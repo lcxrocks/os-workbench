@@ -223,11 +223,11 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    printf("============================================================\n");
-    printf("cluster num: %d\n", nr_clus);
-    printf("dirent_cnt : %d\n", dirent_cnt);
-    printf("pic_cnt    : %d\n", pic_cnt);
-    printf("============================================================\n");
+    // printf("============================================================\n");
+    // printf("cluster num: %d\n", nr_clus);
+    // printf("dirent_cnt : %d\n", dirent_cnt);
+    // printf("pic_cnt    : %d\n", pic_cnt);
+    // printf("============================================================\n");
     /* recover the file*/
 
     //3. RECOVER IMAGES
