@@ -231,28 +231,28 @@ int main(int argc, char *argv[]) {
     /* recover the file*/
 
     //3. RECOVER IMAGES
-    // image_t *p = &list_head;
-    // while(p->next){
-    //     p = p->next;
-    //     int clu_idx = p->clus_idx;
-    //     void *sec1 = disk->data + (clu_idx - 2) * disk->header->BPB_SecPerClus * disk->header->BPB_BytsPerSec;
-    //     //p->bmp->header = (bmp_header_t *) sec1;
-    //     //printf("haha\n");
-    //     //p->bmp->info = (bmp_info_t *)(sec1 + 14);
-    //     char path_name[128] = "/tmp/";
-    //     strcat(path_name, p->name);
-    //     int fd = open(path_name, O_CREAT | O_WRONLY, S_IRWXU);
-    //     write(fd, sec1, p->size);
-    //     char sha1sum[256] = "sha1sum ";
-    //     strcat(sha1sum, path_name);
-    //     FILE *fp = popen(sha1sum, "r");
-    //     //panic_on(!fp, "popen");
-    //     char buf[256];
-    //     memset(buf, 0, sizeof(buf));
-    //     fscanf(fp, "%s", buf); // Get it!
-    //     pclose(fp);
-    //     printf("%s %s\n", buf, p->name);
-    // }
+    image_t *p = &list_head;
+    while(p->next){
+        p = p->next;
+        int clu_idx = p->clus_idx;
+        void *sec1 = disk->data + (clu_idx - 2) * disk->header->BPB_SecPerClus * disk->header->BPB_BytsPerSec;
+        //p->bmp->header = (bmp_header_t *) sec1;
+        //printf("haha\n");
+        //p->bmp->info = (bmp_info_t *)(sec1 + 14);
+        char path_name[128] = "/tmp/";
+        strcat(path_name, p->name);
+        int fd = open(path_name, O_CREAT | O_WRONLY, S_IRWXU);
+        write(fd, sec1, p->size);
+        char sha1sum[256] = "sha1sum ";
+        strcat(sha1sum, path_name);
+        FILE *fp = popen(sha1sum, "r");
+        //panic_on(!fp, "popen");
+        char buf[256];
+        memset(buf, 0, sizeof(buf));
+        fscanf(fp, "%s", buf); // Get it!
+        pclose(fp);
+        printf("%s %s\n", buf, p->name);
+    }
 }
 
 void dir_handler(void *c){
@@ -271,19 +271,31 @@ void dir_handler(void *c){
     list_head.next = pic;
     d = c - 32; //1st long entry
     int pos = 0;
+    bool break_flag = false;
     for (int i = 0; i < num; i++)
     {
         for (int i = 0; i < 10; i = i+2){
             pic->name[pos++] = d->LDIR_Name1[i];
-            if(d->LDIR_Name1[i] == '\0') break; 
+            if(d->LDIR_Name1[i] == '\0') {
+               break_flag = true;
+               break;  
+            }
         }
+        if(break_flag) break;
         for (int i = 0; i < 12; i = i+2){
             pic->name[pos++] = d->LDIR_Name2[i];
-            if(d->LDIR_Name2[i] == '\0') break; 
+            if(d->LDIR_Name2[i] == '\0'){
+               break_flag = true;
+               break;  
+            }
         }
+        if(break_flag) break;
         for (int i = 0; i < 4; i = i+2){
             pic->name[pos++] = d->LDIR_Name3[i];
-            if(d->LDIR_Name3[i] == '\0') break;
+            if(d->LDIR_Name3[i] == '\0'){
+               break_flag = true;
+               break;  
+            }
         }
         d = (void *)d - 32;
     }
