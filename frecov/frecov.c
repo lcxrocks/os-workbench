@@ -246,7 +246,7 @@ int main(int argc, char *argv[]) {
         char sha1sum[256] = "sha1sum ";
         strcat(sha1sum, path_name);
         FILE *fp = popen(sha1sum, "r");
-        panic_on(!fp, "popen");
+        //panic_on(!fp, "popen");
         char buf[256];
         memset(buf, 0, sizeof(buf));
         fscanf(fp, "%s", buf); // Get it!
@@ -295,7 +295,7 @@ void dir_handler(void *c){
     
     if(pic->name[len-3] == 'b' && pic->name[len-2] == 'm'  && pic->name[len-1] == 'p' && pic->size != 0){
         pic_cnt++;
-        printf("\033[32m>> dectected file name: \033[0m%s , clus_idx :%x, file_size: %d\n", pic->name, pic->clus_idx, pic->size);
+        //printf("\033[32m>> dectected file name: \033[0m%s , clus_idx :%x, file_size: %d\n", pic->name, pic->clus_idx, pic->size);
     }
     else{
         list_head.next = pic->next;
