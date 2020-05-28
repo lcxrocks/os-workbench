@@ -293,15 +293,15 @@ void dir_handler(void *c){
     pic->size = d->DIR_FileSize;
     int len = strlen(pic->name);
     
-    //if(pic->name[len-3] == 'b' && pic->name[len-2] == 'm'  && pic->name[len-1] == 'p' && pic->size != 0){
+    if(pic->name[len-3] == 'b' && pic->name[len-2] == 'm'  && pic->name[len-1] == 'p' && pic->size != 0){
         pic_cnt++;
         printf("\033[32m>> dectected file name: \033[0m%s , clus_idx :%x, file_size: %d\n", pic->name, pic->clus_idx, pic->size);
-    //}
-    // else{
-    //     list_head.next = pic->next;
-    //     if(pic->next!=NULL) pic->next->prev = &list_head;
-    //     free(pic);
-    // }
+    }
+    else{
+        list_head.next = pic->next;
+        if(pic->next!=NULL) pic->next->prev = &list_head;
+        free(pic);
+    }
     return ;
 }
 
