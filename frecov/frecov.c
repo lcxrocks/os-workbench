@@ -297,6 +297,7 @@ void dir_handler(void *c){
                break;  
             }
         }
+        if(break_flag) break;
         d = (void *)d - 32;
     }
     if(pic->name[pos] != '\0') pic->name[pos] = '\0';
