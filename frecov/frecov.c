@@ -380,8 +380,8 @@ void check_rgb(int width, int left ,void *p){
     {
         memcpy(next_line_1, p, width-left);
         memcpy(next_line_2, p + width - left, left);
-        cnt += compare(prev_line_1 + left, next_line_1, width - left, 100);
-        cnt += compare(prev_line_2, next_line_2, left, 100);
+        cnt += compare(prev_line_1 + left, next_line_1, width - left, 50);
+        cnt += compare(prev_line_2, next_line_2, left, 50);
         if(cnt >= 7*width/8){
             free(prev_line_2);
             free(prev_line_1);
