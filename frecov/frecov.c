@@ -379,7 +379,7 @@ void write_image(int fd, image_t * ptr){
     bool not_next = false;
     bool seg_fault = false;
     while(num){
-        while(sum < x/2){
+        while(sum < x/4){
             not_next = true;
             memcpy(next_line, t-x+(w*3)+skip, x);
             sum = compare(prev_line, next_line, x);
@@ -438,7 +438,7 @@ int compare(uint8_t *prev_line , uint8_t *next_line, int cnt){
     for (int i = 0; i < cnt; i++){
         int tmp = (int) (prev_line[i] - next_line[i]);
         tmp = (tmp > 0) ? tmp : -tmp;
-        if(tmp < 200) ok_cnt++;
+        if(tmp < 150) ok_cnt++;
     }
     return ok_cnt;
 }
