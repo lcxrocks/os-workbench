@@ -40,9 +40,9 @@ typedef struct bmp_header{
 
 typedef struct bmp_info{
     u4 biSize;
-    u4 biWidth;
+    u4 biWidth;/* important */
     u4 biHeight; /* important */
-    u2 biPlanes; /* important */
+    u2 biPlanes; 
     u2 biBitCount;
     u4 biCompression;
     u4 biSizeImages;
@@ -321,6 +321,7 @@ void dir_handler(void *c){
     pic->bmp = malloc(sizeof(bmp_t));
     pic->bmp->header = (bmp_header_t *)(disk->data + (pic->clus_idx - 2) * disk->header->BPB_SecPerClus * disk->header->BPB_BytsPerSec);
     pic->bmp->info = (bmp_info_t *)(pic->bmp->header + 14);
+    panic_on(pic->bmp->header->bfType[0]!='B', "shit");
     pic->size = d->DIR_FileSize;
     int len = strlen(pic->name);
     
@@ -337,7 +338,7 @@ void dir_handler(void *c){
 }
 
 void write_image(int fd, image_t * ptr){
-    uint32_t w = ptr->bmp->info->biWidth;
+    int w = ptr->bmp->info->biWidth;
     int h = ptr->bmp->info->biHeight; // default: 24bit bmp file
     printf("w : %u\n", w);
     int8_t  *prev_line = (int8_t *) calloc(3*w, sizeof(int8_t));
