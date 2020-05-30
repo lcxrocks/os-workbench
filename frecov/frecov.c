@@ -346,6 +346,7 @@ void write_image(int fd, image_t * ptr){
             t = t + BytsClus;//greedy_find_next_cluster();
             memcpy(next_line, t, 3*w);
             sum = compare(prev_line, next_line, 3*w);
+            printf("hah\n");
         }
         if(t!=disk->data){
             write(fd, t, size < BytsClus ? size : BytsClus);
