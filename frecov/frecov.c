@@ -416,8 +416,8 @@ void check_rgb(int width, int left ,void *p, int skip){
         free(next_line_1);
         return ;
     }
+    
     p = disk->data;
-   
     for (; p < disk->end; p+=BytsClus)
     {
         cnt = 0;
@@ -434,7 +434,8 @@ void check_rgb(int width, int left ,void *p, int skip){
             return ;
         }
     }
-    printf("p :%p, end:%p\n", p, disk->end);
+    p = tmp;
+    return ;
 }
 
 void write_image(int fd, image_t * ptr){
