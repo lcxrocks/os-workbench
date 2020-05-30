@@ -156,8 +156,8 @@ int classify(void *p);
 void dir_handler(void *c);
 void short_entry_handler(void *c, void *entry, bool long_name_flag);
 void write_image(int fd, image_t * p);
-void get_line_rgb(int8_t *digit, int size, void *p);
-int compare(int8_t *digit , int8_t *digit_new, int last_line);
+void get_line_rgb(int8_t *prev_line, int size, void *p);
+int compare(int8_t *prev_line , int8_t *next_line, int cnt);
 
 int unused_cnt;
 int bmp_data_cnt;
@@ -340,29 +340,57 @@ void write_image(int fd, image_t * ptr){
     int w = ptr->bmp->info->biWidth;
     int h = ptr->bmp->info->biHeight; // default: 24bit bmp file
 
-    int8_t  *pre_line = malloc(sizeof(int8_t) * 3 * w);
+    int8_t  *prev_line = malloc(sizeof(int8_t) * 3 * w);
     int8_t  *next_line = malloc(sizeof(int8_t) * 3 * w); // R G B
 
-    int num = ptr->size / BytsClus; // total number of clusters
+    int size = ptr->size;
+    int num = size / BytsClus; // total number of clusters
     printf("\033[32m >>File: \033[0m \033[33m%s \033[0m\033[32mhas %d clusters to write.\033[0m\n", ptr->name, num);
     //write(fd, ptr->bmp->header, ptr->size);
     void *p = ptr->bmp->header;
-    write(fd, p, (ptr->size < BytsClus ? ptr->size : BytsClus)); num--;// first cluster
+    void *t = disk->data;
     
+    write(fd, p, (ptr->size < BytsClus ? ptr->size : BytsClus)); num--; size -= BytsClus;// first cluster
+    memcpy(prev_line, p+BytsClus-3*w, 3*w); 
+    p += BytsClus;
+    memcpy(next_line, p, 3*w);;
+    
+    int sum = 0;
+    while(num > 0 && size > 0){
+        sum = compare(prev_line, next_line, 3*w);
+        while(sum > w * 3 * 20){// allow +-20 per digit per color 
+            t = t + BytsClus;//greedy_find_next_cluster();
+            memcpy(next_line, t, 3*w);
+            sum = compare(prev_line, next_line, 3*w);
+        }
+        if(t!=disk->data){
+            write(fd, t, size < BytsClus ? size : BytsClus);
+            memcpy(prev_line, t+BytsClus-3*w, 3*w);
+            num--; size -= BytsClus; 
+            t = disk->data;
+        }
+        else{
+            write(fd, p, size < BytsClus ? size : BytsClus);
+            memcpy(prev_line, p+BytsClus-3*w, 3*w);
+            num--; size -= BytsClus;
+        }
+        p += BytsClus;
+        memcpy(next_line, p, 3*w);
+    }
 
 };
 
-int compare(int8_t *digit , int8_t *digit_new, int last_line){
+int compare(int8_t *prev_line , int8_t *next_line, int cnt){
     int sum = 0;
-    for (int i = 0; i < last_line; i++){
-        sum += (digit[i] - digit_new[i] > 0) ? digit[i] - digit_new[i] : digit_new[i] - digit[i];
+    for (int i = 0; i < cnt; i++){
+        sum += (prev_line[i] - next_line[i] > 0) ? prev_line[i] - next_line[i] : next_line[i] - prev_line[i];
     }
     return sum;
 }
 
-void get_line_rgb(int8_t *digit, int size, void *p){
+void get_line_rgb(int8_t *prev_line, int size, void *p){
     for (int i = 0; i < size; i++){
-        digit[i] = *((int8_t *) p);
+        prev_line[i] = *((int8_t *) p);
         p++;
     }
 }
