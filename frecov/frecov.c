@@ -269,7 +269,14 @@ void dir_handler(void *c){
     fat_dir *d = c;
 
     int num = d->LDIR_Ord & 0xf;
-    printf("num : %d\n", num); 
+    while(num){
+        num--;
+        d = (void *)d + 32;
+        if((d->LDIR_Ord &0xf)!=num){
+            longname_cnt--;
+            return ;
+        }
+    }
     // while(num == 1 || ((d->LDIR_Ord & 0x40 )!= 0x40) ){
     //     d = (void *)d - 32;
     //     // if((d->LDIR_Ord & 0xf) != num) 
