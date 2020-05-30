@@ -366,13 +366,17 @@ void write_image(int fd, image_t * ptr){
     int x = lseek % (w*3+skip); //rest line 
     int y = lseek / (w*3+skip); 
     printf("lseek - x :%d == %d, %d\n", lseek-x, (lseek-x)/(w*3+skip)*(w*3+skip), y*(w*3+skip));
+    printf("p-x:%d\n", BytsClus - 54 -x);
     int sum = 0;
+    uint8_t *prev_line= calloc(x, sizeof(uint8_t));
+    uint8_t *next_line= calloc(x, sizeof(uint8_t));
+    //memcpy(prev_line, p-x, x);
+
     // while(sum > x*){
-    //     uint8_t *prev_line= calloc(x, sizeof(uint8_t));
-    //     uint8_t *next_line= calloc(x, sizeof(uint8_t));
+        
     //     for (int i = 0; i < x; i++)
     //     {
-            
+    //         prev_line[]
     //     }
         
     // }
