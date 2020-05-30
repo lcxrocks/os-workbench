@@ -349,7 +349,9 @@ void write_image(int fd, image_t * ptr){
     //write(fd, ptr->bmp->header, ptr->size);
     void *p = ptr->bmp->header;
     void *t = disk->data;
-    
+    write(fd, p, (ptr->size < BytsClus ? ptr->size : BytsClus));
+    write(fd, p, (ptr->size < BytsClus ? ptr->size : BytsClus));
+    write(fd, p, (ptr->size < BytsClus ? ptr->size : BytsClus));
     write(fd, p, (ptr->size < BytsClus ? ptr->size : BytsClus)); num--; size -= BytsClus;// first cluster
     memcpy(prev_line, p+BytsClus-3*w, 3*w); 
     p += BytsClus;
