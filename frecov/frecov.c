@@ -223,15 +223,16 @@ int main(int argc, char *argv[]) {
             fat_dir *dir = p;
             if(((dir->LDIR_Attr & ATTR_LONG_NAME_MASK ) == ATTR_LONG_NAME)&& dir->LDIR_Type == 0 && dir->LDIR_FstClusIO == 0 && (dir->LDIR_Ord & 0x40)==0x40){
                 longname_cnt++;
+                dir_handler(p);
             }
-            if(dir->DIR_Name[8]=='B' && dir->DIR_Name[9] == 'M' && dir->DIR_Name[10] == 'P'){
-                //printf("offset: %zx\n", p - cluster_entry);
-                if((dir->DIR_Attr == 0x20) && (dir->DIR_Name[6]=='~')) // make sure this is the long_name_entry
-                {
-                    dirent_cnt++;
-                    dir_handler(p);
-                }
-            }
+            // if(dir->DIR_Name[8]=='B' && dir->DIR_Name[9] == 'M' && dir->DIR_Name[10] == 'P'){
+            //     //printf("offset: %zx\n", p - cluster_entry);
+            //     if((dir->DIR_Attr == 0x20) && (dir->DIR_Name[6]=='~')) // make sure this is the long_name_entry
+            //     {
+            //         dirent_cnt++;
+            //         dir_handler(p);
+            //     }
+            // }
         }
     }
     printf("================================================================\n");
@@ -266,6 +267,7 @@ int main(int argc, char *argv[]) {
 void dir_handler(void *c){
     image_t *p = malloc(sizeof(image_t));
     fat_dir *d = c;
+    if((d->LDIR_Ord & 0x40)!=0x40) printf("fuck me\n");
     int num = 1; 
     while(num == 1 || ((d->LDIR_Ord & 0x40 )!= 0x40) ){
         d = (void *)d - 32;
