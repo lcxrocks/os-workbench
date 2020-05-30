@@ -346,7 +346,7 @@ void write_image(int fd, image_t * ptr){
     for (int i = 0; i < 3*w; i++)
     {
         printf("ha\n");
-        printf("%c\n", prev_line[i]);
+        printf("%d\n", prev_line[i]);
     }
 
     int size = ptr->size;
