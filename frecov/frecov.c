@@ -319,7 +319,7 @@ void dir_handler(void *c){
     d = c;
     pic->clus_idx = (d->DIR_FstClusHI << 16) | d->DIR_FstClusLO;
     pic->bmp = malloc(sizeof(bmp_t));
-    pic->bmp->header = (bmp_header_t *)(disk->data + (pic->clus_idx - 2) * disk->header->BPB_SecPerClus * disk->header->BPB_BytsPerSec);
+    pic->bmp->header = disk->data + (pic->clus_idx - 2) * disk->header->BPB_SecPerClus * disk->header->BPB_BytsPerSec;
     pic->bmp->info = (bmp_info_t *)(pic->bmp->header + 14);
     panic_on(pic->bmp->header->bfType[0]!='B', "shit");
     pic->size = d->DIR_FileSize;
