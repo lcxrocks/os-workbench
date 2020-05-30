@@ -7,6 +7,7 @@
 #include <sys/types.h>   
 #include <sys/stat.h>    
 #include <fcntl.h>
+#include <errno.h>
 #include <unistd.h>
 #define u1 uint8_t
 #define u2 uint16_t
@@ -348,10 +349,12 @@ void write_image(int fd, image_t * ptr){
     while(size > 0){
         printf("\033[32mprocessing %s, remain size: %d\033[0m\n", ptr->name, size);
         if(num == 0){ //first cluster        
-            if(size >= BytsClus)
-                printf("write %zu\n", write(fd, p, BytsClus));
+            if(size >= BytsClus){
+                printf("write %zd\n", write(fd, p, BytsClus));
+                printf("%s\n", strerror(errno)); 
+            }
             else
-                printf("write %zu\n", write(fd, p, size));
+                printf("write %zd\n", write(fd, p, size));
             p = p + BytsClus - last_line; 
             get_line_rgb(digit, last_line, p);
         }
