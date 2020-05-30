@@ -235,22 +235,10 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    // printf("============================================================\n");
-    // printf("cluster num: %d\n", nr_clus);
-    // printf("dirent_cnt : %d\n", dirent_cnt);
-    // printf("pic_cnt    : %d\n", pic_cnt);
-    // printf("============================================================\n");
-    /* recover the file*/
-
     //3. RECOVER IMAGES
     image_t *p = &list_head;
     while(p->next){
         p = p->next;
-        //int clu_idx = p->clus_idx;
-        //void *sec1 = disk->data + (clu_idx - 2) * disk->header->BPB_SecPerClus * disk->header->BPB_BytsPerSec;
-        //p->bmp->header = (bmp_header_t *) sec1;
-        //printf("haha\n");
-        //p->bmp->info = (bmp_info_t *)(sec1 + 14);
         char path_name[128] = "/tmp/";
         strcat(path_name, p->name);
         printf("pathname: %s\n", path_name);
@@ -346,11 +334,7 @@ void write_image(int fd, image_t * ptr){
     int8_t  *prev_line = (int8_t *) calloc(3*w, sizeof(int8_t));
     int8_t  *next_line = (int8_t *) calloc(3*w, sizeof(int8_t)); // R G B
     
-    for (int i = 0; i < 3*w; i++)
-    {
-        printf("ha\n");
-        printf("%d\n", prev_line[i]);
-    }
+    printf("allocated:\nprev: %p \nnext:%p\n", prev_line, next_line);
     int size = ptr->size;
     int num = size / BytsClus; // total number of clusters
     printf("\033[32m >>File: \033[0m \033[33m%s \033[0m\033[32mhas %d clusters to write.\033[0m\n", ptr->name, num);
