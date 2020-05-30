@@ -354,6 +354,7 @@ void write_image(int fd, image_t * ptr){
 
     printf("offset: %d , imageSize :%d == %d, skip: %d\n",offset, imageSize, ptr->bmp->info->biSizeImages, skip);
     printf("%lf\n", ((double) w*3+skip)/4);
+    printf("%d\n", ptr->size);
     int lseek = 0;
     
     //int8_t  *next_line = (int8_t *) calloc(h, sizeof(uint32_t)); // R G B
