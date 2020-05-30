@@ -267,17 +267,18 @@ int main(int argc, char *argv[]) {
 void dir_handler(void *c){
     image_t *p = malloc(sizeof(image_t));
     fat_dir *d = c;
-    if((d->LDIR_Ord & 0x40)!=0x40) printf("fuck me\n");
-    int num = 1; 
-    while(num == 1 || ((d->LDIR_Ord & 0x40 )!= 0x40) ){
-        d = (void *)d - 32;
-        // if((d->LDIR_Ord & 0xf) != num) 
-        // {
-        //     printf("wrong order! should be :%d, now have: %x\n", num, d->LDIR_Ord);
-        //     panic("ha");
-        // }
-        num++;
-    }
+
+    int num = d->LDIR_Ord & 0xf;
+    printf("num : %d\n", num); 
+    // while(num == 1 || ((d->LDIR_Ord & 0x40 )!= 0x40) ){
+    //     d = (void *)d - 32;
+    //     // if((d->LDIR_Ord & 0xf) != num) 
+    //     // {
+    //     //     printf("wrong order! should be :%d, now have: %x\n", num, d->LDIR_Ord);
+    //     //     panic("ha");
+    //     // }
+    //     num++;
+    // }
     image_t *pic = malloc(sizeof(image_t));
     pic->next = list_head.next;
     pic->prev = &list_head;
