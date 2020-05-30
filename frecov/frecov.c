@@ -393,9 +393,9 @@ int compare(uint8_t *prev_line , uint8_t *next_line, int cnt){
     int sum = 0;
     for (int i = 0; i < cnt; i++){
         int tmp = (int) (prev_line[i] - next_line[i]);
-        printf("tmp: %d\n",tmp);
         sum += (tmp > 0) ? tmp : -tmp;
     }
+    printf("sum: %d\n",sum);
     return sum;
 }
 
