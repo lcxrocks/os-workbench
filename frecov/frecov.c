@@ -237,7 +237,7 @@ int main(int argc, char *argv[]) {
     int eq_cnt = 0;int num =0;
     while(p->next){
         p = p->next;
-        char path_name[128] = "/tmp/";
+        char path_name[128] = "../../tmp/";
         strcat(path_name, p->name);
         int fd = open(path_name, O_CREAT | O_WRONLY, S_IRWXU);
         //printf("ERROR: %d\n", errno);
@@ -257,15 +257,15 @@ int main(int argc, char *argv[]) {
         memset(buf, 0, sizeof(buf));
         fscanf(fp, "%s", buf); // Get it!
         /***check***/
-            // char mnt_path[128] = "/mnt/DCIM/";
-            // strcat(mnt_path, p->name);
-            // char sha[256] = "sha1sum ";
-            // strcat(sha, mnt_path); 
-            // FILE *fp1 = popen(sha, "r");
-            // char tmp[256];
-            // memset(tmp, 0, sizeof(tmp));
-            // fscanf(fp1, "%s", tmp);
-            // if(!strcmp(buf, tmp)) eq_cnt++;
+            char mnt_path[128] = "/mnt/DCIM/";
+            strcat(mnt_path, p->name);
+            char sha[256] = "sha1sum ";
+            strcat(sha, mnt_path); 
+            FILE *fp1 = popen(sha, "r");
+            char tmp[256];
+            memset(tmp, 0, sizeof(tmp));
+            fscanf(fp1, "%s", tmp);
+            if(!strcmp(buf, tmp)) eq_cnt++;
         /***check****/
         pclose(fp);
         printf("%s %s\n", buf, p->name);
@@ -376,54 +376,46 @@ void write_image(int fd, image_t * ptr){
     memcpy(prev_line, p-x, x);
     memcpy(next_line, p-x+(w*3)+skip, x);
     int sum = compare(prev_line, next_line, x);
-    bool not_next = false;
-    bool seg_fault = false;
+    void *tmp = NULL;
     while(num){
-        while(sum < x/5){
-            not_next = true;
+        while(t < disk->end){
             memcpy(next_line, t-x+(w*3)+skip, x);
-            sum = compare(prev_line, next_line, x);
-            t += BytsClus; 
-            if(t > disk->end) seg_fault = true;
+            int sum_t = compare(prev_line, next_line, x);
+            if(sum_t > sum){
+                sum = sum_t;
+                tmp = t;
+            }
+            t += BytsClus;
         }
-        if(not_next && !seg_fault){ //find a cluster.
-            if(size > BytsClus){
-                write(fd, t, BytsClus);
+        memcpy(next_line, p-x+(w*3)+skip, x);
+        int sum_t_t = compare(prev_line, next_line, x);
+        if(size < BytsClus){
+            if(sum_t_t < sum && tmp!=NULL){
+                write(fd, tmp, size);
+                num--;
+            }
+            else{
+                write(fd, p, size);
+                num--;
+            }
+        }
+        else{
+            if(sum_t_t < sum && tmp!=NULL){
+                write(fd, tmp, BytsClus);
                 p += BytsClus; num--; size-=BytsClus;
                 lseek += BytsClus; 
                 x = lseek % (w*3+skip);
                 memcpy(prev_line, t+BytsClus-x, x);
-                memcpy(next_line, t+BytsClus-x+(w*3)+skip, x);
-                t = disk->data; //reset 
-                not_next = false;
-                seg_fault = false;
             }
             else{
-                write(fd, t, size);
-                t = disk->data; //reset 
-                not_next = false;
-                seg_fault = false;
-            }
-        }
-        else{ //didn't find a better one / no need to find a better one
-            if(size>BytsClus){
                 write(fd, p, BytsClus);
                 p += BytsClus; num--; size-=BytsClus;
                 lseek += BytsClus; 
                 x = lseek % (w*3+skip);
-                memcpy(prev_line, p-x, x);
-                memcpy(next_line, p-x+(w*3)+skip, x);
-                t = disk->data; //reset 
-                not_next = false;
-                seg_fault = false;
+                memcpy(prev_line, t+BytsClus-x, x);
             }
-            else{
-                write(fd, p, size);
-
-                t = disk->data; //reset 
-                not_next = false;
-                seg_fault = false;
-            }
+            tmp = NULL;
+            t = disk->data;
         }
         
     }
