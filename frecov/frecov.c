@@ -340,20 +340,18 @@ void write_image(int fd, image_t * ptr){
     int w = ptr->bmp->info->biWidth;
     int h = ptr->bmp->info->biHeight; // default: 24bit bmp file
 
-    int8_t  *prev_line = (int8_t *) malloc(2000);
-    int8_t  *next_line = (int8_t *) malloc(2000); // R G B
+    int8_t  *prev_line = (int8_t *) calloc(3*w, sizeof(int8_t));
+    int8_t  *next_line = (int8_t *) calloc(3*w, sizeof(int8_t)); // R G B
 
     int size = ptr->size;
     int num = size / BytsClus; // total number of clusters
     printf("\033[32m >>File: \033[0m \033[33m%s \033[0m\033[32mhas %d clusters to write.\033[0m\n", ptr->name, num);
-    //write(fd, ptr->bmp->header, ptr->size);
     void *p = ptr->bmp->header;
     void *t = disk->data;
     
     write(fd, p, (ptr->size < BytsClus ? ptr->size : BytsClus)); num--; size -= BytsClus;// first cluster
-    printf("wtf?\n");
+
     void *tmp = p+BytsClus-3*w;
-    printf("tmp : %p\n", tmp);
     for (int i = 0; i < 3*w; i++)
     {
         printf("ha\n");
