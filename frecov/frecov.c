@@ -242,7 +242,7 @@ int main(int argc, char *argv[]) {
         char path_name[128] = "../../tmp/";
         strcat(path_name, p->name);
         int fd = open(path_name, O_CREAT | O_WRONLY, S_IRWXU);
-        printf("ERROR: %d\n", errno);
+        //printf("ERROR: %d\n", errno);
         panic_on(fd<0, "Bad fd");
         //write(fd, p->bmp->header, p->size); // 连续的size大小
         write_image(fd, p);
@@ -332,7 +332,7 @@ void write_image(int fd, image_t * ptr){
 
     int size = ptr->size;
     int num = size / BytsClus; // total number of clusters
-    printf("\033[32m >>File: \033[0m \033[33m%s \033[0m\033[32mhas %d clusters to write.\033[0m\n", ptr->name, num);
+    //printf("\033[32m >>File: \033[0m \033[33m%s \033[0m\033[32mhas %d clusters to write.\033[0m\n", ptr->name, num);
     void *p = ptr->bmp->header;
     void *t = disk->data;
     write(fd, p, (ptr->size < BytsClus ? ptr->size : BytsClus)); num--; size -= BytsClus;// first cluster
@@ -342,7 +342,7 @@ void write_image(int fd, image_t * ptr){
     int sum = 0; bool segfault = false;
     while(num > 0 && size > 0){
         sum = compare(prev_line, next_line, 3*w);
-        while(sum > w * 3 * 20){// allow +-20 per digit per color 
+        while(sum > w * 3 * 40){// allow +-20 per digit per color 
             if( t + BytsClus > disk->end) { segfault = true; break;}
             t = t + BytsClus;//greedy_find_next_cluster();
             memcpy(next_line, t, 3*w);
