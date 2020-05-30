@@ -153,6 +153,7 @@ int get_cluster_number(struct fat_header *hd);
 int classify(void *p);
 void dir_handler(void *c);
 void short_entry_handler(void *c, void *entry, bool long_name_flag);
+void write_image(int fd, image_t * p);
 
 int unused_cnt;
 int bmp_data_cnt;
@@ -161,6 +162,10 @@ int empty_cnt;
 int long_name_cnt;
 int dirent_cnt;
 int pic_cnt;
+int nr_datasec;
+int nr_clus;
+int BytsClus;
+int RsvdBytes;
 int main(int argc, char *argv[]) {
     /* Check_basic info */
     check_info(argc);
@@ -185,10 +190,10 @@ int main(int argc, char *argv[]) {
     disk->fs_info = (struct FSInfo *)((void *)disk->header + 512);
     panic_on(disk->fs_info->FSI_TrailSig!=0xAA550000, "BAD TrailSig\n");
 
-    int nr_datasec = disk->header->BPB_TotSec32 - (disk->header->BPB_RsvdSecCnt + (disk->header->BPB_NumFATs * disk->header->BPB_FATSz32));
-    int nr_clus = nr_datasec / disk->header->BPB_SecPerClus; 
-    int BytsClus = disk->header->BPB_BytsPerSec * disk->header->BPB_SecPerClus;
-    int RsvdBytes = (disk->header->BPB_RsvdSecCnt + disk->header->BPB_NumFATs * disk->header->BPB_FATSz32) * disk->header->BPB_BytsPerSec;
+    nr_datasec = disk->header->BPB_TotSec32 - (disk->header->BPB_RsvdSecCnt + (disk->header->BPB_NumFATs * disk->header->BPB_FATSz32));
+    nr_clus = nr_datasec / disk->header->BPB_SecPerClus; 
+    BytsClus = disk->header->BPB_BytsPerSec * disk->header->BPB_SecPerClus;
+    RsvdBytes = (disk->header->BPB_RsvdSecCnt + disk->header->BPB_NumFATs * disk->header->BPB_FATSz32) * disk->header->BPB_BytsPerSec;
     disk->data = (void *)disk->header + RsvdBytes;
     // on a FAT32 volume, RootDirSectors is always 0.
     printf("\033[32mFinish Loading Disk : \033[0m\033[33m%s\033[0m\n", argv[1]);
@@ -236,13 +241,14 @@ int main(int argc, char *argv[]) {
         p = p->next;
         int clu_idx = p->clus_idx;
         void *sec1 = disk->data + (clu_idx - 2) * disk->header->BPB_SecPerClus * disk->header->BPB_BytsPerSec;
-        //p->bmp->header = (bmp_header_t *) sec1;
+        p->bmp->header = (bmp_header_t *) sec1;
         //printf("haha\n");
-        //p->bmp->info = (bmp_info_t *)(sec1 + 14);
+        p->bmp->info = (bmp_info_t *)(sec1 + 14);
         char path_name[128] = "/tmp/";
         strcat(path_name, p->name);
         int fd = open(path_name, O_CREAT | O_WRONLY, S_IRWXU);
-        write(fd, sec1, p->size);
+        //write(fd, sec1, p->size); // 连续的size大小
+        write_image(fd, p);
         char sha1sum[256] = "sha1sum ";
         strcat(sha1sum, path_name);
         FILE *fp = popen(sha1sum, "r");
@@ -317,6 +323,13 @@ void dir_handler(void *c){
     }
     return ;
 }
+
+void write_image(int fd, image_t * p){
+    int size = p->size;
+    // while(size){
+
+    // }
+};
 
 void check_info(int argc){
     panic_on(argc == 1, "Usage: ./frecov *.img\n");
