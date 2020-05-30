@@ -243,7 +243,7 @@ int main(int argc, char *argv[]) {
         //printf("ERROR: %d\n", errno);
         //panic_on(fd<0, "Bad fd");
         
-        if((num%2)==0){
+        if((num%4)==0){
            write(fd, p->bmp->header, p->size); // 连续的size大小
         }
         else
