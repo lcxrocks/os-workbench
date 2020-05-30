@@ -431,6 +431,7 @@ void check_rgb(int width, int left ,void *p, int skip){
             free(prev_line_1);
             free(next_line_2);
             free(next_line_1);
+            printf("find!\n");
             return ;
         }
     }
