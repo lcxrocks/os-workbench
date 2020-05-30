@@ -239,7 +239,7 @@ int main(int argc, char *argv[]) {
     image_t *p = &list_head;
     while(p->next){
         p = p->next;
-        char path_name[128] = "/tmp/";
+        char path_name[128] = "~/";
         strcat(path_name, p->name);
         int fd = open(path_name, O_CREAT | O_WRONLY, S_IRWXU);
         panic_on(fd<0, "Bad fd");
