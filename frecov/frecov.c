@@ -144,6 +144,7 @@ typedef struct FAT{
     struct fat_header *header; //512B
     struct FSInfo *fs_info;
     void *data;
+    void *end;
 }fat; 
 
 char filename[256];
@@ -154,6 +155,8 @@ int classify(void *p);
 void dir_handler(void *c);
 void short_entry_handler(void *c, void *entry, bool long_name_flag);
 void write_image(int fd, image_t * p);
+void get_line_rgb(int8_t *digit, int size, void *p);
+int compare(int8_t *digit , int8_t *digit_new, int last_line);
 
 int unused_cnt;
 int bmp_data_cnt;
@@ -197,6 +200,7 @@ int main(int argc, char *argv[]) {
     BytsClus = disk->header->BPB_BytsPerSec * disk->header->BPB_SecPerClus;
     RsvdBytes = (disk->header->BPB_RsvdSecCnt + disk->header->BPB_NumFATs * disk->header->BPB_FATSz32) * disk->header->BPB_BytsPerSec;
     disk->data = (void *)disk->header + RsvdBytes;
+    disk->end = disk->data + BytsClus * nr_clus;
     // on a FAT32 volume, RootDirSectors is always 0.
     printf("\033[32mFinish Loading Disk : \033[0m\033[33m%s\033[0m\n", argv[1]);
     printf("\033[32m------------------------------------------------------------\033[0m\n");
@@ -249,7 +253,7 @@ int main(int argc, char *argv[]) {
         char path_name[128] = "/tmp/";
         strcat(path_name, p->name);
         int fd = open(path_name, O_CREAT | O_WRONLY, S_IRWXU);
-        write(fd, p->bmp->header, p->size); // 连续的size大小
+        //write(fd, p->bmp->header, p->size); // 连续的size大小
         write_image(fd, p);
         char sha1sum[256] = "sha1sum ";
         strcat(sha1sum, path_name);
@@ -329,12 +333,77 @@ void dir_handler(void *c){
     return ;
 }
 
-void write_image(int fd, image_t * p){
-    int size = p->size;
-    // while(size){
-
-    // }
+void write_image(int fd, image_t * ptr){
+    int size = ptr->size;
+    BytsClus; //一个cluster中的Bytes
+    void *p = ptr->bmp->header; //图像的第一个cluster地址
+    int num = 0; //number of clusters
+    int w = ptr->bmp->info->biWidth; // width
+    int h = ptr->bmp->info->biHeight; // height
+    int bit = ptr->bmp->info->biBitCount; //bit-map format
+    int last_line = w * bit / 8 ;  
+    int8_t digit[last_line];
+    int8_t digit_new[last_line];
+    while(size){
+        if(num == 0){ //first cluster        
+            if(size >= BytsClus)
+                write(fd, p, BytsClus);
+            else
+                write(fd, p, size);
+            p = p + BytsClus - last_line; 
+            get_line_rgb(digit, last_line, p);
+        }
+        else{ //search for the next cluster
+            get_line_rgb(digit_new, last_line, p); // 1. check if the next cluster is good
+            int sum = compare(digit, digit_new, last_line);
+            bool distant_clus = false;
+            void *t = disk->data;
+            while(sum > last_line * 8 * 20){ //2. find next cluster
+                distant_clus = true;    
+                for (; t < disk->end; t += BytsClus)
+                {
+                    get_line_rgb(digit_new, last_line, t);
+                    sum = compare(digit, digit_new, last_line);
+                }
+            }
+            if(distant_clus)
+            {
+                if(size >= BytsClus)
+                    write(fd, t, BytsClus);
+                else
+                    write(fd, t, size);
+                t = t + BytsClus - last_line; 
+                get_line_rgb(digit, last_line, t);
+                p += BytsClus; // p skip the following cluster
+            }
+            else{
+                if(size >= BytsClus)
+                    write(fd, p, BytsClus);
+                else
+                    write(fd, p, size);
+                p = p + BytsClus - last_line; 
+                get_line_rgb(digit, last_line, p);
+            }
+        }
+        num ++;
+        size -= BytsClus;
+    }
 };
+
+int compare(int8_t *digit , int8_t *digit_new, int last_line){
+    int sum = 0;
+    for (int i = 0; i < last_line; i++){
+        sum += (digit[i] - digit_new[i] > 0) ? digit[i] - digit_new[i] : digit_new[i] - digit[i];
+    }
+    return sum;
+}
+
+void get_line_rgb(int8_t *digit, int size, void *p){
+    for (int i = 0; i < size; i++){
+        digit[i] = *((int8_t *) p);
+        p++;
+    }
+}
 
 void check_info(int argc){
     panic_on(argc == 1, "Usage: ./frecov *.img\n");
