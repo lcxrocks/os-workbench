@@ -389,6 +389,7 @@ void write_image(int fd, image_t * ptr){
                 p += BytsClus; num--; size-=BytsClus;
                 lseek += BytsClus; 
                 x = lseek % (w*3+skip);
+                printf("free: %p\n", prev_line);
                 free(prev_line);
                 free(next_line);
                 uint8_t *prev_line= calloc(x, sizeof(uint8_t));
@@ -416,6 +417,7 @@ void write_image(int fd, image_t * ptr){
                 p += BytsClus; num--; size-=BytsClus;
                 lseek += BytsClus; 
                 x = lseek % (w*3+skip);
+                printf("free: %p\n", prev_line);
                 free(prev_line);
                 free(next_line);
                 uint8_t *prev_line= calloc(x, sizeof(uint8_t));
