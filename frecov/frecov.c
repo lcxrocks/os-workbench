@@ -348,7 +348,7 @@ void write_image(int fd, image_t * ptr){
         printf("ha\n");
         printf("%d\n", prev_line[i]);
     }
-
+    printf("hah\n");
     int size = ptr->size;
     int num = size / BytsClus; // total number of clusters
     printf("\033[32m >>File: \033[0m \033[33m%s \033[0m\033[32mhas %d clusters to write.\033[0m\n", ptr->name, num);
