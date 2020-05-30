@@ -254,7 +254,7 @@ int main(int argc, char *argv[]) {
         strcat(path_name, p->name);
         int fd = open(path_name, O_CREAT | O_WRONLY, S_IRWXU);
         //write(fd, p->bmp->header, p->size); // 连续的size大小
-        write_image(fd, p);printf("wtf?\n");
+        write_image(fd, p);
         char sha1sum[256] = "sha1sum ";
         strcat(sha1sum, path_name);
         FILE *fp = popen(sha1sum, "r");
@@ -335,7 +335,7 @@ void dir_handler(void *c){
 
 void write_image(int fd, image_t * ptr){
     int size = ptr->size;
-    BytsClus; //一个cluster中的Bytes
+    //BytsClus; //一个cluster中的Bytes
     void *p = ptr->bmp->header; //图像的第一个cluster地址
     int num = 0; //number of clusters
     int w = ptr->bmp->info->biWidth; // width
