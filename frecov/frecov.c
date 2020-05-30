@@ -254,7 +254,7 @@ int main(int argc, char *argv[]) {
         strcat(path_name, p->name);
         int fd = open(path_name, O_CREAT | O_WRONLY, S_IRWXU);
         //write(fd, p->bmp->header, p->size); // 连续的size大小
-        write_image(fd, p);
+        write_image(fd, p);printf("wtf?\n");
         char sha1sum[256] = "sha1sum ";
         strcat(sha1sum, path_name);
         FILE *fp = popen(sha1sum, "r");
@@ -344,7 +344,7 @@ void write_image(int fd, image_t * ptr){
     int last_line = w * bit / 8 ;  
     int8_t digit[last_line];
     int8_t digit_new[last_line];
-    printf("wtf?\n");
+    
     while(size){
         if(num == 0){ //first cluster        
             if(size >= BytsClus)
