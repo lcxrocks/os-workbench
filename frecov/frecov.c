@@ -234,7 +234,7 @@ int main(int argc, char *argv[]) {
     
     //3. RECOVER IMAGES
     image_t *p = &list_head;
-    int eq_cnt = 0;
+    int eq_cnt = 0;int num =0;
     while(p->next){
         p = p->next;
         char path_name[128] = "../../tmp/";
@@ -242,8 +242,13 @@ int main(int argc, char *argv[]) {
         int fd = open(path_name, O_CREAT | O_WRONLY, S_IRWXU);
         //printf("ERROR: %d\n", errno);
         //panic_on(fd<0, "Bad fd");
-        //write(fd, p->bmp->header, p->size); // 连续的size大小
-        write_image(fd, p);
+        
+        if((num%2)==0){
+            write(fd, p->bmp->header, p->size); // 连续的size大小
+        }
+        else
+            write_image(fd, p);
+        num++;
         char sha1sum[256] = "sha1sum ";
         strcat(sha1sum, path_name);
         FILE *fp = popen(sha1sum, "r");
