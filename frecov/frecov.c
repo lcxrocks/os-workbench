@@ -345,7 +345,7 @@ void write_image(int fd, image_t * ptr){
     int sum = 0;
     while(num > 0 && size > 0){
         sum = compare(prev_line, next_line, 3*w);
-        while(sum > w * 3 * 30){// allow +-20 per digit per color 
+        while(sum > w * 3 * 40){// allow +-20 per digit per color 
             t = t + BytsClus;//greedy_find_next_cluster();
             memcpy(next_line, t, 3*w);
             sum = compare(prev_line, next_line, 3*w);
