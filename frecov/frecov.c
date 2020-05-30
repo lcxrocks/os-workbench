@@ -250,8 +250,8 @@ int main(int argc, char *argv[]) {
         int fd = open(path_name, O_CREAT | O_WRONLY, S_IRWXU);
         //printf("ERROR: %d\n", errno);
         //panic_on(fd<0, "Bad fd");
-        write(fd, p->bmp->header, p->size); // 连续的size大小
-        //write_image(fd, p);
+        //write(fd, p->bmp->header, p->size); // 连续的size大小
+        write_image(fd, p);
         char sha1sum[256] = "sha1sum ";
         strcat(sha1sum, path_name);
         FILE *fp = popen(sha1sum, "r");
