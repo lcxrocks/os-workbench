@@ -158,13 +158,12 @@ void check_info(int argc);
 void print_info(struct fat_header *hd);
 int get_cluster_number(struct fat_header *hd);
 int classify(void *p);
-void dir_handler(void *c);
+bool dir_handler(void *c);
 void short_entry_handler(void *c, void *entry, bool long_name_flag);
 void write_image(int fd, image_t * p);
 void get_line_rgb(int8_t *prev_line, int size, void *p);
 int compare(uint8_t *prev_line , uint8_t *next_line, int cnt, int threshold);
 
-int dirent_cnt;
 int pic_cnt;
 int nr_datasec;
 int nr_clus;
@@ -252,10 +251,11 @@ int main(int argc, char *argv[]) {
             fat_dir *dir = p;
             if(((dir->LDIR_Attr & ATTR_LONG_NAME_MASK ) == ATTR_LONG_NAME)&& dir->LDIR_Type == 0 && dir->LDIR_FstClusIO == 0 && (dir->LDIR_Ord & 0x40)==0x40){
                 longname_cnt++;
-                label[i] = DIRENT;
-                dirent++;
-                dir_handler(p);
-                bool entry = true;
+                if(dir_handler(p)) {
+                    label[i] = DIRENT;
+                    dirent++;
+                    entry = true;
+                }
             }
         }
         if(!entry){
@@ -301,7 +301,6 @@ int main(int argc, char *argv[]) {
     //     printf("%s %s\n", buf, p->name);
     // }
     printf("================================================================\n");
-    printf("dirent   : %d\n", dirent_cnt);
     printf("pic cnt  : %d\n", pic_cnt);
     printf("ln_cnt   : %d\n", longname_cnt);
     //printf("success : %d\n", eq_cnt);
@@ -319,7 +318,7 @@ int get_nclu(void * p){
 }
 
 
-void dir_handler(void *c){
+bool dir_handler(void *c){
     fat_dir *d = c;
     int num = d->LDIR_Ord & 0xf;
     int tmp = num;
@@ -328,7 +327,7 @@ void dir_handler(void *c){
         d = (void *)d + 32;
         if((d->LDIR_Ord &0xf)!=tmp){
             longname_cnt--;
-            return ;
+            return false;
         }
     } // d now is at 1st long entry
 
@@ -385,8 +384,9 @@ void dir_handler(void *c){
         list_head.next = pic->next;
         if(pic->next!=NULL) pic->next->prev = &list_head;
         free(pic);
+        return false;
     }
-    return ;
+    return true;
 }
 
 void check_rgb(int width, int left ,void *p){
