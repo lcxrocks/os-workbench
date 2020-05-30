@@ -322,7 +322,6 @@ void dir_handler(void *c){
     pic->bmp->info = (void *)pic->bmp->header + 14; 
     pic->size = d->DIR_FileSize;
     int len = strlen(pic->name);
-    printf("\033[31m>> num: %d : dectected file name: \033[0m%s , clus_idx :%x, file_size: %d\n",num, pic->name, pic->clus_idx, pic->size);
     if(pic->name[len-3] == 'b' && pic->name[len-2] == 'm'  && pic->name[len-1] == 'p' && pic->size != 0){
         pic_cnt++;
         printf("\033[32m>> dectected file name: \033[0m%s , clus_idx :%x, file_size: %d\n", pic->name, pic->clus_idx, pic->size);
