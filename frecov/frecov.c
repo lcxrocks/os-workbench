@@ -365,7 +365,7 @@ void write_image(int fd, image_t * ptr){
     int lseek = BytsClus - offset;
     int x = lseek % (w*3+skip); //rest line 
     int y = lseek / (w*3+skip); 
-    printf("lseek - x :%d == %d\n", lseek-x, (lseek-x)/(w*3+skip)*(w*3+skip));
+    printf("lseek - x :%d == %d, %d\n", lseek-x, (lseek-x)/(w*3+skip)*(w*3+skip), y*(w*3+skip));
     int sum = 0;
     // while(sum > x*){
     //     uint8_t *prev_line= calloc(x, sizeof(uint8_t));
