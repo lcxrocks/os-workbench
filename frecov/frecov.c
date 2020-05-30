@@ -221,7 +221,7 @@ int main(int argc, char *argv[]) {
             fat_dir *dir = p;
             if(dir->DIR_Name[8]=='B' && dir->DIR_Name[9] == 'M' && dir->DIR_Name[10] == 'P'){
                 //printf("offset: %zx\n", p - cluster_entry);
-                if((dir->DIR_Attr & 0x20) && (dir->DIR_Name[6]=='~')) // make sure this is the long_name_entry
+                if((dir->DIR_Attr == ATTR_LONG_NAME) && (dir->DIR_Name[6]=='~')) // make sure this is the long_name_entry
                 {
                     dirent_cnt++;
                     dir_handler(p);
