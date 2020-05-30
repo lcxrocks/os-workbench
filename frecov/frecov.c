@@ -384,9 +384,11 @@ void write_image(int fd, image_t * ptr){
 
 int compare(int8_t *prev_line , int8_t *next_line, int cnt){
     int sum = 0;
+    printf("hi\n");
     for (int i = 0; i < cnt; i++){
         sum += (prev_line[i] - next_line[i] > 0) ? prev_line[i] - next_line[i] : next_line[i] - prev_line[i];
     }
+    printf("not ok!\n");
     return sum;
 }
 
