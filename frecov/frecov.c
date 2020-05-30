@@ -418,6 +418,7 @@ void write_image(int fd, image_t * ptr){
         lseek += BytsClus;
         x = lseek % w;
         p += BytsClus;
+        size -= BytsClus;
     }
 
     //printf("\033[32m >>File: \033[0m \033[33m%s \033[0m\033[32mhas %d clusters to write.\033[0m\n", ptr->name, num);
