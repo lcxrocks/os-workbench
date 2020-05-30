@@ -374,7 +374,7 @@ void write_image(int fd, image_t * ptr){
     bool not_next = false;
     bool seg_fault = false;
     while(num){
-        while(sum > x*300){
+        while(sum > x*1000){
             not_next = true;
             memcpy(next_line, t-x+(w*3)+skip, x);
             sum = compare(prev_line, next_line, x);
