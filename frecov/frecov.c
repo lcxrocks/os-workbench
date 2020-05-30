@@ -308,7 +308,7 @@ void dir_handler(void *c){
     pic->clus_idx = (d->DIR_FstClusHI << 16) | d->DIR_FstClusLO;
     pic->bmp = malloc(sizeof(bmp_t));
     pic->bmp->header = disk->data + (pic->clus_idx - 2) * disk->header->BPB_SecPerClus * disk->header->BPB_BytsPerSec;
-    pic->bmp->info = (bmp_info_t *)(pic->bmp->header + 14);
+    pic->bmp->info = (void *)pic->bmp->header + 14;
     printf("pic->bmp: %c%c\n", pic->bmp->header->bfType[0], pic->bmp->header->bfType[1]);
     printf("width: %u, height: %u\n", pic->bmp->info->biWidth, pic->bmp->info->biHeight);
     printf("bitcnt: %d\n", pic->bmp->info->biBitCount);
