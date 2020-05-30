@@ -235,14 +235,10 @@ int main(int argc, char *argv[]) {
             // }
         }
     }
-    printf("================================================================\n");
-    printf("dirent : %d\n", dirent_cnt);
-    printf("pic cnt: %d\n", pic_cnt);
-    printf("ln_cnt : %d\n", longname_cnt);
-    printf("================================================================\n");
-
+    
     //3. RECOVER IMAGES
     image_t *p = &list_head;
+    int eq_cnt = 0;
     while(p->next){
         p = p->next;
         char path_name[128] = "../../tmp/";
@@ -259,9 +255,27 @@ int main(int argc, char *argv[]) {
         char buf[256];
         memset(buf, 0, sizeof(buf));
         fscanf(fp, "%s", buf); // Get it!
+        /***check***/
+            char mnt_path[128] = "/mnt/DCIM/";
+            strcat(mnt_path, p->name);
+            char sha[256] = "sha1sum ";
+            strcat(sha, mnt_path); 
+            FILE *fp1 = popen(sha, "r");
+            char tmp[256];
+            memset(tmp, 0, sizeof(tmp));
+            fscanf(fp1, "%s", tmp);
+            if(!strcmp(buf, tmp)) eq_cnt++;
+        /***check****/
         pclose(fp);
         printf("%s %s\n", buf, p->name);
     }
+    printf("================================================================\n");
+    printf("dirent : %d\n", dirent_cnt);
+    printf("pic cnt: %d\n", pic_cnt);
+    printf("ln_cnt : %d\n", longname_cnt);
+    printf("success: %d\n", eq_cnt);
+    printf("================================================================\n");
+
 }
 
 void dir_handler(void *c){
