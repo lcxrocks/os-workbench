@@ -361,8 +361,9 @@ void write_image(int fd, image_t * ptr){
             int sum = compare(digit, digit_new, last_line);
             bool distant_clus = false;
             void *t = disk->data;
-            while(sum > last_line * 8 * 20){ //2. find next cluster
+            while(sum > last_line * 8 * 10){ //2. find next cluster
                 distant_clus = true;    
+                printf("\033[31mlocating %s, remain size: %d\033[0m\n", ptr->name, size);
                 for (; t < disk->end; t += BytsClus)
                 {
                     get_line_rgb(digit_new, last_line, t);
