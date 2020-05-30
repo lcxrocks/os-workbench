@@ -366,16 +366,15 @@ void write_image(int fd, image_t * ptr){
     int x = lseek % (w*3+skip); //rest line 
     int y = lseek / (w*3+skip); 
 
-    uint8_t *prev_line= calloc(x, sizeof(uint8_t));
-    uint8_t *next_line= calloc(x, sizeof(uint8_t));
+    uint8_t *prev_line= calloc(16384, sizeof(uint8_t));
+    uint8_t *next_line= calloc(16384, sizeof(uint8_t));
     memcpy(prev_line, p-x, x);
     memcpy(next_line, p-x+(w*3)+skip, x);
     int sum = compare(prev_line, next_line, x);
     bool not_next = false;
     bool seg_fault = false;
     while(num){
-        printf("size:%d\n", size);
-        while(sum > x*30){
+        while(sum > x*100){
             not_next = true;
             memcpy(next_line, t-x+(w*3)+skip, x);
             sum = compare(prev_line, next_line, x);
@@ -383,46 +382,30 @@ void write_image(int fd, image_t * ptr){
             if(t > disk->end) seg_fault = true;
         }
         if(not_next && !seg_fault){ //find a cluster.
-            printf("enter t\n");
             if(size > BytsClus){
                 write(fd, t, BytsClus);
                 p += BytsClus; num--; size-=BytsClus;
                 lseek += BytsClus; 
                 x = lseek % (w*3+skip);
-                printf("free: %p\n", prev_line);
-                free(prev_line);
-                free(next_line);
-                prev_line= calloc(x, sizeof(uint8_t));
-                next_line= calloc(x, sizeof(uint8_t));
                 memcpy(prev_line, t+BytsClus-x, x);
                 memcpy(next_line, t+BytsClus-x+(w*3)+skip, x);
-                printf("allocated in t: %p\n", prev_line);
                 t = disk->data; //reset 
                 not_next = false;
                 seg_fault = false;
             }
             else{
                 write(fd, t, size);
-                free(prev_line);
-                free(next_line);
                 t = disk->data; //reset 
                 not_next = false;
                 seg_fault = false;
             }
         }
         else{ //didn't find a better one / no need to find a better one
-            printf("enter p\n");
             if(size>BytsClus){
                 write(fd, p, BytsClus);
                 p += BytsClus; num--; size-=BytsClus;
                 lseek += BytsClus; 
                 x = lseek % (w*3+skip);
-                printf("free: %p\n", prev_line);
-                free(prev_line);
-                free(next_line);
-                prev_line= calloc(x, sizeof(uint8_t));
-                next_line= calloc(x, sizeof(uint8_t));
-                printf("allocated in p: %p\n", prev_line);
                 memcpy(prev_line, p-x, x);
                 memcpy(next_line, p-x+(w*3)+skip, x);
                 t = disk->data; //reset 
@@ -431,13 +414,14 @@ void write_image(int fd, image_t * ptr){
             }
             else{
                 write(fd, p, size);
-                free(prev_line);
-                free(next_line);
+
                 t = disk->data; //reset 
                 not_next = false;
                 seg_fault = false;
             }
         }
+        free(prev_line);
+        free(next_line);
     }
     
     //printf("\033[32m >>File: \033[0m \033[33m%s \033[0m\033[32mhas %d clusters to write.\033[0m\n", ptr->name, num);
