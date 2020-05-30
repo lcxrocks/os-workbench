@@ -306,7 +306,7 @@ int main(int argc, char *argv[]) {
     printf("================================================================\n");
     printf("pic cnt  : %d\n", pic_cnt);
     printf("ln_cnt   : %d\n", longname_cnt);
-    printf("success : %d\n", eq_cnt);
+    printf("success  : %d\n", eq_cnt);
     printf("bmp_h_cnt: %d\n", bmp_header_cnt);
     printf("bmp_d_cnt: %d\n", bmp_data_cnt);
     printf("diren_cnt: %d\n", dirent);
@@ -409,7 +409,7 @@ void check_rgb(int width, int left ,void *p){
     cnt += compare(prev_line_1 + left, next_line_1, width - left, 100);
     cnt += compare(prev_line_2, next_line_2, left, 100);
 
-    if(cnt <= width/2){
+    if(cnt <= width/4){
         free(prev_line_2);
         free(prev_line_1);
         free(next_line_2);
