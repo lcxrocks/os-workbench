@@ -420,10 +420,10 @@ void write_image(int fd, image_t * ptr){
                 seg_fault = false;
             }
         }
-        free(prev_line);
-        free(next_line);
+        
     }
-    
+    free(prev_line);
+    free(next_line);
     //printf("\033[32m >>File: \033[0m \033[33m%s \033[0m\033[32mhas %d clusters to write.\033[0m\n", ptr->name, num);
 
 };
