@@ -315,7 +315,7 @@ void dir_handler(void *c){
         d = (void *)d - 32;
     }
     if(pic->name[pos] != '\0') pic->name[pos] = '\0';
-    d = (void *)c - num * 32;
+    d = (void *)c + num * 32;
     pic->clus_idx = (d->DIR_FstClusHI << 16) | d->DIR_FstClusLO;
     pic->bmp = malloc(sizeof(bmp_t));
     pic->bmp->header = disk->data + (pic->clus_idx - 2) * disk->header->BPB_SecPerClus * disk->header->BPB_BytsPerSec;
