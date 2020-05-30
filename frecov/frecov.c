@@ -236,7 +236,8 @@ int main(int argc, char *argv[]) {
     /* recover the file*/
 
     //3. RECOVER IMAGES
-    image_t *p = &list_head;
+    image_t *p = malloc(sizeof(image_t));
+    p = &list_head;
     while(p->next){
         p = p->next;
         int clu_idx = p->clus_idx;
