@@ -238,7 +238,6 @@ int main(int argc, char *argv[]) {
     /* recover the file*/
 
     //3. RECOVER IMAGES
-    printf("hahha\n");
     image_t *p = &list_head;
     while(p->next){
         p = p->next;
@@ -312,6 +311,7 @@ void dir_handler(void *c){
     if(pic->name[pos] != '\0') pic->name[pos] = '\0';
     d = c;
     pic->clus_idx = (d->DIR_FstClusHI << 16) | d->DIR_FstClusLO;
+    printf("why??\n");
     pic->bmp->header = (bmp_header_t *)(disk->data + (pic->clus_idx - 2) * disk->header->BPB_SecPerClus * disk->header->BPB_BytsPerSec);
     p->bmp->info = (bmp_info_t *)(pic->bmp->header + 14);
     pic->size = d->DIR_FileSize;
