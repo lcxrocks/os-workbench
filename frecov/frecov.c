@@ -238,13 +238,13 @@ int main(int argc, char *argv[]) {
     image_t *p = &list_head;
     while(p->next){
         p = p->next;
-        char path_name[128] = "/tmp/";
+        char path_name[128] = "../../tmp/";
         strcat(path_name, p->name);
         int fd = open(path_name, O_CREAT | O_WRONLY, S_IRWXU);
         //printf("ERROR: %d\n", errno);
         //panic_on(fd<0, "Bad fd");
-        write(fd, p->bmp->header, p->size); // 连续的size大小
-        //write_image(fd, p);
+        //write(fd, p->bmp->header, p->size); // 连续的size大小
+        write_image(fd, p);
         char sha1sum[256] = "sha1sum ";
         strcat(sha1sum, path_name);
         FILE *fp = popen(sha1sum, "r");
@@ -312,7 +312,7 @@ void dir_handler(void *c){
     int len = strlen(pic->name);
     if(pic->name[len-3] == 'b' && pic->name[len-2] == 'm'  && pic->name[len-1] == 'p' && pic->size != 0){
         pic_cnt++;
-        //printf("\033[32m>> dectected file name: \033[0m%s , clus_idx :%x, file_size: %d\n", pic->name, pic->clus_idx, pic->size);
+        printf("\033[32m>> dectected file name: \033[0m%s , clus_idx :%x, file_size: %d\n", pic->name, pic->clus_idx, pic->size);
     }
     else{
         list_head.next = pic->next;
@@ -340,7 +340,7 @@ void write_image(int fd, image_t * ptr){
     int sum = 0; bool segfault = false;
     while(num > 0 && size > 0){
         sum = compare(prev_line, next_line, 3*w);
-        while(sum > w * 3 * 40){// allow +-20 per digit per color 
+        while(sum > w * 3 * 60){// allow +-20 per digit per color 
             if( t + BytsClus > disk->end) { segfault = true; break;}
             t = t + BytsClus;//greedy_find_next_cluster();
             memcpy(next_line, t, 3*w);
@@ -370,14 +370,8 @@ int compare(int8_t *prev_line , int8_t *next_line, int cnt){
     for (int i = 0; i < cnt; i++){
         sum += (prev_line[i] - next_line[i] > 0) ? prev_line[i] - next_line[i] : next_line[i] - prev_line[i];
     }
+    sum = sum * sum;
     return sum;
-}
-
-void get_line_rgb(int8_t *prev_line, int size, void *p){
-    for (int i = 0; i < size; i++){
-        prev_line[i] = *((int8_t *) p);
-        p++;
-    }
 }
 
 void check_info(int argc){
