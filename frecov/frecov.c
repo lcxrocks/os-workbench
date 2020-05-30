@@ -340,32 +340,29 @@ void write_image(int fd, image_t * ptr){
     write(fd, p, (ptr->size < BytsClus ? ptr->size : BytsClus)); num--; size -= BytsClus;// first cluster
 
     void *tmp = p+BytsClus-3*w;
-    
     memcpy(prev_line, tmp, 3*w); 
-    printf("wtf?\n");
     p += BytsClus;
     memcpy(next_line, p, 3*w);;
     
     int sum = 0;
     while(num > 0 && size > 0){
         sum = compare(prev_line, next_line, 3*w);
-        if(sum) printf(" ");
-        // while(sum > w * 3 * 20){// allow +-20 per digit per color 
-        //     t = t + BytsClus;//greedy_find_next_cluster();
-        //     memcpy(next_line, t, 3*w);
-        //     sum = compare(prev_line, next_line, 3*w);
-        // }
-        // if(t!=disk->data){
-        //     write(fd, t, size < BytsClus ? size : BytsClus);
-        //     memcpy(prev_line, t+BytsClus-3*w, 3*w);
-        //     num--; size -= BytsClus; 
-        //     t = disk->data;
-        // }
-        // else{
-        //     write(fd, p, size < BytsClus ? size : BytsClus);
-        //     memcpy(prev_line, p+BytsClus-3*w, 3*w);
-        //     num--; size -= BytsClus;
-        // }
+        while(sum > w * 3 * 20){// allow +-20 per digit per color 
+            t = t + BytsClus;//greedy_find_next_cluster();
+            memcpy(next_line, t, 3*w);
+            sum = compare(prev_line, next_line, 3*w);
+        }
+        if(t!=disk->data){
+            write(fd, t, size < BytsClus ? size : BytsClus);
+            memcpy(prev_line, t+BytsClus-3*w, 3*w);
+            num--; size -= BytsClus; 
+            t = disk->data;
+        }
+        else{
+            write(fd, p, size < BytsClus ? size : BytsClus);
+            memcpy(prev_line, p+BytsClus-3*w, 3*w);
+            num--; size -= BytsClus;
+        }
         num--;
         p += BytsClus;
         memcpy(next_line, p, 3*w);
