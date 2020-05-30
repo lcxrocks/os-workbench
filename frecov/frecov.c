@@ -345,7 +345,6 @@ void write_image(int fd, image_t * ptr){
     int last_line = w * bit / 8 ;  
     int8_t *digit = (int8_t *) malloc(sizeof(int8_t) * last_line);
     int8_t *digit_new = (int8_t *) malloc(sizeof(int8_t) * last_line);
-    printf("wtf?\n");
     while(size > 0){
         printf("\033[32mprocessing %s, remain size: %d\033[0m\n", ptr->name, size);
         if(num == 0){ //first cluster        
