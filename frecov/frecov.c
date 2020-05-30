@@ -275,7 +275,7 @@ void dir_handler(void *c){
             return ;
         }
     } // d now is at 1st long entry
-    
+    if((d->LDIR_Ord & 0xf )!= 0x1) printf("fuck me\n");
     image_t *pic = malloc(sizeof(image_t));
     pic->next = list_head.next;
     pic->prev = &list_head;
