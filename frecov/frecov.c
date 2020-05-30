@@ -216,7 +216,7 @@ int main(int argc, char *argv[]) {
     {
         cluster_entry = BytsClus * i + disk->data;
         end_entry = BytsClus * (i+1) + disk->data;
-        for (void *p = cluster_entry; p < end_entry; p = p+32)
+        for (void *p = cluster_entry; p < end_entry; p += 32)
         {
             fat_dir *dir = p;
             if(dir->DIR_Name[8]=='B' && dir->DIR_Name[9] == 'M' && dir->DIR_Name[10] == 'P'){
@@ -265,6 +265,7 @@ void dir_handler(void *c){
         d = (void *)d - 32;
         num++;
     }
+    printf("num: %d\n", num);
     image_t *pic = malloc(sizeof(image_t));
     pic->next = list_head.next;
     pic->prev = &list_head;
@@ -310,7 +311,6 @@ void dir_handler(void *c){
     pic->bmp->info = (void *)pic->bmp->header + 14; 
     pic->size = d->DIR_FileSize;
     int len = strlen(pic->name);
-    
     if(pic->name[len-3] == 'b' && pic->name[len-2] == 'm'  && pic->name[len-1] == 'p' && pic->size != 0){
         pic_cnt++;
         printf("\033[32m>> dectected file name: \033[0m%s , clus_idx :%x, file_size: %d\n", pic->name, pic->clus_idx, pic->size);
