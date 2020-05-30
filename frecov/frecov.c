@@ -339,16 +339,17 @@ void write_image(int fd, image_t * ptr){
     memcpy(prev_line, p+BytsClus-3*w, 3*w); p += BytsClus;
     memcpy(next_line, p, 3*w);
 
-    int sum = 0;
+    int sum = 0; bool segfault = false;
     while(num > 0 && size > 0){
         sum = compare(prev_line, next_line, 3*w);
         while(sum > w * 3 * 20){// allow +-20 per digit per color 
+            if( t + BytsClus > disk->end) { segfault = true; break;}
             t = t + BytsClus;//greedy_find_next_cluster();
             memcpy(next_line, t, 3*w);
             sum = compare(prev_line, next_line, 3*w);
             printf("hah\n");
         }
-        if(t!=disk->data){
+        if(t!=disk->data && !segfault){
             write(fd, t, size < BytsClus ? size : BytsClus);
             memcpy(prev_line, t+BytsClus-3*w, 3*w);
             num--; size -= BytsClus; 
