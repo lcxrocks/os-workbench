@@ -351,10 +351,11 @@ void write_image(int fd, image_t * ptr){
     void *t = disk->data;
     
     write(fd, p, (ptr->size < BytsClus ? ptr->size : BytsClus)); num--; size -= BytsClus;// first cluster
+    printf("wtf?\n");
     memcpy(prev_line, p+BytsClus-3*w, 3*w); 
     p += BytsClus;
     memcpy(next_line, p, 3*w);;
-    printf("wtf?\n");
+    
     int sum = 0;
     while(num > 0 && size > 0){
         sum = compare(prev_line, next_line, 3*w);
