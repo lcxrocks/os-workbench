@@ -341,11 +341,11 @@ void write_image(int fd, image_t * ptr){
     int w = ptr->bmp->info->biWidth; // width
     int h = ptr->bmp->info->biHeight; // height
     int bit = ptr->bmp->info->biBitCount; //bit-map format
-    
+    printf("wtf?\n");
     int last_line = w * bit / 8 ;  
     int8_t digit[last_line];
     int8_t digit_new[last_line];
-    printf("wtf?\n");
+    
     while(size){
         if(num == 0){ //first cluster        
             if(size >= BytsClus)
