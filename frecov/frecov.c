@@ -235,37 +235,36 @@ int main(int argc, char *argv[]) {
     printf("================================================================\n");
 
     //3. RECOVER IMAGES
-    // image_t *p = &list_head;
-    // while(p->next){
-    //     p = p->next;
-    //     char path_name[128] = "/tmp/";
-    //     strcat(path_name, p->name);
-    //     int fd = open(path_name, O_CREAT | O_WRONLY, S_IRWXU);
-    //     //printf("ERROR: %d\n", errno);
-    //     //panic_on(fd<0, "Bad fd");
-    //     //write(fd, p->bmp->header, p->size); // 连续的size大小
-    //     write_image(fd, p);
-    //     char sha1sum[256] = "sha1sum ";
-    //     strcat(sha1sum, path_name);
-    //     FILE *fp = popen(sha1sum, "r");
-    //     //panic_on(!fp, "popen");
-    //     char buf[256];
-    //     memset(buf, 0, sizeof(buf));
-    //     fscanf(fp, "%s", buf); // Get it!
-    //     pclose(fp);
-    //     printf("%s %s\n", buf, p->name);
-    // }
+    image_t *p = &list_head;
+    while(p->next){
+        p = p->next;
+        char path_name[128] = "/tmp/";
+        strcat(path_name, p->name);
+        int fd = open(path_name, O_CREAT | O_WRONLY, S_IRWXU);
+        //printf("ERROR: %d\n", errno);
+        //panic_on(fd<0, "Bad fd");
+        write(fd, p->bmp->header, p->size); // 连续的size大小
+        //write_image(fd, p);
+        char sha1sum[256] = "sha1sum ";
+        strcat(sha1sum, path_name);
+        FILE *fp = popen(sha1sum, "r");
+        //panic_on(!fp, "popen");
+        char buf[256];
+        memset(buf, 0, sizeof(buf));
+        fscanf(fp, "%s", buf); // Get it!
+        pclose(fp);
+        printf("%s %s\n", buf, p->name);
+    }
 }
 
 void dir_handler(void *c){
     image_t *p = malloc(sizeof(image_t));
     fat_dir *d = c;
     int num = 1; 
-    while(((d->LDIR_Ord & 0x40 )!= 0x40) ){
+    while(num == 1 || ((d->LDIR_Ord & 0x40 )!= 0x40) ){
         d = (void *)d - 32;
         num++;
     }
-    printf("num: %d\n", num);
     image_t *pic = malloc(sizeof(image_t));
     pic->next = list_head.next;
     pic->prev = &list_head;
@@ -313,7 +312,7 @@ void dir_handler(void *c){
     int len = strlen(pic->name);
     if(pic->name[len-3] == 'b' && pic->name[len-2] == 'm'  && pic->name[len-1] == 'p' && pic->size != 0){
         pic_cnt++;
-        printf("\033[32m>> dectected file name: \033[0m%s , clus_idx :%x, file_size: %d\n", pic->name, pic->clus_idx, pic->size);
+        //printf("\033[32m>> dectected file name: \033[0m%s , clus_idx :%x, file_size: %d\n", pic->name, pic->clus_idx, pic->size);
     }
     else{
         list_head.next = pic->next;
