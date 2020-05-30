@@ -379,7 +379,7 @@ void write_image(int fd, image_t * ptr){
     bool not_next = false;
     bool seg_fault = false;
     while(num){
-        while(sum > x*45000){
+        while(sum < x/2){
             not_next = true;
             memcpy(next_line, t-x+(w*3)+skip, x);
             sum = compare(prev_line, next_line, x);
@@ -434,12 +434,13 @@ void write_image(int fd, image_t * ptr){
 };
 
 int compare(uint8_t *prev_line , uint8_t *next_line, int cnt){
-    int sum = 0;
+    int ok_cnt = 0;
     for (int i = 0; i < cnt; i++){
         int tmp = (int) (prev_line[i] - next_line[i]);
-        sum += (tmp > 0) ? tmp : -tmp;
+        tmp = (tmp > 0) ? tmp : -tmp;
+        if(tmp < 50) ok_cnt++;
     }
-    return sum;
+    return ok_cnt;
 }
 
 void check_info(int argc){
