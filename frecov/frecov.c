@@ -345,7 +345,11 @@ void write_image(int fd, image_t * ptr){
 
     int num = ptr->size / BytsClus; // total number of clusters
     printf("\033[32m >>File: \033[0m \033[33m%s \033[0m\033[32mhas %d clusters to write.\033[0m\n", ptr->name, num);
-    write(fd, ptr->bmp->header, ptr->size);
+    //write(fd, ptr->bmp->header, ptr->size);
+    void *p = ptr->bmp->header;
+    write(fd, p, (ptr->size < BytsClus ? ptr->size : BytsClus)); num--;// first cluster
+    
+
 };
 
 int compare(int8_t *digit , int8_t *digit_new, int last_line){
