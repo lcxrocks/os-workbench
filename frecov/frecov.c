@@ -351,19 +351,28 @@ void write_image(int fd, image_t * ptr){
     int bytesPerLine=((w*24+31)>>5)<<2;
     int imageSize=bytesPerLine*h;
     int skip=4-(((w*24)>>3)&3);
-
+    int size = ptr->size;
+    int num = size / BytsClus; // total number of clusters
+    
     printf("offset: %d , imageSize :%d == %d, skip: %d\n",offset, imageSize, ptr->bmp->info->biSizeImages, skip);
     printf("%lf\n", ((double) w*3+skip)/4);
     printf("%d\n", ptr->size);
-    int lseek = 0;
-    
-    //int8_t  *next_line = (int8_t *) calloc(h, sizeof(uint32_t)); // R G B
 
-    int size = ptr->size;
-    int num = size / BytsClus; // total number of clusters
-    //printf("\033[32m >>File: \033[0m \033[33m%s \033[0m\033[32mhas %d clusters to write.\033[0m\n", ptr->name, num);
     void *p = ptr->bmp->header;
     void *t = disk->data;
+    write(fd, p, BytsClus); 
+    p += BytsClus; num--;// first byte
+    int lseek = BytsClus - offset;
+    int x = lseek % (w*3+skip);
+    int y = lseek / (w*3+skip);
+    
+    printf("x: %d == %d\n", x, (x/3)*3);
+
+    //int8_t  *next_line = (int8_t *) calloc(h, sizeof(uint32_t)); // R G B
+
+    
+    
+    //printf("\033[32m >>File: \033[0m \033[33m%s \033[0m\033[32mhas %d clusters to write.\033[0m\n", ptr->name, num);
     // write(fd, p, (ptr->size < BytsClus ? ptr->size : BytsClus)); num--; size -= BytsClus;// first cluster
     // memcpy(prev_line, p+BytsClus-3*w, 3*w); p += BytsClus;
     // memcpy(next_line, p, 3*w);
