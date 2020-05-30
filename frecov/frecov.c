@@ -381,9 +381,9 @@ void write_image(int fd, image_t * ptr){
             }
             else{
                 if(size >= BytsClus)
-                    printf("write %zu\n", write(fd, p, BytsClus));
+                    printf("write %zd\n", write(fd, p, BytsClus));
                 else
-                    printf("write %zu\n", write(fd, p, size));
+                    printf("write %zd\n", write(fd, p, size));
                 p = p + BytsClus - last_line; 
                 get_line_rgb(digit, last_line, p);
             }
