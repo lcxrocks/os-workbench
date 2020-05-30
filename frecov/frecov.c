@@ -356,6 +356,7 @@ void write_image(int fd, image_t * ptr){
     printf("tmp : %p\n", tmp);
     for (int i = 0; i < 3*w; i++)
     {
+        printf("ha\n");
         printf("%c\n", prev_line[i]);
     }
     
