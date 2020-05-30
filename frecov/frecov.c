@@ -354,9 +354,9 @@ void write_image(int fd, image_t * ptr){
     int size = ptr->size;
     int num = size / BytsClus; // total number of clusters
     
-    printf("offset: %d , imageSize :%d == %d, skip: %d\n",offset, imageSize, ptr->bmp->info->biSizeImages, skip);
-    printf("%lf\n", ((double) w*3+skip)/4);
-    printf("%d\n", ptr->size);
+    // printf("offset: %d , imageSize :%d == %d, skip: %d\n",offset, imageSize, ptr->bmp->info->biSizeImages, skip);
+    // printf("%lf\n", ((double) w*3+skip)/4);
+    // printf("%d\n", ptr->size);
 
     void *p = ptr->bmp->header;
     void *t = disk->data;
@@ -365,8 +365,7 @@ void write_image(int fd, image_t * ptr){
     int lseek = BytsClus - offset;
     int x = lseek % (w*3+skip); //rest line 
     int y = lseek / (w*3+skip); 
-    printf("lseek - x :%d == %d, %d\n", lseek-x, (lseek-x)/(w*3+skip)*(w*3+skip), y*(w*3+skip));
-    
+
     uint8_t *prev_line= calloc(x, sizeof(uint8_t));
     uint8_t *next_line= calloc(x, sizeof(uint8_t));
     memcpy(prev_line, p-x, x);
@@ -398,39 +397,44 @@ void write_image(int fd, image_t * ptr){
                 not_next = false;
                 seg_fault = false;
             }
+            else{
+                write(fd, t, size);
+                free(prev_line);
+                free(next_line);
+                t = disk->data; //reset 
+                not_next = false;
+                seg_fault = false;
+            }
         }
         else{ //didn't find a better one / no need to find a better one
-            write(fd, p, BytsClus);
-            p += BytsClus; num--; size-=BytsClus;
-            lseek += BytsClus; 
-            x = lseek % (w*3+skip);
-            free(prev_line);
-            free(next_line);
-            uint8_t *prev_line= calloc(x, sizeof(uint8_t));
-            uint8_t *next_line= calloc(x, sizeof(uint8_t));
-            memcpy(prev_line, p-x, x);
-            memcpy(next_line, p-x+(w*3)+skip, x);
-            t = disk->data; //reset 
-            not_next = false;
-            seg_fault = false;
+            if(size>BytsClus){
+                write(fd, p, BytsClus);
+                p += BytsClus; num--; size-=BytsClus;
+                lseek += BytsClus; 
+                x = lseek % (w*3+skip);
+                free(prev_line);
+                free(next_line);
+                uint8_t *prev_line= calloc(x, sizeof(uint8_t));
+                uint8_t *next_line= calloc(x, sizeof(uint8_t));
+                memcpy(prev_line, p-x, x);
+                memcpy(next_line, p-x+(w*3)+skip, x);
+                t = disk->data; //reset 
+                not_next = false;
+                seg_fault = false;
+            }
+            else{
+                write(fd, p, size);
+                free(prev_line);
+                free(next_line);
+                t = disk->data; //reset 
+                not_next = false;
+                seg_fault = false;
+            }
         }
     }
     
-    // while(sum > x*){
-        
-    //     for (int i = 0; i < x; i++)
-    //     {
-    //         prev_line[]
-    //     }
-        
-    // }
-
-    
     //printf("\033[32m >>File: \033[0m \033[33m%s \033[0m\033[32mhas %d clusters to write.\033[0m\n", ptr->name, num);
 
-
-    // free(prev_line);
-    // free(next_line);
 };
 
 int compare(uint8_t *prev_line , uint8_t *next_line, int cnt){
