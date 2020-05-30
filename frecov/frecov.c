@@ -265,9 +265,7 @@ int main(int argc, char *argv[]) {
 }
 
 void dir_handler(void *c){
-    image_t *p = malloc(sizeof(image_t));
     fat_dir *d = c;
-
     int num = d->LDIR_Ord & 0xf;
     while(num > 1){
         num--;
@@ -276,47 +274,38 @@ void dir_handler(void *c){
             longname_cnt--;
             return ;
         }
-    }
-    return ;
-    // while(num == 1 || ((d->LDIR_Ord & 0x40 )!= 0x40) ){
-    //     d = (void *)d - 32;
-    //     // if((d->LDIR_Ord & 0xf) != num) 
-    //     // {
-    //     //     printf("wrong order! should be :%d, now have: %x\n", num, d->LDIR_Ord);
-    //     //     panic("ha");
-    //     // }
-    //     num++;
-    // }
+    } // d now is at 1st long entry
+    
     image_t *pic = malloc(sizeof(image_t));
     pic->next = list_head.next;
     pic->prev = &list_head;
     if(list_head.next!=NULL)
         list_head.next->prev = pic;
     list_head.next = pic;
-    d = c - 32; //1st long entry
+
     int pos = 0;
     bool break_flag = false;
     for (int i = 0; i < num; i++)
     {
-        for (int i = 0; i < 10; i = i+2){
-            pic->name[pos++] = d->LDIR_Name1[i];
-            if(d->LDIR_Name1[i] == '\0') {
+        for (int j = 0; j < 10; j = j+2){
+            pic->name[pos++] = d->LDIR_Name1[j];
+            if(d->LDIR_Name1[j] == '\0') {
                break_flag = true;
                break;  
             }
         }
         if(break_flag) break;
-        for (int i = 0; i < 12; i = i+2){
-            pic->name[pos++] = d->LDIR_Name2[i];
-            if(d->LDIR_Name2[i] == '\0'){
+        for (int j = 0; j < 12; j = j+2){
+            pic->name[pos++] = d->LDIR_Name2[j];
+            if(d->LDIR_Name2[j] == '\0'){
                break_flag = true;
                break;  
             }
         }
         if(break_flag) break;
-        for (int i = 0; i < 4; i = i+2){
-            pic->name[pos++] = d->LDIR_Name3[i];
-            if(d->LDIR_Name3[i] == '\0'){
+        for (int j = 0; j < 4; j = j+2){
+            pic->name[pos++] = d->LDIR_Name3[j];
+            if(d->LDIR_Name3[j] == '\0'){
                break_flag = true;
                break;  
             }
