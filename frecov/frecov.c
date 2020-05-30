@@ -353,6 +353,7 @@ void write_image(int fd, image_t * ptr){
     int skip=4-(((w*24)>>3)&3);
 
     printf("imageSize :%d == %d, skip: %d\n", imageSize, ptr->bmp->info->biSizeImages, skip);
+    printf("%d\n", (w*3+skip)/4);
     int8_t  *prev_line = (int8_t *) calloc(3*w, sizeof(int8_t));
     int8_t  *next_line = (int8_t *) calloc(3*w, sizeof(int8_t)); // R G B
 
