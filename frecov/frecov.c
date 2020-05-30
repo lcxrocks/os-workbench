@@ -269,40 +269,40 @@ int main(int argc, char *argv[]) {
     }
     
     //3. RECOVER IMAGES
-    // image_t *p = &list_head;
-    // int eq_cnt = 0;int num =0;
-    // while(p->next){
-    //     p = p->next;
-    //     char path_name[128] = "../../tmp/";
-    //     strcat(path_name, p->name);
-    //     int fd = open(path_name, O_CREAT | O_WRONLY, S_IRWXU);
-    //     // if((num%2)==0){
-    //     //    write(fd, p->bmp->header, p->size); // 连续的size大小
-    //     // }
-    //     // else
-    //         write_image(fd, p);
-    //     num++;
-    //     char sha1sum[256] = "sha1sum ";
-    //     strcat(sha1sum, path_name);
-    //     FILE *fp = popen(sha1sum, "r");
-    //     //panic_on(!fp, "popen");
-    //     char buf[256];
-    //     memset(buf, 0, sizeof(buf));
-    //     fscanf(fp, "%s", buf); // Get it!
-    //     /***check***/
-    //         char mnt_path[128] = "/mnt/DCIM/";
-    //         strcat(mnt_path, p->name);
-    //         char sha[256] = "sha1sum ";
-    //         strcat(sha, mnt_path); 
-    //         FILE *fp1 = popen(sha, "r");
-    //         char tmp[256];
-    //         memset(tmp, 0, sizeof(tmp));
-    //         fscanf(fp1, "%s", tmp);
-    //         if(!strcmp(buf, tmp)) eq_cnt++;
-    //     /***check****/
-    //     pclose(fp);
-    //     printf("%s %s\n", buf, p->name);
-    // }
+    image_t *p = &list_head;
+    int eq_cnt = 0;int num =0;
+    while(p->next){
+        p = p->next;
+        char path_name[128] = "../../tmp/";
+        strcat(path_name, p->name);
+        int fd = open(path_name, O_CREAT | O_WRONLY, S_IRWXU);
+        // if((num%2)==0){
+        //    write(fd, p->bmp->header, p->size); // 连续的size大小
+        // }
+        // else
+            write_image(fd, p);
+        num++;
+        char sha1sum[256] = "sha1sum ";
+        strcat(sha1sum, path_name);
+        FILE *fp = popen(sha1sum, "r");
+        //panic_on(!fp, "popen");
+        char buf[256];
+        memset(buf, 0, sizeof(buf));
+        fscanf(fp, "%s", buf); // Get it!
+        /***check***/
+            char mnt_path[128] = "/mnt/DCIM/";
+            strcat(mnt_path, p->name);
+            char sha[256] = "sha1sum ";
+            strcat(sha, mnt_path); 
+            FILE *fp1 = popen(sha, "r");
+            char tmp[256];
+            memset(tmp, 0, sizeof(tmp));
+            fscanf(fp1, "%s", tmp);
+            if(!strcmp(buf, tmp)) eq_cnt++;
+        /***check****/
+        pclose(fp);
+        printf("%s %s\n", buf, p->name);
+    }
     printf("================================================================\n");
     printf("pic cnt  : %d\n", pic_cnt);
     printf("ln_cnt   : %d\n", longname_cnt);
@@ -420,6 +420,7 @@ void check_rgb(int width, int left ,void *p){
     cnt = 0;
     for (; p < disk->end; p+=BytsClus)
     {
+        if(label[get_nclu(p)]!=BMP_DATA) continue;
         memcpy(next_line_1, p, width-left);
         memcpy(next_line_2, p + width - left, left);
         cnt += compare(prev_line_1 + left, next_line_1, width - left, 100);
