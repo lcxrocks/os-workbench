@@ -340,8 +340,8 @@ void write_image(int fd, image_t * ptr){
     int w = ptr->bmp->info->biWidth;
     int h = ptr->bmp->info->biHeight; // default: 24bit bmp file
 
-    int8_t  *prev_line = (int8_t *) malloc(sizeof(int8_t) * 3 * w);
-    int8_t  *next_line = (int8_t *) malloc(sizeof(int8_t) * 3 * w); // R G B
+    int8_t  *prev_line = (int8_t *) malloc(sizeof(int8_t) * 3 * 2000);
+    int8_t  *next_line = (int8_t *) malloc(sizeof(int8_t) * 3 * 2000); // R G B
 
     int size = ptr->size;
     int num = size / BytsClus; // total number of clusters
@@ -389,7 +389,8 @@ void write_image(int fd, image_t * ptr){
         p += BytsClus;
         memcpy(next_line, p, 3*w);
     }
-
+    free(prev_line);
+    free(next_line);
 };
 
 int compare(int8_t *prev_line , int8_t *next_line, int cnt){
