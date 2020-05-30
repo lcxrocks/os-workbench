@@ -269,7 +269,7 @@ void dir_handler(void *c){
     fat_dir *d = c;
 
     int num = d->LDIR_Ord & 0xf;
-    while(num){
+    while(num > 1){
         num--;
         d = (void *)d + 32;
         printf("%d ", d->LDIR_Ord);
