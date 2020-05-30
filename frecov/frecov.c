@@ -253,6 +253,7 @@ int main(int argc, char *argv[]) {
         //p->bmp->info = (bmp_info_t *)(sec1 + 14);
         char path_name[128] = "~/tmp/";
         strcat(path_name, p->name);
+        printf("pathname: %s\n", path_name);
         int fd = open(path_name, O_CREAT | O_WRONLY, S_IRWXU);
         panic_on(fd<0, "Bad fd");
         //write(fd, p->bmp->header, p->size); // 连续的size大小
