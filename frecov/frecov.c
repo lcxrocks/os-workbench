@@ -240,9 +240,6 @@ int main(int argc, char *argv[]) {
         char path_name[128] = "/tmp/";
         strcat(path_name, p->name);
         int fd = open(path_name, O_CREAT | O_WRONLY, S_IRWXU);
-        //printf("ERROR: %d\n", errno);
-        //panic_on(fd<0, "Bad fd");
-        
         // if((num%2)==0){
         //    write(fd, p->bmp->header, p->size); // 连续的size大小
         // }
@@ -366,7 +363,7 @@ void check_rgb(int width, int left ,void *p){
     cnt += compare(prev_line_1 + left, next_line_1, width - left, 100);
     cnt += compare(prev_line_2, next_line_2, left, 100);
 
-    if(cnt >= 1*width/2){
+    if(cnt <= width/2){
         free(prev_line_2);
         free(prev_line_1);
         free(next_line_2);
@@ -381,7 +378,7 @@ void check_rgb(int width, int left ,void *p){
         memcpy(next_line_2, p + width - left, left);
         cnt += compare(prev_line_1 + left, next_line_1, width - left, 50);
         cnt += compare(prev_line_2, next_line_2, left, 50);
-        if(cnt >= 7*width/8){
+        if(cnt <= width/8){
             free(prev_line_2);
             free(prev_line_1);
             free(next_line_2);
@@ -431,13 +428,13 @@ void write_image(int fd, image_t * ptr){
 };
 
 int compare(uint8_t *prev_line , uint8_t *next_line, int cnt, int threshold){
-    int ok_cnt = 0;
+    int not_ok_cnt = 0;
     for (int i = 0; i < cnt; i++){
         int tmp = (int) (prev_line[i] - next_line[i]);
         tmp = (tmp > 0) ? tmp : -tmp;
-        if(tmp < threshold) ok_cnt++;
+        if(tmp > threshold) not_ok_cnt++;
     }
-    return ok_cnt;
+    return not_ok_cnt;
 }
 
 void check_info(int argc){
