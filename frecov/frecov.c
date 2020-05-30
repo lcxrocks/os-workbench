@@ -363,10 +363,20 @@ void write_image(int fd, image_t * ptr){
     write(fd, p, BytsClus); 
     p += BytsClus; num--;// first byte
     int lseek = BytsClus - offset;
-    int x = lseek % (w*3+skip);
-    int y = lseek / (w*3+skip);
-    
-    printf("x: %d == %d\n", x-1, ((x-1)/3)*3);
+    int x = lseek % (w*3+skip); //rest line 
+    int y = lseek / (w*3+skip); 
+    printf("lseek - x :%d == %d\n", lseek-x, (lseek-x)/(w*3+skip)*(w*3+skip));
+    int sum = 0;
+    // while(sum > x*){
+    //     uint8_t *prev_line= calloc(x, sizeof(uint8_t));
+    //     uint8_t *next_line= calloc(x, sizeof(uint8_t));
+    //     for (int i = 0; i < x; i++)
+    //     {
+            
+    //     }
+        
+    // }
+    // if(p+)
 
     //int8_t  *next_line = (int8_t *) calloc(h, sizeof(uint32_t)); // R G B
 
