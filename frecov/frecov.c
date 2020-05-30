@@ -322,6 +322,7 @@ void dir_handler(void *c){
     pic->bmp->header = disk->data + (pic->clus_idx - 2) * disk->header->BPB_SecPerClus * disk->header->BPB_BytsPerSec;
     pic->bmp->info = (bmp_info_t *)(pic->bmp->header + 14);
     printf("pic->bmp: %c%c\n", pic->bmp->header->bfType[0], pic->bmp->header->bfType[1]);
+    printf("width: %d, height: %d\n", pic->bmp->info->biWidth, pic->bmp->info->biHeight);
     panic_on(pic->bmp->header->bfType[0]!='B', "shit");
     pic->size = d->DIR_FileSize;
     int len = strlen(pic->name);
