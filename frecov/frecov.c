@@ -253,7 +253,7 @@ int main(int argc, char *argv[]) {
         //p->bmp->info = (bmp_info_t *)(sec1 + 14);
         char path_name[128] = "/tmp/";
         strcat(path_name, p->name);
-        printf("pathname: %s\n", path_name);
+        //printf("pathname: %s\n", path_name);
         int fd = open(path_name, O_CREAT | O_WRONLY, S_IWUSR);
         panic_on(fd<0, "Bad fd");
         //write(fd, p->bmp->header, p->size); // 连续的size大小
@@ -337,65 +337,7 @@ void dir_handler(void *c){
 }
 
 void write_image(int fd, image_t * ptr){
-    int size = ptr->size;
-    //BytsClus; //一个cluster中的Bytes
-    void *p = ptr->bmp->header; //图像的第一个cluster地址
-    int num = 0; //number of clusters
-    int w = ptr->bmp->info->biWidth; // width
-    int h = ptr->bmp->info->biHeight; // height
-    int bit = ptr->bmp->info->biBitCount; //bit-map format
-    
-    int last_line = w * bit / 8 ;  
-    int8_t *digit = (int8_t *) malloc(sizeof(int8_t) * last_line);
-    int8_t *digit_new = (int8_t *) malloc(sizeof(int8_t) * last_line);
-    while(size > 0){
-        printf("\033[32mprocessing %s, remain size: %d\033[0m\n", ptr->name, size);
-        if(num == 0){ //first cluster        
-            if(size >= BytsClus){
-                printf("write %zd\n", write(fd, p, BytsClus));
-                printf("%s\n", strerror(errno)); 
-            }
-            else
-                printf("write %zd\n", write(fd, p, size));
-            p = p + BytsClus - last_line; 
-            get_line_rgb(digit, last_line, p);
-        }
-        else{ //search for the next cluster
-            get_line_rgb(digit_new, last_line, p); // 1. check if the next cluster is good
-            int sum = compare(digit, digit_new, last_line);
-            bool distant_clus = false;
-            void *t = disk->data;
-            while(sum > last_line * 8 * 10){ //2. find next cluster
-                distant_clus = true;
-                printf("\033[31mlocating %s, remain size: %d\033[0m\n", ptr->name, size);
-                for (; t < disk->end; t += BytsClus)
-                {
-                    get_line_rgb(digit_new, last_line, t);
-                    sum = compare(digit, digit_new, last_line);
-                }
-            }
-            if(distant_clus)
-            {
-                if(size >= BytsClus)
-                    printf("write %zu\n", write(fd, t, BytsClus));
-                else
-                    printf("write %zu\n", write(fd, t, size));
-                t = t + BytsClus - last_line; 
-                get_line_rgb(digit, last_line, t);
-                p += BytsClus; // p skip the following cluster
-            }
-            else{
-                if(size >= BytsClus)
-                    printf("write %zd\n", write(fd, p, BytsClus));
-                else
-                    printf("write %zd\n", write(fd, p, size));
-                p = p + BytsClus - last_line; 
-                get_line_rgb(digit, last_line, p);
-            }
-        }
-        num ++;
-        size -= BytsClus;
-    }
+    write(fd, ptr->bmp->header, ptr->size);
 };
 
 int compare(int8_t *digit , int8_t *digit_new, int last_line){
