@@ -234,14 +234,17 @@ int main(int argc, char *argv[]) {
         void *p = cluster_entry;
         if(!memcmp(p, empty, 64)){
             label[i] = EMPTY;
+            empty_cnt++;
             continue;
         }
         if(*(char *)p == 'B' && *(char*) (p+1) == 'M'){
             label[i] = BMP_HEADER;
+            bmp_header_cnt++;
             continue;
         }
         if(*(unsigned char *)p == 0xe5){
             label[i] = UNUSED;
+            unused_cnt++;
             continue;
         }
         for (void *p = cluster_entry; p < end_entry; p += 32)
@@ -250,12 +253,14 @@ int main(int argc, char *argv[]) {
             if(((dir->LDIR_Attr & ATTR_LONG_NAME_MASK ) == ATTR_LONG_NAME)&& dir->LDIR_Type == 0 && dir->LDIR_FstClusIO == 0 && (dir->LDIR_Ord & 0x40)==0x40){
                 longname_cnt++;
                 label[i] = DIRENT;
+                dirent++;
                 dir_handler(p);
                 bool entry = true;
             }
         }
         if(!entry){
             label[i] = BMP_DATA;
+            bmp_data_cnt++;
             continue;
         }
     }
