@@ -263,6 +263,11 @@ void dir_handler(void *c){
     int num = 1; 
     while(num == 1 || ((d->LDIR_Ord & 0x40 )!= 0x40) ){
         d = (void *)d - 32;
+        if((d->LDIR_Ord & 0xf) != num) 
+        {
+            printf("wrong order! should be :%d, now have: %d\n", num, d->LDIR_Ord);
+            panic("ha");
+        }
         num++;
     }
     image_t *pic = malloc(sizeof(image_t));
