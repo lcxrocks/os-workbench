@@ -16,6 +16,7 @@
 #define ATTR_HIDDEN 0x02
 #define ATTR_SYSTEM 0x04
 #define ATTR_VOLUME_ID 0x08
+#define ATTR_LONG_NAME_MASK 0x3f
 #define ATTR_LONG_NAME 0x0f //0x01 | 0x02 | 0x04 | 0x08
 
 #define panic_on(cond, s) \
@@ -165,6 +166,7 @@ int nr_datasec;
 int nr_clus;
 int BytsClus;
 int RsvdBytes;
+int longname_cnt;
 fat *disk;
 
 int main(int argc, char *argv[]) {
@@ -219,6 +221,9 @@ int main(int argc, char *argv[]) {
         for (void *p = cluster_entry; p < end_entry; p += 32)
         {
             fat_dir *dir = p;
+            if(((dir->LDIR_Attr & ATTR_LONG_NAME_MASK ) == ATTR_LONG_NAME)&& dir->LDIR_Type == 0){
+                longname_cnt++;
+            }
             if(dir->DIR_Name[8]=='B' && dir->DIR_Name[9] == 'M' && dir->DIR_Name[10] == 'P'){
                 //printf("offset: %zx\n", p - cluster_entry);
                 if((dir->DIR_Attr == 0x20) && (dir->DIR_Name[6]=='~')) // make sure this is the long_name_entry
@@ -232,6 +237,7 @@ int main(int argc, char *argv[]) {
     printf("================================================================\n");
     printf("dirent : %d\n", dirent_cnt);
     printf("pic cnt: %d\n", pic_cnt);
+    printf("ln_cnt : %d\n", longname_cnt);
     printf("================================================================\n");
 
     //3. RECOVER IMAGES
