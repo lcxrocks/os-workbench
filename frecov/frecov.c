@@ -354,6 +354,11 @@ void write_image(int fd, image_t * ptr){
     printf("wtf?\n");
     void *tmp = p+BytsClus-3*w;
     printf("tmp : %p\n", tmp);
+    for (int i = 0; i < 3*w; i++)
+    {
+        printf("%c\n", prev_line[i]);
+    }
+    
     memcpy(prev_line, tmp, 3*w); 
     printf("wtf?\n");
     p += BytsClus;
