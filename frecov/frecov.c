@@ -342,7 +342,8 @@ void write_image(int fd, image_t * ptr){
 
     int8_t  *prev_line = (int8_t *) calloc(3*w, sizeof(int8_t));
     int8_t  *next_line = (int8_t *) calloc(3*w, sizeof(int8_t)); // R G B
-for (int i = 0; i < 3*w; i++)
+    
+    for (int i = 0; i < 3*w; i++)
     {
         printf("ha\n");
         printf("%c\n", prev_line[i]);
