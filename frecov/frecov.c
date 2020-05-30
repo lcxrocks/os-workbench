@@ -349,9 +349,9 @@ void write_image(int fd, image_t * ptr){
         printf("\033[32mprocessing %s, remain size: %d\033[0m\n", ptr->name, size);
         if(num == 0){ //first cluster        
             if(size >= BytsClus)
-                write(fd, p, BytsClus);
+                printf("write %zu\n", write(fd, p, BytsClus));
             else
-                write(fd, p, size);
+                printf("write %zu\n", write(fd, p, size));
             p = p + BytsClus - last_line; 
             get_line_rgb(digit, last_line, p);
         }
@@ -372,9 +372,9 @@ void write_image(int fd, image_t * ptr){
             if(distant_clus)
             {
                 if(size >= BytsClus)
-                    write(fd, t, BytsClus);
+                    printf("write %zu\n", write(fd, p, BytsClus));
                 else
-                    write(fd, t, size);
+                    printf("write %zu\n", write(fd, p, BytsClus));
                 t = t + BytsClus - last_line; 
                 get_line_rgb(digit, last_line, t);
                 p += BytsClus; // p skip the following cluster
