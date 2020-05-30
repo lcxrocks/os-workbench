@@ -430,7 +430,7 @@ int compare(uint8_t *prev_line , uint8_t *next_line, int cnt){
     for (int i = 0; i < cnt; i++){
         int tmp = (int) (prev_line[i] - next_line[i]);
         tmp = (tmp > 0) ? tmp : -tmp;
-        if(tmp < 100) ok_cnt++;
+        if(tmp < 60) ok_cnt++;
     }
     return ok_cnt;
 }
