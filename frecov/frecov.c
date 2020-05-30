@@ -238,6 +238,7 @@ int main(int argc, char *argv[]) {
     /* recover the file*/
 
     //3. RECOVER IMAGES
+    printf("hahha\n");
     image_t *p = &list_head;
     while(p->next){
         p = p->next;
