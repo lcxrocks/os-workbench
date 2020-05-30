@@ -366,7 +366,7 @@ void write_image(int fd, image_t * ptr){
     int x = lseek % (w*3+skip);
     int y = lseek / (w*3+skip);
     
-    printf("x: %d == %d\n", x, (x/3)*3);
+    printf("x: %d == %d\n", x-1, ((x-1)/3)*3);
 
     //int8_t  *next_line = (int8_t *) calloc(h, sizeof(uint32_t)); // R G B
 
