@@ -329,8 +329,7 @@ void write_image(int fd, image_t * ptr){
     int h = ptr->bmp->info->biHeight; // default: 24bit bmp file
     int8_t  *prev_line = (int8_t *) calloc(3*w, sizeof(int8_t));
     int8_t  *next_line = (int8_t *) calloc(3*w, sizeof(int8_t)); // R G B
-    
-    printf("allocated:\nprev: %p \nnext:%p\n", prev_line, next_line);
+
     int size = ptr->size;
     int num = size / BytsClus; // total number of clusters
     printf("\033[32m >>File: \033[0m \033[33m%s \033[0m\033[32mhas %d clusters to write.\033[0m\n", ptr->name, num);
