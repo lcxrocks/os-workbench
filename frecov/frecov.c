@@ -253,7 +253,7 @@ int main(int argc, char *argv[]) {
         //p->bmp->info = (bmp_info_t *)(sec1 + 14);
         char path_name[128] = "/tmp/";
         strcat(path_name, p->name);
-        //printf("pathname: %s\n", path_name);
+        printf("pathname: %s\n", path_name);
         int fd = open(path_name, O_CREAT | O_WRONLY, S_IWUSR);
         panic_on(fd<0, "Bad fd");
         //write(fd, p->bmp->header, p->size); // 连续的size大小
@@ -348,6 +348,7 @@ void write_image(int fd, image_t * ptr){
         printf("ha\n");
         printf("%c\n", prev_line[i]);
     }
+
     int size = ptr->size;
     int num = size / BytsClus; // total number of clusters
     printf("\033[32m >>File: \033[0m \033[33m%s \033[0m\033[32mhas %d clusters to write.\033[0m\n", ptr->name, num);
