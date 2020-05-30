@@ -372,18 +372,18 @@ void write_image(int fd, image_t * ptr){
             if(distant_clus)
             {
                 if(size >= BytsClus)
-                    printf("write %zu\n", write(fd, p, BytsClus));
+                    printf("write %zu\n", write(fd, t, BytsClus));
                 else
-                    printf("write %zu\n", write(fd, p, BytsClus));
+                    printf("write %zu\n", write(fd, t, size));
                 t = t + BytsClus - last_line; 
                 get_line_rgb(digit, last_line, t);
                 p += BytsClus; // p skip the following cluster
             }
             else{
                 if(size >= BytsClus)
-                    write(fd, p, BytsClus);
+                    printf("write %zu\n", write(fd, p, BytsClus));
                 else
-                    write(fd, p, size);
+                    printf("write %zu\n", write(fd, p, size));
                 p = p + BytsClus - last_line; 
                 get_line_rgb(digit, last_line, p);
             }
