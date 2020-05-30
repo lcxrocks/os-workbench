@@ -265,7 +265,7 @@ void dir_handler(void *c){
         d = (void *)d - 32;
         if((d->LDIR_Ord & 0xf) != num) 
         {
-            printf("wrong order! should be :%d, now have: %d\n", num, d->LDIR_Ord);
+            printf("wrong order! should be :%d, now have: %x\n", num, d->LDIR_Ord);
             panic("ha");
         }
         num++;
