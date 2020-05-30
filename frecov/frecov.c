@@ -352,7 +352,7 @@ void write_image(int fd, image_t * ptr){
     int sum = 0; bool segfault = false;
     while(num > 0 && size > 0){
         sum = compare(prev_line, next_line, 3*w);
-        while(sum > w * 3 * 60){// allow +-20 per digit per color 
+        while(sum > w * 3 * 20){// allow +-20 per digit per color 
             if( t + BytsClus > disk->end) { segfault = true; break;}
             t = t + BytsClus;//greedy_find_next_cluster();
             memcpy(next_line, t, 3*w);
