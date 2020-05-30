@@ -335,7 +335,6 @@ void write_image(int fd, image_t * ptr){
     printf("\033[32m >>File: \033[0m \033[33m%s \033[0m\033[32mhas %d clusters to write.\033[0m\n", ptr->name, num);
     void *p = ptr->bmp->header;
     void *t = disk->data;
-    
     write(fd, p, (ptr->size < BytsClus ? ptr->size : BytsClus)); num--; size -= BytsClus;// first cluster
 
     void *tmp = p+BytsClus-3*w;
@@ -346,7 +345,7 @@ void write_image(int fd, image_t * ptr){
     int sum = 0;
     while(num > 0 && size > 0){
         sum = compare(prev_line, next_line, 3*w);
-        while(sum > w * 3 * 20){// allow +-20 per digit per color 
+        while(sum > w * 3 * 30){// allow +-20 per digit per color 
             t = t + BytsClus;//greedy_find_next_cluster();
             memcpy(next_line, t, 3*w);
             sum = compare(prev_line, next_line, 3*w);
