@@ -272,11 +272,14 @@ void dir_handler(void *c){
     while(num){
         num--;
         d = (void *)d + 32;
-        if((d->LDIR_Ord &0xf)!=num){
-            longname_cnt--;
-            return ;
-        }
+        printf("%d ", d->LDIR_Ord);
+        // if((d->LDIR_Ord &0xf)!=num){
+        //     longname_cnt--;
+        //     return ;
+        // }
     }
+    printf("\n");
+    return ;
     // while(num == 1 || ((d->LDIR_Ord & 0x40 )!= 0x40) ){
     //     d = (void *)d - 32;
     //     // if((d->LDIR_Ord & 0xf) != num) 
