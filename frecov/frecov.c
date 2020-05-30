@@ -242,6 +242,7 @@ int main(int argc, char *argv[]) {
         char path_name[128] = "~/";
         strcat(path_name, p->name);
         int fd = open(path_name, O_CREAT | O_WRONLY, S_IRWXU);
+        printf("ERROR: %d\n", errno);
         panic_on(fd<0, "Bad fd");
         //write(fd, p->bmp->header, p->size); // 连续的size大小
         write_image(fd, p);
