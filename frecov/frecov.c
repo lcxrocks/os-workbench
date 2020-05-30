@@ -383,6 +383,7 @@ void write_image(int fd, image_t * ptr){
             if(t > disk->end) seg_fault = true;
         }
         if(not_next && !seg_fault){ //find a cluster.
+            printf("enter t\n");
             if(size > BytsClus){
                 write(fd, t, BytsClus);
                 p += BytsClus; num--; size-=BytsClus;
@@ -409,6 +410,7 @@ void write_image(int fd, image_t * ptr){
             }
         }
         else{ //didn't find a better one / no need to find a better one
+            printf("enter p\n");
             if(size>BytsClus){
                 write(fd, p, BytsClus);
                 p += BytsClus; num--; size-=BytsClus;
