@@ -353,6 +353,7 @@ void write_image(int fd, image_t * ptr){
     write(fd, p, (ptr->size < BytsClus ? ptr->size : BytsClus)); num--; size -= BytsClus;// first cluster
     printf("wtf?\n");
     void *tmp = p+BytsClus-3*w;
+    printf("tmp : %p\n", tmp);
     memcpy(prev_line, tmp, 3*w); 
     printf("wtf?\n");
     p += BytsClus;
