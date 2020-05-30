@@ -275,7 +275,7 @@ void dir_handler(void *c){
             return ;
         }
     } // d now is at 1st long entry
-    if((d->LDIR_Ord & 0xf )!= 0x1) printf("fuck me\n");
+
     image_t *pic = malloc(sizeof(image_t));
     pic->next = list_head.next;
     pic->prev = &list_head;
@@ -321,7 +321,7 @@ void dir_handler(void *c){
     pic->bmp->info = (void *)pic->bmp->header + 14; 
     pic->size = d->DIR_FileSize;
     int len = strlen(pic->name);
-    printf("\033[31m>> dectected file name: \033[0m%s , clus_idx :%x, file_size: %d\n", pic->name, pic->clus_idx, pic->size);
+    printf("\033[31m>> num: %d : dectected file name: \033[0m%s , clus_idx :%x, file_size: %d\n",num, pic->name, pic->clus_idx, pic->size);
     if(pic->name[len-3] == 'b' && pic->name[len-2] == 'm'  && pic->name[len-1] == 'p' && pic->size != 0){
         pic_cnt++;
         printf("\033[32m>> dectected file name: \033[0m%s , clus_idx :%x, file_size: %d\n", pic->name, pic->clus_idx, pic->size);
