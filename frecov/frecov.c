@@ -239,9 +239,8 @@ int main(int argc, char *argv[]) {
     image_t *p = &list_head;
     while(p->next){
         p = p->next;
-        char path_name[128] = "/tmp/";
+        char path_name[128] = "~/tmp/";
         strcat(path_name, p->name);
-        printf("pathname: %s\n", path_name);
         int fd = open(path_name, O_CREAT | O_WRONLY, S_IRWXU);
         panic_on(fd<0, "Bad fd");
         //write(fd, p->bmp->header, p->size); // 连续的size大小
