@@ -394,6 +394,7 @@ void write_image(int fd, image_t * ptr){
                 uint8_t *next_line= calloc(x, sizeof(uint8_t));
                 memcpy(prev_line, t+BytsClus-x, x);
                 memcpy(next_line, t+BytsClus-x+(w*3)+skip, x);
+                printf("allocated in t\n");
                 t = disk->data; //reset 
                 not_next = false;
                 seg_fault = false;
@@ -417,6 +418,7 @@ void write_image(int fd, image_t * ptr){
                 free(next_line);
                 uint8_t *prev_line= calloc(x, sizeof(uint8_t));
                 uint8_t *next_line= calloc(x, sizeof(uint8_t));
+                printf("allocated in p\n");
                 memcpy(prev_line, p-x, x);
                 memcpy(next_line, p-x+(w*3)+skip, x);
                 t = disk->data; //reset 
