@@ -392,8 +392,8 @@ void write_image(int fd, image_t * ptr){
                 printf("free: %p\n", prev_line);
                 free(prev_line);
                 free(next_line);
-                uint8_t *prev_line= calloc(x, sizeof(uint8_t));
-                uint8_t *next_line= calloc(x, sizeof(uint8_t));
+                prev_line= calloc(x, sizeof(uint8_t));
+                next_line= calloc(x, sizeof(uint8_t));
                 memcpy(prev_line, t+BytsClus-x, x);
                 memcpy(next_line, t+BytsClus-x+(w*3)+skip, x);
                 printf("allocated in t: %p\n", prev_line);
@@ -420,8 +420,8 @@ void write_image(int fd, image_t * ptr){
                 printf("free: %p\n", prev_line);
                 free(prev_line);
                 free(next_line);
-                uint8_t *prev_line= calloc(x, sizeof(uint8_t));
-                uint8_t *next_line= calloc(x, sizeof(uint8_t));
+                prev_line= calloc(x, sizeof(uint8_t));
+                next_line= calloc(x, sizeof(uint8_t));
                 printf("allocated in p: %p\n", prev_line);
                 memcpy(prev_line, p-x, x);
                 memcpy(next_line, p-x+(w*3)+skip, x);
