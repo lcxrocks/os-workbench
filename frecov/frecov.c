@@ -166,6 +166,8 @@ int nr_datasec;
 int nr_clus;
 int BytsClus;
 int RsvdBytes;
+fat *disk;
+
 int main(int argc, char *argv[]) {
     /* Check_basic info */
     check_info(argc);
@@ -182,7 +184,7 @@ int main(int argc, char *argv[]) {
     struct stat s;
     panic_on(fstat(fd, &s)==-1, "fstat failed!\n");
 
-    fat * disk = (fat *)malloc(sizeof(fat));
+    disk = (fat *)malloc(sizeof(fat));
 
     disk->header = (struct fat_header *)mmap(NULL, s.st_size, PROT_READ, MAP_PRIVATE, fd, 0); //DONT USE SHARED
     panic_on(disk->header->Signature_word!=0xAA55, "BAD Signature\n");    
@@ -236,19 +238,18 @@ int main(int argc, char *argv[]) {
     /* recover the file*/
 
     //3. RECOVER IMAGES
-    image_t *p = malloc(sizeof(image_t));
-    p = &list_head;
+    image_t *p = &list_head;
     while(p->next){
         p = p->next;
-        int clu_idx = p->clus_idx;
-        void *sec1 = disk->data + (clu_idx - 2) * disk->header->BPB_SecPerClus * disk->header->BPB_BytsPerSec;
-        p->bmp->header = (bmp_header_t *) sec1;
+        //int clu_idx = p->clus_idx;
+        //void *sec1 = disk->data + (clu_idx - 2) * disk->header->BPB_SecPerClus * disk->header->BPB_BytsPerSec;
+        //p->bmp->header = (bmp_header_t *) sec1;
         //printf("haha\n");
-        p->bmp->info = (bmp_info_t *)(sec1 + 14);
+        //p->bmp->info = (bmp_info_t *)(sec1 + 14);
         char path_name[128] = "/tmp/";
         strcat(path_name, p->name);
         int fd = open(path_name, O_CREAT | O_WRONLY, S_IRWXU);
-        //write(fd, sec1, p->size); // 连续的size大小
+        write(fd, p->bmp->header, p->size); // 连续的size大小
         write_image(fd, p);
         char sha1sum[256] = "sha1sum ";
         strcat(sha1sum, path_name);
@@ -310,6 +311,8 @@ void dir_handler(void *c){
     if(pic->name[pos] != '\0') pic->name[pos] = '\0';
     d = c;
     pic->clus_idx = (d->DIR_FstClusHI << 16) | d->DIR_FstClusLO;
+    pic->bmp->header = (bmp_header_t *)(disk->data + (pic->clus_idx - 2) * disk->header->BPB_SecPerClus * disk->header->BPB_BytsPerSec);
+    p->bmp->info = (bmp_info_t *)(pic->bmp->header + 14);
     pic->size = d->DIR_FileSize;
     int len = strlen(pic->name);
     
