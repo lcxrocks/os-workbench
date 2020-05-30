@@ -250,7 +250,7 @@ int main(int argc, char *argv[]) {
         //p->bmp->header = (bmp_header_t *) sec1;
         //printf("haha\n");
         //p->bmp->info = (bmp_info_t *)(sec1 + 14);
-        char path_name[128] = "/tmp/";
+        char path_name[128] = "/~/tmp/";
         strcat(path_name, p->name);
         int fd = open(path_name, O_CREAT | O_WRONLY, S_IRWXU);
         //write(fd, p->bmp->header, p->size); // 连续的size大小
@@ -347,6 +347,7 @@ void write_image(int fd, image_t * ptr){
     int8_t *digit_new = (int8_t *) malloc(sizeof(int8_t) * last_line);
     printf("wtf?\n");
     while(size){
+        printf("\033[32mprocessing %s, remain size: %d\033[0m\n", ptr->name, size);
         if(num == 0){ //first cluster        
             if(size >= BytsClus)
                 write(fd, p, BytsClus);
