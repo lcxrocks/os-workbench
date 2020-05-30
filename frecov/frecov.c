@@ -162,7 +162,7 @@ void dir_handler(void *c);
 void short_entry_handler(void *c, void *entry, bool long_name_flag);
 void write_image(int fd, image_t * p);
 void get_line_rgb(int8_t *prev_line, int size, void *p);
-int compare(uint8_t *prev_line , uint8_t *next_line, int cnt);
+int compare(uint8_t *prev_line , uint8_t *next_line, int cnt, int threshold);
 
 int dirent_cnt;
 int pic_cnt;
@@ -349,6 +349,51 @@ void dir_handler(void *c){
     return ;
 }
 
+void check_rgb(int width, int left ,void *p){
+    uint8_t *prev_line_1 = calloc(20480, sizeof(uint8_t));
+    uint8_t *prev_line_2 = calloc(20480, sizeof(uint8_t));
+    uint8_t *next_line_1 = calloc(20480, sizeof(uint8_t));
+    uint8_t *next_line_2 = calloc(20480, sizeof(uint8_t));
+
+    memcpy(prev_line_1, p-width-left, width);
+    memcpy(prev_line_2, p-left, left);
+
+    //default: take the next cluster as input
+    void *tmp = p;
+    memcpy(next_line_1, p, width-left);
+    memcpy(next_line_2, p + width - left, left);
+    int cnt = 0;
+    cnt += compare(prev_line_1 + left, next_line_1, width - left, 100);
+    cnt += compare(prev_line_2, next_line_2, left, 100);
+
+    if( cnt >= width/2){
+        free(prev_line_2);
+        free(prev_line_1);
+        free(next_line_2);
+        free(next_line_1);
+        return ;
+    }
+
+    p = disk->data;
+    cnt = 0;
+    for (; p < disk->end; p+=BytsClus)
+    {
+        memcpy(next_line_1, p, width-left);
+        memcpy(next_line_2, p + width - left, left);
+        cnt += compare(prev_line_1 + left, next_line_1, width - left, 60);
+        cnt += compare(prev_line_2, next_line_2, left, 60);
+        if(cnt >= 4*width/5){
+            free(prev_line_2);
+            free(prev_line_1);
+            free(next_line_2);
+            free(next_line_1);
+            return ;
+        }
+    }
+    
+
+}
+
 void write_image(int fd, image_t * ptr){
     int w = ptr->bmp->info->biWidth;
     int h = ptr->bmp->info->biHeight; // default: 24bit bmp file
@@ -358,79 +403,34 @@ void write_image(int fd, image_t * ptr){
     int skip=4-(((w*24)>>3)&3);
     int size = ptr->size;
     int num = size / BytsClus; // total number of clusters
-    
-    // printf("offset: %d , imageSize :%d == %d, skip: %d\n",offset, imageSize, ptr->bmp->info->biSizeImages, skip);
-    // printf("%lf\n", ((double) w*3+skip)/4);
-    // printf("%d\n", ptr->size);
+    w = w*3 +skip; //width bytes
 
     void *p = ptr->bmp->header;
     void *t = disk->data;
     write(fd, p, BytsClus); 
     p += BytsClus; num--; size-=BytsClus;// first byte
     int lseek = BytsClus - offset;
-    int x = lseek % (w*3+skip); //rest line 
-    int y = lseek / (w*3+skip); 
-
-    uint8_t *prev_line= calloc(16384, sizeof(uint8_t));
-    uint8_t *next_line= calloc(16384, sizeof(uint8_t));
-    memcpy(prev_line, p-x, x);
-    memcpy(next_line, p-x+(w*3)+skip, x);
-    int sum = compare(prev_line, next_line, x);
-    void *tmp = NULL;
+    int x = lseek % (w); //rest line 
+    
     while(num){
-        while(t < disk->end){
-            memcpy(next_line, t-x+(w*3)+skip, x);
-            int sum_t = compare(prev_line, next_line, x);
-            if(sum_t > sum){
-                sum = sum_t;
-                tmp = t;
-            }
-            t += BytsClus;
-        }
-        memcpy(next_line, p-x+(w*3)+skip, x);
-        int sum_t_t = compare(prev_line, next_line, x);
-        if(size < BytsClus){
-            if(sum_t_t < sum && tmp!=NULL){
-                write(fd, tmp, size);
-                num--;
-            }
-            else{
-                write(fd, p, size);
-                num--;
-            }
-        }
-        else{
-            if(sum_t_t < sum && tmp!=NULL){
-                write(fd, tmp, BytsClus);
-                p += BytsClus; num--; size-=BytsClus;
-                lseek += BytsClus; 
-                x = lseek % (w*3+skip);
-                memcpy(prev_line, t+BytsClus-x, x);
-            }
-            else{
-                write(fd, p, BytsClus);
-                p += BytsClus; num--; size-=BytsClus;
-                lseek += BytsClus; 
-                x = lseek % (w*3+skip);
-                memcpy(prev_line, t+BytsClus-x, x);
-            }
-            tmp = NULL;
-            t = disk->data;
-        }
-        
+        check_rgb(w, x, p);
+        num--; 
+        write(fd, p, size > BytsClus? BytsClus:size);
+        lseek += BytsClus;
+        x = lseek % w;
+        p += BytsClus;
     }
-    free(prev_line);
-    free(next_line);
+
     //printf("\033[32m >>File: \033[0m \033[33m%s \033[0m\033[32mhas %d clusters to write.\033[0m\n", ptr->name, num);
 
 };
 
-int compare(uint8_t *prev_line , uint8_t *next_line, int cnt){
+int compare(uint8_t *prev_line , uint8_t *next_line, int cnt, int threshold){
     int ok_cnt = 0;
     for (int i = 0; i < cnt; i++){
         int tmp = (int) (prev_line[i] - next_line[i]);
         tmp = (tmp > 0) ? tmp : -tmp;
-        if(tmp < 60) ok_cnt++;
+        if(tmp < threshold) ok_cnt++;
     }
     return ok_cnt;
 }
