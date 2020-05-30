@@ -308,11 +308,7 @@ void dir_handler(void *c){
     pic->clus_idx = (d->DIR_FstClusHI << 16) | d->DIR_FstClusLO;
     pic->bmp = malloc(sizeof(bmp_t));
     pic->bmp->header = disk->data + (pic->clus_idx - 2) * disk->header->BPB_SecPerClus * disk->header->BPB_BytsPerSec;
-    pic->bmp->info = (void *)pic->bmp->header + 14;
-    printf("pic->bmp: %c%c\n", pic->bmp->header->bfType[0], pic->bmp->header->bfType[1]);
-    printf("width: %u, height: %u\n", pic->bmp->info->biWidth, pic->bmp->info->biHeight);
-    printf("bitcnt: %d\n", pic->bmp->info->biBitCount);
-    panic_on(pic->bmp->header->bfType[0]!='B', "shit");
+    pic->bmp->info = (void *)pic->bmp->header + 14; 
     pic->size = d->DIR_FileSize;
     int len = strlen(pic->name);
     
@@ -331,8 +327,6 @@ void dir_handler(void *c){
 void write_image(int fd, image_t * ptr){
     int w = ptr->bmp->info->biWidth;
     int h = ptr->bmp->info->biHeight; // default: 24bit bmp file
-    printf("w : %u\n", w);
-    printf("bit: %d\n", ptr->bmp->info->biBitCount);
     int8_t  *prev_line = (int8_t *) calloc(3*w, sizeof(int8_t));
     int8_t  *next_line = (int8_t *) calloc(3*w, sizeof(int8_t)); // R G B
     
@@ -346,7 +340,6 @@ void write_image(int fd, image_t * ptr){
     write(fd, p, (ptr->size < BytsClus ? ptr->size : BytsClus)); num--; size -= BytsClus;// first cluster
 
     void *tmp = p+BytsClus-3*w;
-    
     
     memcpy(prev_line, tmp, 3*w); 
     printf("wtf?\n");
