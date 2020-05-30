@@ -337,7 +337,7 @@ void dir_handler(void *c){
     int len = strlen(pic->name);
     if(pic->name[len-3] == 'b' && pic->name[len-2] == 'm'  && pic->name[len-1] == 'p' && pic->size != 0){
         pic_cnt++;
-        printf("\033[32m>> dectected file name: \033[0m%s , clus_idx :%x, file_size: %d\n", pic->name, pic->clus_idx, pic->size);
+        //printf("\033[32m>> dectected file name: \033[0m%s , clus_idx :%x, file_size: %d\n", pic->name, pic->clus_idx, pic->size);
     }
     else{
         list_head.next = pic->next;
@@ -379,7 +379,7 @@ void check_rgb(int width, int left ,void *p){
         memcpy(next_line_2, p + width - left, left);
         cnt += compare(prev_line_1 + left, next_line_1, width - left, 100);
         cnt += compare(prev_line_2, next_line_2, left, 100);
-        if(cnt <= width/2){
+        if(cnt <= width/8){
             free(prev_line_2);
             free(prev_line_1);
             free(next_line_2);
