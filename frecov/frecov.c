@@ -149,6 +149,10 @@ typedef struct FAT{
     void *end;
 }fat; 
 
+typedef struct RGB{
+    u1 RGB[3]; //BGR actually (24bit)
+}__attribute__((packed)) rgb_t;
+
 char filename[256];
 void check_info(int argc);
 void print_info(struct fat_header *hd);
@@ -225,14 +229,6 @@ int main(int argc, char *argv[]) {
                 longname_cnt++;
                 dir_handler(p);
             }
-            // if(dir->DIR_Name[8]=='B' && dir->DIR_Name[9] == 'M' && dir->DIR_Name[10] == 'P'){
-            //     //printf("offset: %zx\n", p - cluster_entry);
-            //     if((dir->DIR_Attr == 0x20) && (dir->DIR_Name[6]=='~')) // make sure this is the long_name_entry
-            //     {
-            //         dirent_cnt++;
-            //         dir_handler(p);
-            //     }
-            // }
         }
     }
     
@@ -241,33 +237,33 @@ int main(int argc, char *argv[]) {
     int eq_cnt = 0;
     while(p->next){
         p = p->next;
-        char path_name[128] = "../../tmp/";
-        strcat(path_name, p->name);
-        int fd = open(path_name, O_CREAT | O_WRONLY, S_IRWXU);
-        //printf("ERROR: %d\n", errno);
-        //panic_on(fd<0, "Bad fd");
-        write(fd, p->bmp->header, p->size); // 连续的size大小
-        //write_image(fd, p);
-        char sha1sum[256] = "sha1sum ";
-        strcat(sha1sum, path_name);
-        FILE *fp = popen(sha1sum, "r");
-        //panic_on(!fp, "popen");
-        char buf[256];
-        memset(buf, 0, sizeof(buf));
-        fscanf(fp, "%s", buf); // Get it!
-        /***check***/
-            char mnt_path[128] = "/mnt/DCIM/";
-            strcat(mnt_path, p->name);
-            char sha[256] = "sha1sum ";
-            strcat(sha, mnt_path); 
-            FILE *fp1 = popen(sha, "r");
-            char tmp[256];
-            memset(tmp, 0, sizeof(tmp));
-            fscanf(fp1, "%s", tmp);
-            if(!strcmp(buf, tmp)) eq_cnt++;
-        /***check****/
-        pclose(fp);
-        printf("%s %s\n", buf, p->name);
+        // char path_name[128] = "../../tmp/";
+        // strcat(path_name, p->name);
+        // int fd = open(path_name, O_CREAT | O_WRONLY, S_IRWXU);
+        // //printf("ERROR: %d\n", errno);
+        // //panic_on(fd<0, "Bad fd");
+        // write(fd, p->bmp->header, p->size); // 连续的size大小
+        write_image(fd, p);
+        // char sha1sum[256] = "sha1sum ";
+        // strcat(sha1sum, path_name);
+        // FILE *fp = popen(sha1sum, "r");
+        // //panic_on(!fp, "popen");
+        // char buf[256];
+        // memset(buf, 0, sizeof(buf));
+        // fscanf(fp, "%s", buf); // Get it!
+        // /***check***/
+        //     char mnt_path[128] = "/mnt/DCIM/";
+        //     strcat(mnt_path, p->name);
+        //     char sha[256] = "sha1sum ";
+        //     strcat(sha, mnt_path); 
+        //     FILE *fp1 = popen(sha, "r");
+        //     char tmp[256];
+        //     memset(tmp, 0, sizeof(tmp));
+        //     fscanf(fp1, "%s", tmp);
+        //     if(!strcmp(buf, tmp)) eq_cnt++;
+        // /***check****/
+        // pclose(fp);
+        // printf("%s %s\n", buf, p->name);
     }
     printf("================================================================\n");
     printf("dirent : %d\n", dirent_cnt);
@@ -351,6 +347,12 @@ void dir_handler(void *c){
 void write_image(int fd, image_t * ptr){
     int w = ptr->bmp->info->biWidth;
     int h = ptr->bmp->info->biHeight; // default: 24bit bmp file
+    int offset = ptr->bmp->header->bfOffBits;
+    int bytesPerLine=((w*24+31)>>5)<<2;
+    int imageSize=bytesPerLine*h;
+    int skip=4-(((w*24)>>3)&3);
+
+    printf("imageSize :%d == %d, skip: %d\n", imageSize, ptr->bmp->info->biSizeImages, skip);
     int8_t  *prev_line = (int8_t *) calloc(3*w, sizeof(int8_t));
     int8_t  *next_line = (int8_t *) calloc(3*w, sizeof(int8_t)); // R G B
 
@@ -359,34 +361,10 @@ void write_image(int fd, image_t * ptr){
     //printf("\033[32m >>File: \033[0m \033[33m%s \033[0m\033[32mhas %d clusters to write.\033[0m\n", ptr->name, num);
     void *p = ptr->bmp->header;
     void *t = disk->data;
-    write(fd, p, (ptr->size < BytsClus ? ptr->size : BytsClus)); num--; size -= BytsClus;// first cluster
-    memcpy(prev_line, p+BytsClus-3*w, 3*w); p += BytsClus;
-    memcpy(next_line, p, 3*w);
+    // write(fd, p, (ptr->size < BytsClus ? ptr->size : BytsClus)); num--; size -= BytsClus;// first cluster
+    // memcpy(prev_line, p+BytsClus-3*w, 3*w); p += BytsClus;
+    // memcpy(next_line, p, 3*w);
 
-    int sum = 0; bool segfault = false;
-    while(num > 0 && size > 0){
-        sum = compare(prev_line, next_line, 3*w);
-        while(sum > w * 3 * 20){// allow +-20 per digit per color 
-            if( t + BytsClus > disk->end) { segfault = true; break;}
-            t = t + BytsClus;//greedy_find_next_cluster();
-            memcpy(next_line, t, 3*w);
-            sum = compare(prev_line, next_line, 3*w);
-        }
-        if(t!=disk->data && !segfault){
-            write(fd, t, size < BytsClus ? size : BytsClus);
-            memcpy(prev_line, t+BytsClus-3*w, 3*w);
-            num--; size -= BytsClus; 
-            t = disk->data;
-        }
-        else{
-            write(fd, p, size < BytsClus ? size : BytsClus);
-            memcpy(prev_line, p+BytsClus-3*w, 3*w);
-            num--; size -= BytsClus;
-        }
-        num--;
-        p += BytsClus;
-        memcpy(next_line, p, 3*w);
-    }
     free(prev_line);
     free(next_line);
 };
