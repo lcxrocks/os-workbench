@@ -261,7 +261,7 @@ void dir_handler(void *c){
     image_t *p = malloc(sizeof(image_t));
     fat_dir *d = c;
     int num = 1; 
-    while(num==1 || ((d->LDIR_Ord & 0x40 )!= 0x40) ){
+    while(((d->LDIR_Ord & 0x40 )!= 0x40) ){
         d = (void *)d - 32;
         num++;
     }
