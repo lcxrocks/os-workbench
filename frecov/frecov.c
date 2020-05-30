@@ -263,6 +263,9 @@ int main(int argc, char *argv[]) {
             bmp_data_cnt++;
             continue;
         }
+        else{
+            entry = false;
+        }
     }
     
     //3. RECOVER IMAGES
