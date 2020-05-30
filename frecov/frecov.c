@@ -352,10 +352,11 @@ void write_image(int fd, image_t * ptr){
     int imageSize=bytesPerLine*h;
     int skip=4-(((w*24)>>3)&3);
 
-    printf("imageSize :%d == %d, skip: %d\n", imageSize, ptr->bmp->info->biSizeImages, skip);
+    printf("offset: %d , imageSize :%d == %d, skip: %d\n",offset, imageSize, ptr->bmp->info->biSizeImages, skip);
     printf("%lf\n", ((double) w*3+skip)/4);
-    int8_t  *prev_line = (int8_t *) calloc(3*w, sizeof(int8_t));
-    int8_t  *next_line = (int8_t *) calloc(3*w, sizeof(int8_t)); // R G B
+    int lseek = 0;
+    
+    //int8_t  *next_line = (int8_t *) calloc(h, sizeof(uint32_t)); // R G B
 
     int size = ptr->size;
     int num = size / BytsClus; // total number of clusters
@@ -366,8 +367,8 @@ void write_image(int fd, image_t * ptr){
     // memcpy(prev_line, p+BytsClus-3*w, 3*w); p += BytsClus;
     // memcpy(next_line, p, 3*w);
 
-    free(prev_line);
-    free(next_line);
+    // free(prev_line);
+    // free(next_line);
 };
 
 int compare(int8_t *prev_line , int8_t *next_line, int cnt){
