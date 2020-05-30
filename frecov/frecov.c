@@ -392,7 +392,7 @@ bool dir_handler(void *c){
     return true;
 }
 
-void check_rgb(int width, int left ,void *p){
+void check_rgb(int width, int left ,void *p, int skip){
     uint8_t *prev_line_1 = calloc(20480, sizeof(uint8_t));
     uint8_t *prev_line_2 = calloc(20480, sizeof(uint8_t));
     uint8_t *next_line_1 = calloc(20480, sizeof(uint8_t));
@@ -406,10 +406,10 @@ void check_rgb(int width, int left ,void *p){
     memcpy(next_line_1, p, width-left);
     memcpy(next_line_2, p + width - left, left);
     int cnt = 0;
-    cnt += compare(prev_line_1 + left, next_line_1, width - left, 100);
+    cnt += compare(prev_line_1 + left, next_line_1, width - left -skip, 100);
     cnt += compare(prev_line_2, next_line_2, left, 100);
 
-    if(cnt <= width/4){
+    if(cnt <= width/2){
         free(prev_line_2);
         free(prev_line_1);
         free(next_line_2);
@@ -417,9 +417,10 @@ void check_rgb(int width, int left ,void *p){
         return ;
     }
     p = disk->data;
-    cnt = 0;
+   
     for (; p < disk->end; p+=BytsClus)
     {
+        cnt = 0;
         if(label[get_nclu(p)]!=BMP_DATA) continue;
         memcpy(next_line_1, p, width-left);
         memcpy(next_line_2, p + width - left, left);
@@ -454,7 +455,7 @@ void write_image(int fd, image_t * ptr){
     int x = lseek % (w); //rest line 
     
     while(num){
-        check_rgb(w, x, p);
+        check_rgb(w, x, p, skip);
         if(num==1){
             write(fd, p, size);
             return;
