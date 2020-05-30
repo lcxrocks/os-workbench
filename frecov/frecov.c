@@ -29,7 +29,7 @@
 
 #define panic(s) panic_on(1, s)
 
-enum{DIRENT = 0, BMP_DATA, UNUSED, EMPTY}; // states of clusters
+enum{DIRENT = 0, BMP_HEADER, BMP_DATA, UNUSED, EMPTY}; // states of clusters
 // 1. PIC DEF
 typedef struct bmp_header{
     char bfType[2];
@@ -218,64 +218,101 @@ int main(int argc, char *argv[]) {
     int dir_sz = sizeof(fat_dir); 
     void *ex = NULL;
 
+    char empty[64] = "";
     void *end_entry = NULL;
+    bool entry = false;
+    int bmp_header_cnt = 0;
+    int bmp_data_cnt = 0;
+    int dirent = 0;
+    int unused_cnt = 0;
+    int empty_cnt = 0;
     for (int i = 0; i < nr_clus; i++)
     {
+        
         cluster_entry = BytsClus * i + disk->data;
         end_entry = BytsClus * (i+1) + disk->data;
+        void *p = cluster_entry;
+        if(!memcmp(p, empty, 64)){
+            label[i] = EMPTY;
+            continue;
+        }
+        if(*(char *)p == 'B' && *(char*) (p+1) == 'M'){
+            label[i] = BMP_HEADER;
+            continue;
+        }
+        if(*(unsigned char *)p == 0xe5){
+            label[i] = UNUSED;
+            continue;
+        }
         for (void *p = cluster_entry; p < end_entry; p += 32)
         {
             fat_dir *dir = p;
             if(((dir->LDIR_Attr & ATTR_LONG_NAME_MASK ) == ATTR_LONG_NAME)&& dir->LDIR_Type == 0 && dir->LDIR_FstClusIO == 0 && (dir->LDIR_Ord & 0x40)==0x40){
                 longname_cnt++;
+                label[i] = DIRENT;
                 dir_handler(p);
+                bool entry = true;
             }
+        }
+        if(!entry){
+            label[i] = BMP_DATA;
+            continue;
         }
     }
     
     //3. RECOVER IMAGES
-    image_t *p = &list_head;
-    int eq_cnt = 0;int num =0;
-    while(p->next){
-        p = p->next;
-        char path_name[128] = "../../tmp/";
-        strcat(path_name, p->name);
-        int fd = open(path_name, O_CREAT | O_WRONLY, S_IRWXU);
-        // if((num%2)==0){
-        //    write(fd, p->bmp->header, p->size); // 连续的size大小
-        // }
-        // else
-            write_image(fd, p);
-        num++;
-        char sha1sum[256] = "sha1sum ";
-        strcat(sha1sum, path_name);
-        FILE *fp = popen(sha1sum, "r");
-        //panic_on(!fp, "popen");
-        char buf[256];
-        memset(buf, 0, sizeof(buf));
-        fscanf(fp, "%s", buf); // Get it!
-        /***check***/
-            char mnt_path[128] = "/mnt/DCIM/";
-            strcat(mnt_path, p->name);
-            char sha[256] = "sha1sum ";
-            strcat(sha, mnt_path); 
-            FILE *fp1 = popen(sha, "r");
-            char tmp[256];
-            memset(tmp, 0, sizeof(tmp));
-            fscanf(fp1, "%s", tmp);
-            if(!strcmp(buf, tmp)) eq_cnt++;
-        /***check****/
-        pclose(fp);
-        printf("%s %s\n", buf, p->name);
-    }
+    // image_t *p = &list_head;
+    // int eq_cnt = 0;int num =0;
+    // while(p->next){
+    //     p = p->next;
+    //     char path_name[128] = "../../tmp/";
+    //     strcat(path_name, p->name);
+    //     int fd = open(path_name, O_CREAT | O_WRONLY, S_IRWXU);
+    //     // if((num%2)==0){
+    //     //    write(fd, p->bmp->header, p->size); // 连续的size大小
+    //     // }
+    //     // else
+    //         write_image(fd, p);
+    //     num++;
+    //     char sha1sum[256] = "sha1sum ";
+    //     strcat(sha1sum, path_name);
+    //     FILE *fp = popen(sha1sum, "r");
+    //     //panic_on(!fp, "popen");
+    //     char buf[256];
+    //     memset(buf, 0, sizeof(buf));
+    //     fscanf(fp, "%s", buf); // Get it!
+    //     /***check***/
+    //         char mnt_path[128] = "/mnt/DCIM/";
+    //         strcat(mnt_path, p->name);
+    //         char sha[256] = "sha1sum ";
+    //         strcat(sha, mnt_path); 
+    //         FILE *fp1 = popen(sha, "r");
+    //         char tmp[256];
+    //         memset(tmp, 0, sizeof(tmp));
+    //         fscanf(fp1, "%s", tmp);
+    //         if(!strcmp(buf, tmp)) eq_cnt++;
+    //     /***check****/
+    //     pclose(fp);
+    //     printf("%s %s\n", buf, p->name);
+    // }
     printf("================================================================\n");
-    printf("dirent : %d\n", dirent_cnt);
-    printf("pic cnt: %d\n", pic_cnt);
-    printf("ln_cnt : %d\n", longname_cnt);
-    printf("success: %d\n", eq_cnt);
+    printf("dirent   : %d\n", dirent_cnt);
+    printf("pic cnt  : %d\n", pic_cnt);
+    printf("ln_cnt   : %d\n", longname_cnt);
+    //printf("success : %d\n", eq_cnt);
+    printf("bmp_h_cnt: %d\n", bmp_header_cnt);
+    printf("bmp_d_cnt: %d\n", bmp_data_cnt);
+    printf("diren_cnt: %d\n", dirent);
+    printf("unusedcnt: %d\n", unused_cnt); 
+    printf("empty_cnt: %d\n",empty_cnt);
     printf("================================================================\n");
 
 }
+
+int get_nclu(void * p){
+    return (int)((p-disk->data)/BytsClus);
+}
+
 
 void dir_handler(void *c){
     fat_dir *d = c;
