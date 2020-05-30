@@ -373,7 +373,6 @@ void check_rgb(int width, int left ,void *p){
         free(next_line_1);
         return ;
     }
-    printf("fuckme\n");
     p = disk->data;
     cnt = 0;
     for (; p < disk->end; p+=BytsClus)
@@ -413,7 +412,6 @@ void write_image(int fd, image_t * ptr){
     
     while(num){
         check_rgb(w, x, p);
-        num--; 
         if(num==1){
             write(fd, p, size);
             return;
@@ -425,6 +423,7 @@ void write_image(int fd, image_t * ptr){
         x = lseek % w;
         p += BytsClus;
         size -= BytsClus;
+        num--; 
     }
 
     //printf("\033[32m >>File: \033[0m \033[33m%s \033[0m\033[32mhas %d clusters to write.\033[0m\n", ptr->name, num);
