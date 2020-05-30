@@ -162,7 +162,7 @@ void dir_handler(void *c);
 void short_entry_handler(void *c, void *entry, bool long_name_flag);
 void write_image(int fd, image_t * p);
 void get_line_rgb(int8_t *prev_line, int size, void *p);
-int compare(int8_t *prev_line , int8_t *next_line, int cnt);
+int compare(uint8_t *prev_line , uint8_t *next_line, int cnt);
 
 int dirent_cnt;
 int pic_cnt;
@@ -366,12 +366,12 @@ void write_image(int fd, image_t * ptr){
     int x = lseek % (w*3+skip); //rest line 
     int y = lseek / (w*3+skip); 
     printf("lseek - x :%d == %d, %d\n", lseek-x, (lseek-x)/(w*3+skip)*(w*3+skip), y*(w*3+skip));
-    printf("p-x:%d\n", BytsClus - 54 -x);
-    int sum = 0;
+    
     uint8_t *prev_line= calloc(x, sizeof(uint8_t));
     uint8_t *next_line= calloc(x, sizeof(uint8_t));
-    //memcpy(prev_line, p-x, x);
-
+    memcpy(prev_line, p-x, x);
+    memcpy(next_line, p-x+(w*3)+skip, x);
+    int sum = compare(prev_line, next_line, x);
     // while(sum > x*){
         
     //     for (int i = 0; i < x; i++)
@@ -380,25 +380,21 @@ void write_image(int fd, image_t * ptr){
     //     }
         
     // }
-    // if(p+)
 
-    //int8_t  *next_line = (int8_t *) calloc(h, sizeof(uint32_t)); // R G B
-
-    
     
     //printf("\033[32m >>File: \033[0m \033[33m%s \033[0m\033[32mhas %d clusters to write.\033[0m\n", ptr->name, num);
-    // write(fd, p, (ptr->size < BytsClus ? ptr->size : BytsClus)); num--; size -= BytsClus;// first cluster
-    // memcpy(prev_line, p+BytsClus-3*w, 3*w); p += BytsClus;
-    // memcpy(next_line, p, 3*w);
+
 
     // free(prev_line);
     // free(next_line);
 };
 
-int compare(int8_t *prev_line , int8_t *next_line, int cnt){
+int compare(uint8_t *prev_line , uint8_t *next_line, int cnt){
     int sum = 0;
     for (int i = 0; i < cnt; i++){
-        sum += (prev_line[i] - next_line[i] > 0) ? prev_line[i] - next_line[i] : next_line[i] - prev_line[i];
+        int tmp = (int) (prev_line[i] - next_line[i]);
+        printf("tmp: %d\n",tmp);
+        sum += (tmp > 0) ? tmp : -tmp;
     }
     return sum;
 }
