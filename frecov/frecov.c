@@ -366,14 +366,14 @@ void check_rgb(int width, int left ,void *p){
     cnt += compare(prev_line_1 + left, next_line_1, width - left, 100);
     cnt += compare(prev_line_2, next_line_2, left, 100);
 
-    if( cnt >= 3*width/4){
+    if(cnt >= 3*width/4){
         free(prev_line_2);
         free(prev_line_1);
         free(next_line_2);
         free(next_line_1);
         return ;
     }
-
+    printf("fuckme\n");
     p = disk->data;
     cnt = 0;
     for (; p < disk->end; p+=BytsClus)
