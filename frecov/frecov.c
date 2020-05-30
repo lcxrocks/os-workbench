@@ -237,16 +237,16 @@ int main(int argc, char *argv[]) {
     int eq_cnt = 0;int num =0;
     while(p->next){
         p = p->next;
-        char path_name[128] = "../../tmp/";
+        char path_name[128] = "/tmp/";
         strcat(path_name, p->name);
         int fd = open(path_name, O_CREAT | O_WRONLY, S_IRWXU);
         //printf("ERROR: %d\n", errno);
         //panic_on(fd<0, "Bad fd");
         
-        // if((num%2)==0){
-        //    write(fd, p->bmp->header, p->size); // 连续的size大小
-        // }
-        // else
+        if((num%2)==0){
+           write(fd, p->bmp->header, p->size); // 连续的size大小
+        }
+        else
             write_image(fd, p);
         num++;
         char sha1sum[256] = "sha1sum ";
@@ -382,7 +382,7 @@ void check_rgb(int width, int left ,void *p){
         memcpy(next_line_2, p + width - left, left);
         cnt += compare(prev_line_1 + left, next_line_1, width - left, 100);
         cnt += compare(prev_line_2, next_line_2, left, 100);
-        if(cnt >= 5*width/8){
+        if(cnt >= 7*width/8){
             free(prev_line_2);
             free(prev_line_1);
             free(next_line_2);
