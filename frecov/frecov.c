@@ -434,6 +434,7 @@ void check_rgb(int width, int left ,void *p, int skip){
             return ;
         }
     }
+    printf("p :%p, end:%p\n", p, disk->end);
 }
 
 void write_image(int fd, image_t * ptr){
