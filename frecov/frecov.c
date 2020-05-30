@@ -237,33 +237,33 @@ int main(int argc, char *argv[]) {
     int eq_cnt = 0;
     while(p->next){
         p = p->next;
-        // char path_name[128] = "../../tmp/";
-        // strcat(path_name, p->name);
-        // int fd = open(path_name, O_CREAT | O_WRONLY, S_IRWXU);
-        // //printf("ERROR: %d\n", errno);
-        // //panic_on(fd<0, "Bad fd");
-        // write(fd, p->bmp->header, p->size); // 连续的size大小
+        char path_name[128] = "../../tmp/";
+        strcat(path_name, p->name);
+        int fd = open(path_name, O_CREAT | O_WRONLY, S_IRWXU);
+        //printf("ERROR: %d\n", errno);
+        //panic_on(fd<0, "Bad fd");
+        //write(fd, p->bmp->header, p->size); // 连续的size大小
         write_image(fd, p);
-        // char sha1sum[256] = "sha1sum ";
-        // strcat(sha1sum, path_name);
-        // FILE *fp = popen(sha1sum, "r");
-        // //panic_on(!fp, "popen");
-        // char buf[256];
-        // memset(buf, 0, sizeof(buf));
-        // fscanf(fp, "%s", buf); // Get it!
-        // /***check***/
-        //     char mnt_path[128] = "/mnt/DCIM/";
-        //     strcat(mnt_path, p->name);
-        //     char sha[256] = "sha1sum ";
-        //     strcat(sha, mnt_path); 
-        //     FILE *fp1 = popen(sha, "r");
-        //     char tmp[256];
-        //     memset(tmp, 0, sizeof(tmp));
-        //     fscanf(fp1, "%s", tmp);
-        //     if(!strcmp(buf, tmp)) eq_cnt++;
-        // /***check****/
-        // pclose(fp);
-        // printf("%s %s\n", buf, p->name);
+        char sha1sum[256] = "sha1sum ";
+        strcat(sha1sum, path_name);
+        FILE *fp = popen(sha1sum, "r");
+        //panic_on(!fp, "popen");
+        char buf[256];
+        memset(buf, 0, sizeof(buf));
+        fscanf(fp, "%s", buf); // Get it!
+        /***check***/
+            char mnt_path[128] = "/mnt/DCIM/";
+            strcat(mnt_path, p->name);
+            char sha[256] = "sha1sum ";
+            strcat(sha, mnt_path); 
+            FILE *fp1 = popen(sha, "r");
+            char tmp[256];
+            memset(tmp, 0, sizeof(tmp));
+            fscanf(fp1, "%s", tmp);
+            if(!strcmp(buf, tmp)) eq_cnt++;
+        /***check****/
+        pclose(fp);
+        printf("%s %s\n", buf, p->name);
     }
     printf("================================================================\n");
     printf("dirent : %d\n", dirent_cnt);
@@ -361,7 +361,7 @@ void write_image(int fd, image_t * ptr){
     void *p = ptr->bmp->header;
     void *t = disk->data;
     write(fd, p, BytsClus); 
-    p += BytsClus; num--;// first byte
+    p += BytsClus; num--; size-=BytsClus;// first byte
     int lseek = BytsClus - offset;
     int x = lseek % (w*3+skip); //rest line 
     int y = lseek / (w*3+skip); 
@@ -372,6 +372,50 @@ void write_image(int fd, image_t * ptr){
     memcpy(prev_line, p-x, x);
     memcpy(next_line, p-x+(w*3)+skip, x);
     int sum = compare(prev_line, next_line, x);
+    bool not_next = false;
+    bool seg_fault = false;
+    while(num){
+        while(sum > x*30){
+            not_next = true;
+            memcpy(next_line, t-x+(w*3)+skip, x);
+            sum = compare(prev_line, next_line, x);
+            t += BytsClus; 
+            if(t > disk->end) seg_fault = true;
+        }
+        if(not_next && !seg_fault){ //find a cluster.
+            if(size > BytsClus){
+                write(fd, t, BytsClus);
+                p += BytsClus; num--; size-=BytsClus;
+                lseek += BytsClus; 
+                x = lseek % (w*3+skip);
+                free(prev_line);
+                free(next_line);
+                uint8_t *prev_line= calloc(x, sizeof(uint8_t));
+                uint8_t *next_line= calloc(x, sizeof(uint8_t));
+                memcpy(prev_line, t+BytsClus-x, x);
+                memcpy(next_line, t+BytsClus-x+(w*3)+skip, x);
+                t = disk->data; //reset 
+                not_next = false;
+                seg_fault = false;
+            }
+        }
+        else{ //didn't find a better one / no need to find a better one
+            write(fd, p, BytsClus);
+            p += BytsClus; num--; size-=BytsClus;
+            lseek += BytsClus; 
+            x = lseek % (w*3+skip);
+            free(prev_line);
+            free(next_line);
+            uint8_t *prev_line= calloc(x, sizeof(uint8_t));
+            uint8_t *next_line= calloc(x, sizeof(uint8_t));
+            memcpy(prev_line, p-x, x);
+            memcpy(next_line, p-x+(w*3)+skip, x);
+            t = disk->data; //reset 
+            not_next = false;
+            seg_fault = false;
+        }
+    }
+    
     // while(sum > x*){
         
     //     for (int i = 0; i < x; i++)
@@ -395,7 +439,6 @@ int compare(uint8_t *prev_line , uint8_t *next_line, int cnt){
         int tmp = (int) (prev_line[i] - next_line[i]);
         sum += (tmp > 0) ? tmp : -tmp;
     }
-    printf("sum: %d\n",sum);
     return sum;
 }
 
