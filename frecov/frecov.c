@@ -316,7 +316,6 @@ int main(int argc, char *argv[]) {
 }
 
 int get_nclu(void * p){
-    printf("p-disk_data: %zd\n", p-disk->data);
     return (int)(((p-disk->data)/BytsClus));
 }
 
