@@ -420,7 +420,7 @@ void check_rgb(int width, int left ,void *p, int skip){
         return ;
     }
     else{
-        printf("cnt: %d at cluster: %d\n", cnt, get_nclu(p));
+        printf("cnt: %d at cluster: %d with p :%p\n", cnt, get_nclu(p), p);
     }
     
     p = disk->data;
@@ -430,6 +430,7 @@ void check_rgb(int width, int left ,void *p, int skip){
         if(label[get_nclu(ptr)]!=BMP_DATA) continue;
         memcpy(next_line_1, ptr, width-left);
         memcpy(next_line_2, ptr + width - left, left);
+        printf("ptr at: %p\n", ptr);
         cnt += compare(prev_line_1 + left, next_line_1, width - left - skip, 100);
         cnt += compare(prev_line_2, next_line_2, left, 100);
         
