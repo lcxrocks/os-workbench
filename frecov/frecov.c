@@ -29,7 +29,7 @@
 
 #define panic(s) panic_on(1, s)
 
-enum{DIRENT = 0, BMP_HEADER, BMP_DATA, UNUSED, EMPTY}; // states of clusters
+enum{DIRENT = 0, BMP_HEADER, BMP_DATA, UNUSED, EMPTY, USED}; // states of clusters
 // 1. PIC DEF
 typedef struct bmp_header{
     char bfType[2];
@@ -419,6 +419,7 @@ void check_rgb(int width, int left ,void **p_t, int skip){
         free(next_line_2);
         free(next_line_1);
         *p_t = p;
+        label[get_nclu(p)] = USED;
         return ;
     }
     // else{
@@ -429,7 +430,7 @@ void check_rgb(int width, int left ,void **p_t, int skip){
     for (void *ptr = disk->data; ptr < disk->end; ptr+=BytsClus)
     {
         cnt = 0;
-        if(label[get_nclu(ptr)]!=BMP_DATA) continue;
+        if(label[get_nclu(ptr)]!=BMP_DATA || label[get_nclu(ptr)== USED]) continue;
         memcpy(next_line_1, ptr, width-left);
         memcpy(next_line_2, ptr + width - left, left);
         cnt += compare(prev_line_1 + left, next_line_1, width - left - skip, 100);
@@ -444,6 +445,7 @@ void check_rgb(int width, int left ,void **p_t, int skip){
             free(next_line_1);
             p = ptr;
             *p_t = p;
+            label[get_nclu(p)] = USED;
             //printf("\033[31mptr at: %p, p should be: %p\033[0m\n", ptr, p);
             return ;
         }
