@@ -431,7 +431,7 @@ int check_rgb(int width, int left ,void **p_t, int skip, int avg){
         cnt += compare(prev_line_1 + left, next_line_1, width - left - skip, 100);
         cnt += compare(prev_line_2, next_line_2, left, 100);
         
-        if(abs(cnt - avg) <= 2*avg){ 
+        if(abs(cnt - avg) <= 200*avg){ 
             free(prev_line_2);
             free(prev_line_1);
             free(next_line_2);
