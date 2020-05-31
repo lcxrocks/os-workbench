@@ -408,7 +408,7 @@ void check_rgb(int width, int left ,void *p, int skip){
     cnt += compare(prev_line_1 + left, next_line_1, width - left -skip, 100);
     cnt += compare(prev_line_2, next_line_2, left, 100);
     
-    if(cnt <= width/2){
+    if(cnt <= width/4){
         printf("cnt/width: %d/%d\n", cnt, width);
         free(prev_line_2);
         free(prev_line_1);
@@ -427,7 +427,7 @@ void check_rgb(int width, int left ,void *p, int skip){
         cnt += compare(prev_line_1 + left, next_line_1, width - left - skip, 100);
         cnt += compare(prev_line_2, next_line_2, left, 100);
         
-        if(cnt <= width/8){printf("cnt: %d \n", cnt);
+        if(cnt <= width/8){//printf("cnt: %d \n", cnt);
             free(prev_line_2);
             free(prev_line_1);
             free(next_line_2);
