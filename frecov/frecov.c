@@ -391,7 +391,7 @@ bool dir_handler(void *c){
     return true;
 }
 
-void check_rgb(int width, int left ,void **p_t, int skip){
+int check_rgb(int width, int left ,void **p_t, int skip, int avg){
     uint8_t *prev_line_1 = calloc(40960, sizeof(uint8_t));
     uint8_t *prev_line_2 = calloc(40960, sizeof(uint8_t));
     uint8_t *next_line_1 = calloc(40960, sizeof(uint8_t));
@@ -409,7 +409,7 @@ void check_rgb(int width, int left ,void **p_t, int skip){
     cnt += compare(prev_line_1 + left, next_line_1, width - left -skip, 100);
     cnt += compare(prev_line_2, next_line_2, left, 100);
     
-    //if(cnt <= width/3){
+    if(abs(cnt-avg) <= 2*avg){
         // printf("continus! ");
         // printf("cnt/width: %d/%d\n", cnt, width);
         free(prev_line_2);
@@ -418,8 +418,8 @@ void check_rgb(int width, int left ,void **p_t, int skip){
         free(next_line_1);
         *p_t = p;
         label[get_nclu(p)] = USED;
-        return ;
-    //}
+        return cnt;
+    }
     
     p = disk->data;
     for (void *ptr = disk->data; ptr < disk->end; ptr+=BytsClus)
@@ -431,7 +431,7 @@ void check_rgb(int width, int left ,void **p_t, int skip){
         cnt += compare(prev_line_1 + left, next_line_1, width - left - skip, 100);
         cnt += compare(prev_line_2, next_line_2, left, 100);
         
-        if(cnt <= width/8){ 
+        if(abs(cnt - avg) <= 2*avg){ 
             free(prev_line_2);
             free(prev_line_1);
             free(next_line_2);
@@ -440,12 +440,12 @@ void check_rgb(int width, int left ,void **p_t, int skip){
             label[get_nclu(p)] = USED;
             printf("\033[31mnot continus!cnt: %d \nptr at: %p, p should be: %p\033[0m\n", cnt, ptr, p);
             // printf("disk->data:%p\n", disk->data);
-            return ;
+            return cnt;
         }
     }
     *p_t = tmp;
     label[get_nclu(p)] = USED;
-    return ;
+    return cnt;
 }
 
 void write_image(int fd, image_t * ptr){
@@ -457,6 +457,7 @@ void write_image(int fd, image_t * ptr){
     int skip=4-(((w*24)>>3)&3);
     int size = ptr->size;
     int num = size / BytsClus; // total number of clusters
+    int total = num;
     w = w*3 +skip; //width bytes
 
     void *p = ptr->bmp->header;
@@ -466,8 +467,11 @@ void write_image(int fd, image_t * ptr){
     int lseek = BytsClus - offset;
     int x = lseek % (w); //rest line 
     memcpy(label, true_label, 64000*4);
+    int diff = 0;
+
     while(num){
-        check_rgb(w, x, &p, skip);
+        int avg = total - num == 0? 0: diff/(total-num);
+        diff += check_rgb(w, x, &p, skip, avg);
         if(num==1){
             write(fd, p, size);
             return;
