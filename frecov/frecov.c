@@ -156,7 +156,6 @@ typedef struct RGB{
 char filename[256];
 void check_info(int argc);
 void print_info(struct fat_header *hd);
-int get_cluster_number(struct fat_header *hd);
 int classify(void *p);
 bool dir_handler(void *c);
 void short_entry_handler(void *c, void *entry, bool long_name_flag);
@@ -393,10 +392,10 @@ bool dir_handler(void *c){
 }
 
 void check_rgb(int width, int left ,void *p, int skip){
-    uint8_t *prev_line_1 = calloc(20480, sizeof(uint8_t));
-    uint8_t *prev_line_2 = calloc(20480, sizeof(uint8_t));
-    uint8_t *next_line_1 = calloc(20480, sizeof(uint8_t));
-    uint8_t *next_line_2 = calloc(20480, sizeof(uint8_t));
+    uint8_t *prev_line_1 = calloc(40960, sizeof(uint8_t));
+    uint8_t *prev_line_2 = calloc(40960, sizeof(uint8_t));
+    uint8_t *next_line_1 = calloc(40960, sizeof(uint8_t));
+    uint8_t *next_line_2 = calloc(40960, sizeof(uint8_t));
 
     memcpy(prev_line_1, p-width-left, width);
     memcpy(prev_line_2, p-left, left);
@@ -431,7 +430,6 @@ void check_rgb(int width, int left ,void *p, int skip){
             free(prev_line_1);
             free(next_line_2);
             free(next_line_1);
-            printf("find!\n");
             return ;
         }
     }
@@ -507,18 +505,6 @@ unsigned char ChkSum(unsigned char *p){
     }
     return Sum;
 }   
-
-
-int FATSz = 0;
-int TotSec = 0;
-int DataSec = 0;
-int get_cluster_number(struct fat_header *hd){
-    FATSz = hd->BPB_FATSz32;
-    TotSec = hd->BPB_TotSec32;
-    DataSec = TotSec - (hd->BPB_RsvdSecCnt + (hd->BPB_NumFATs * FATSz));
-    int cnt = DataSec / hd->BPB_SecPerClus ;
-    return cnt;
-}
 
 #define CHECK(disk, string) \
     printf("%s:\t\t", #string); \
