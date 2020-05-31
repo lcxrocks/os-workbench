@@ -475,22 +475,22 @@ void write_image(int fd, image_t * ptr){
     int lseek = BytsClus - offset;
     int x = lseek % (w); //rest line 
 
-    // while(num){
-    //     check_rgb(w, x, &p, skip);
-    //     if(num==1){
-    //         write(fd, p, size);
-    //         return;
-    //     }
-    //     else{
-    //         printf("Conlusion: no.%3d cluster at : %5d, p: %p\n", num, get_nclu(p), p);
-    //         write(fd, p, BytsClus);
-    //     }
-    //     lseek += BytsClus;
-    //     x = lseek % w;
-    //     p += BytsClus;
-    //     size -= BytsClus;
-    //     num--; 
-    // }
+    while(num){
+        check_rgb(w, x, &p, skip);
+        if(num==1){
+            write(fd, p, size);
+            return;
+        }
+        else{
+            printf("Conlusion: no.%3d cluster at : %5d, p: %p\n", num, get_nclu(p), p);
+            write(fd, p, BytsClus);
+        }
+        lseek += BytsClus;
+        x = lseek % w;
+        p += BytsClus;
+        size -= BytsClus;
+        num--; 
+    }
     memcpy(label, true_label, 64000*4);
 
     //printf("\033[32m >>File: \033[0m \033[33m%s \033[0m\033[32mhas %d clusters to write.\033[0m\n", ptr->name, num);
