@@ -272,8 +272,9 @@ int main(int argc, char *argv[]) {
     int eq_cnt = 0;int num =0;
     while(p->next){
         num++;
-        if(num < 95) continue;
         p = p->next;
+        if(num < 95) continue;
+        
         char path_name[128] = "../../tmp/";
         strcat(path_name, p->name);
         int fd = open(path_name, O_CREAT | O_WRONLY, S_IRWXU);
