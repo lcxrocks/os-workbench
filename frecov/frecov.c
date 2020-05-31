@@ -271,7 +271,7 @@ int main(int argc, char *argv[]) {
     while(p->next){
         num++;
         p = p->next;
-        if(num != 4) continue;
+        //if(num != 4) continue;
         
         char path_name[128] = "../../tmp/";
         strcat(path_name, p->name);
@@ -481,7 +481,7 @@ void write_image(int fd, image_t * ptr){
             return;
         }
         else{
-            printf("Conlusion: no.%3d cluster at : %5d, p: %p\n", num, get_nclu(p), p);
+            //printf("Conlusion: no.%3d cluster at : %5d, p: %p\n", num, get_nclu(p), p);
             write(fd, p, BytsClus);
         }
         lseek += BytsClus;
