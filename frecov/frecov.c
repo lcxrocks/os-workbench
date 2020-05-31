@@ -419,6 +419,9 @@ void check_rgb(int width, int left ,void *p, int skip){
         free(next_line_1);
         return ;
     }
+    else{
+        printf("cnt: %d at cluster: %d\n", cnt, get_nclu(p));
+    }
     
     p = disk->data;
     for (; p < disk->end; p+=BytsClus)
