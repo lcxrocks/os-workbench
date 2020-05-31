@@ -424,9 +424,9 @@ void check_rgb(int width, int left ,void **p_t, int skip){
         label[get_nclu(p)] = USED;
         return ;
     }
-    // else{
-    //     printf("cnt: %d at cluster: %d with p :%p\n", cnt, get_nclu(p), p);
-    // }
+    else{
+        printf("cnt: %d at cluster: %d with p :%p\n", cnt, get_nclu(p), p);
+    }
     
     p = disk->data;
     for (void *ptr = disk->data; ptr < disk->end; ptr+=BytsClus)
