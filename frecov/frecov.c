@@ -454,6 +454,7 @@ void check_rgb(int width, int left ,void **p_t, int skip){
         }
     }
     *p_t = p;
+    label[get_nclu(p)] = USED;
     return ;
 }
 
