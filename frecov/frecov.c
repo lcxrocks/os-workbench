@@ -391,12 +391,12 @@ bool dir_handler(void *c){
     return true;
 }
 
-int check_rgb(int width, int left ,void **p_t, int skip, int bound){
+void check_rgb(int width, int left ,void **p_t, int skip){
     uint8_t *prev_line_1 = calloc(40960, sizeof(uint8_t));
     uint8_t *prev_line_2 = calloc(40960, sizeof(uint8_t));
     uint8_t *next_line_1 = calloc(40960, sizeof(uint8_t));
     uint8_t *next_line_2 = calloc(40960, sizeof(uint8_t));
-
+    
     void *p = *p_t;
     memcpy(prev_line_1, p-width-left, width);
     memcpy(prev_line_2, p-left, left);
@@ -409,7 +409,7 @@ int check_rgb(int width, int left ,void **p_t, int skip, int bound){
     cnt += compare(prev_line_1 + left, next_line_1, width - left -skip, 100);
     cnt += compare(prev_line_2, next_line_2, left, 100);
     
-    if(cnt <= 10*bound){
+    if(cnt <= width/5){
        printf("continus! ");
         printf("cnt/width: %d/%d\n", cnt, width);
         free(prev_line_2);
@@ -418,7 +418,7 @@ int check_rgb(int width, int left ,void **p_t, int skip, int bound){
         free(next_line_1);
         *p_t = p;
         label[get_nclu(p)] = USED;
-        return cnt;
+        return ;
     }
     else{
         printf("cnt: %d at cluster: %d with p :%p\n", cnt, get_nclu(p), p);
@@ -434,7 +434,7 @@ int check_rgb(int width, int left ,void **p_t, int skip, int bound){
         cnt += compare(prev_line_1 + left, next_line_1, width - left - skip, 100);
         cnt += compare(prev_line_2, next_line_2, left, 100);
         
-        if(cnt <= 2*bound){ 
+        if(cnt <= width/8){ 
              printf("not continus! ");
              printf("cnt: %d \n", cnt);
             free(prev_line_2);
@@ -445,12 +445,12 @@ int check_rgb(int width, int left ,void **p_t, int skip, int bound){
             label[get_nclu(p)] = USED;
             printf("\033[31mptr at: %p, p should be: %p\033[0m\n", ptr, p);
             printf("disk->data:%p\n", disk->data);
-            return cnt;
+            return ;
         }
     }
     *p_t = p;
     label[get_nclu(p)] = USED;
-    return cnt;
+    return ;
 }
 
 void write_image(int fd, image_t * ptr){
@@ -462,7 +462,6 @@ void write_image(int fd, image_t * ptr){
     int skip=4-(((w*24)>>3)&3);
     int size = ptr->size;
     int num = size / BytsClus; // total number of clusters
-    int total = num;
     w = w*3 +skip; //width bytes
 
     void *p = ptr->bmp->header;
@@ -471,10 +470,9 @@ void write_image(int fd, image_t * ptr){
     p += BytsClus; num--; size-=BytsClus;// first byte
     int lseek = BytsClus - offset;
     int x = lseek % (w); //rest line 
-    int bound = 0;
 
     while(num){
-        bound += check_rgb(w, x, &p, skip, bound/(total-num));
+        check_rgb(w, x, &p, skip);
         if(num==1){
             write(fd, p, size);
             return;
