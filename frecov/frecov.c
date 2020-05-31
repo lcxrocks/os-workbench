@@ -273,7 +273,7 @@ int main(int argc, char *argv[]) {
         p = p->next;
         //if(num != 4) continue;
         
-        char path_name[128] = "../../tmp/";
+        char path_name[128] = "/tmp/";
         strcat(path_name, p->name);
         int fd = open(path_name, O_CREAT | O_WRONLY, S_IRWXU);
         // if((num%2)==1){
@@ -289,15 +289,15 @@ int main(int argc, char *argv[]) {
         memset(buf, 0, sizeof(buf));
         fscanf(fp, "%s", buf); // Get it!
         /***check***/
-            char mnt_path[128] = "/mnt/DCIM/";
-            strcat(mnt_path, p->name);
-            char sha[256] = "sha1sum ";
-            strcat(sha, mnt_path); 
-            FILE *fp1 = popen(sha, "r");
-            char tmp[256];
-            memset(tmp, 0, sizeof(tmp));
-            fscanf(fp1, "%s", tmp);
-            if(!strcmp(buf, tmp)) eq_cnt++;
+            // char mnt_path[128] = "/mnt/DCIM/";
+            // strcat(mnt_path, p->name);
+            // char sha[256] = "sha1sum ";
+            // strcat(sha, mnt_path); 
+            // FILE *fp1 = popen(sha, "r");
+            // char tmp[256];
+            // memset(tmp, 0, sizeof(tmp));
+            // fscanf(fp1, "%s", tmp);
+            // if(!strcmp(buf, tmp)) eq_cnt++;
         /***check****/
         pclose(fp);
         printf("%s %s\n", buf, p->name);
