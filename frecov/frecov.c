@@ -320,7 +320,7 @@ int main(int argc, char *argv[]) {
 }
 
 int get_nclu(void * p){
-    return (int)((p - disk->data -2)/BytsClus);
+    return (int)(((p - disk->data)/BytsClus)+2);
 }
 
 
