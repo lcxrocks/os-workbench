@@ -267,13 +267,15 @@ int main(int argc, char *argv[]) {
         }
     }
     
+    memcpy(true_label, label, 64000*sizeof(int));
+    
     //3. RECOVER IMAGES
     image_t *p = &list_head;
     int eq_cnt = 0;int num =0;
     while(p->next){
         num++;
         p = p->next;
-        //if(num < 96) continue;
+        if(num < 96) continue;
         
         char path_name[128] = "../../tmp/";
         strcat(path_name, p->name);
@@ -471,8 +473,7 @@ void write_image(int fd, image_t * ptr){
     p += BytsClus; num--; size-=BytsClus;// first byte
     int lseek = BytsClus - offset;
     int x = lseek % (w); //rest line 
-    
-    memcpy(true_label, label, 64000*4);
+
     while(num){
         check_rgb(w, x, &p, skip);
         if(num==1){
