@@ -271,6 +271,7 @@ int main(int argc, char *argv[]) {
     image_t *p = &list_head;
     int eq_cnt = 0;int num =0;
     while(p->next){
+        if(num < 95) continue;
         p = p->next;
         char path_name[128] = "../../tmp/";
         strcat(path_name, p->name);
