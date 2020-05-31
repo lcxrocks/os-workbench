@@ -276,11 +276,11 @@ int main(int argc, char *argv[]) {
         char path_name[128] = "/tmp/";
         strcat(path_name, p->name);
         int fd = open(path_name, O_CREAT | O_WRONLY, S_IRWXU);
-       // if((num%2)==1){
-           write(fd, p->bmp->header, p->size); // 连续的size大小
+        // if((num%2)==1){
+        //    write(fd, p->bmp->header, p->size); // 连续的size大小
         // }
         // else
-        //     write_image(fd, p);
+          //  write_image(fd, p);
         char sha1sum[256] = "sha1sum ";
         strcat(sha1sum, path_name);
         FILE *fp = popen(sha1sum, "r");
@@ -289,18 +289,19 @@ int main(int argc, char *argv[]) {
         memset(buf, 0, sizeof(buf));
         fscanf(fp, "%s", buf); // Get it!
         /***check***/
-            char mnt_path[128] = "/mnt/DCIM/";
-            strcat(mnt_path, p->name);
-            char sha[256] = "sha1sum ";
-            strcat(sha, mnt_path); 
-            FILE *fp1 = popen(sha, "r");
-            char tmp[256];
-            memset(tmp, 0, sizeof(tmp));
-            fscanf(fp1, "%s", tmp);
-            if(!strcmp(buf, tmp)) eq_cnt++;
+            // char mnt_path[128] = "/mnt/DCIM/";
+            // strcat(mnt_path, p->name);
+            // char sha[256] = "sha1sum ";
+            // strcat(sha, mnt_path); 
+            // FILE *fp1 = popen(sha, "r");
+            // char tmp[256];
+            // memset(tmp, 0, sizeof(tmp));
+            // fscanf(fp1, "%s", tmp);
+            // if(!strcmp(buf, tmp)) eq_cnt++;
         /***check****/
         pclose(fp);
         printf("%s %s\n", buf, p->name);
+        //printf("%s\n",p->name);
         fflush(stdout);
     }
     printf("================================================================\n");
@@ -440,10 +441,7 @@ void check_rgb(int width, int left ,void **p_t, int skip){
         // if(cnt <= best_fit){ 
         //     //  printf("not continus! ");
         //     //  printf("cnt: %d \n", cnt);
-        //     free(prev_line_2);
-        //     free(prev_line_1);
-        //     free(next_line_2);
-        //     free(next_line_1);
+        
         //     p = ptr; *p_t = p;
         //     label[get_nclu(p)] = USED;
         //     printf("\033[31mptr at: %p, p should be: %p\033[0m\n", ptr, p);
@@ -451,6 +449,10 @@ void check_rgb(int width, int left ,void **p_t, int skip){
         //     return ;
         // }
     }
+            free(prev_line_2);
+            free(prev_line_1);
+            free(next_line_2);
+            free(next_line_1);
     //if(p+BytsClus < disk->end) printf("hh\n");
     *p_t = p+BytsClus > disk->end? tmp:p;
     label[get_nclu(p)] = USED;
