@@ -462,6 +462,7 @@ void write_image(int fd, image_t * ptr){
             return;
         }
         else{
+            printf("no.%d cluster at : %d\n", num, get_nclu(p));
             write(fd, p, BytsClus);
         }
         lseek += BytsClus;
