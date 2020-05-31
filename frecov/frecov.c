@@ -430,7 +430,7 @@ void check_rgb(int width, int left ,void **p_t, int skip){
     for (void *ptr = disk->data; ptr < disk->end; ptr+=BytsClus)
     {
         cnt = 0;
-        if(label[get_nclu(ptr)]!=BMP_DATA || label[get_nclu(ptr)== USED]) continue;
+        if(label[get_nclu(ptr)]!=BMP_DATA) continue;
         memcpy(next_line_1, ptr, width-left);
         memcpy(next_line_2, ptr + width - left, left);
         cnt += compare(prev_line_1 + left, next_line_1, width - left - skip, 100);
