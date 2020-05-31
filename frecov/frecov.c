@@ -393,12 +393,13 @@ bool dir_handler(void *c){
     return true;
 }
 
-void check_rgb(int width, int left ,void *p, int skip){
+void check_rgb(int width, int left ,void **p_t, int skip){
     uint8_t *prev_line_1 = calloc(40960, sizeof(uint8_t));
     uint8_t *prev_line_2 = calloc(40960, sizeof(uint8_t));
     uint8_t *next_line_1 = calloc(40960, sizeof(uint8_t));
     uint8_t *next_line_2 = calloc(40960, sizeof(uint8_t));
 
+    void *p = *p_t;
     memcpy(prev_line_1, p-width-left, width);
     memcpy(prev_line_2, p-left, left);
 
@@ -417,6 +418,7 @@ void check_rgb(int width, int left ,void *p, int skip){
         free(prev_line_1);
         free(next_line_2);
         free(next_line_1);
+        *p_t = p;
         return ;
     }
     else{
@@ -441,11 +443,12 @@ void check_rgb(int width, int left ,void *p, int skip){
             free(next_line_2);
             free(next_line_1);
             p = ptr;
+            *p_t = p;
             printf("\033[31mptr at: %p, p should be: %p\033[0m\n", ptr, p);
             return ;
         }
     }
-    p = tmp;
+    *p_t = p;
     return ;
 }
 
