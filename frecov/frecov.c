@@ -430,7 +430,6 @@ void check_rgb(int width, int left ,void *p, int skip){
         if(label[get_nclu(ptr)]!=BMP_DATA) continue;
         memcpy(next_line_1, ptr, width-left);
         memcpy(next_line_2, ptr + width - left, left);
-        // if(get_nclu(ptr) == 16348) 
         cnt += compare(prev_line_1 + left, next_line_1, width - left - skip, 100);
         cnt += compare(prev_line_2, next_line_2, left, 100);
         
@@ -442,7 +441,7 @@ void check_rgb(int width, int left ,void *p, int skip){
             free(next_line_2);
             free(next_line_1);
             p = ptr;
-            printf("\033[31mptr at: %p\033[0m\n", ptr);
+            printf("\033[31mptr at: %p, p should be: %p\033[0m\n", ptr, p);
             return ;
         }
     }
@@ -475,7 +474,7 @@ void write_image(int fd, image_t * ptr){
             return;
         }
         else{
-            printf("no.%3d cluster at : %5d\n", num, get_nclu(p));
+            printf("Conlusion: no.%3d cluster at : %5d, p: %p\n", num, get_nclu(p), p);
             write(fd, p, BytsClus);
         }
         lseek += BytsClus;
