@@ -271,15 +271,15 @@ int main(int argc, char *argv[]) {
     while(p->next){
         num++;
         p = p->next;
-        if(num != 95) continue;
+        //if(num != 95) continue;
         
         char path_name[128] = "../../tmp/";
         strcat(path_name, p->name);
         int fd = open(path_name, O_CREAT | O_WRONLY, S_IRWXU);
-        // if((num%2)==0){
-        //    write(fd, p->bmp->header, p->size); // 连续的size大小
-        // }
-        // else
+        if((num%2)==0){
+           write(fd, p->bmp->header, p->size); // 连续的size大小
+        }
+        else
             write_image(fd, p);
         char sha1sum[256] = "sha1sum ";
         strcat(sha1sum, path_name);
