@@ -149,10 +149,6 @@ typedef struct FAT{
     void *end;
 }fat; 
 
-typedef struct RGB{
-    u1 RGB[3]; //BGR actually (24bit)
-}__attribute__((packed)) rgb_t;
-
 char filename[256];
 void check_info(int argc);
 void print_info(struct fat_header *hd);
@@ -320,7 +316,7 @@ int main(int argc, char *argv[]) {
 }
 
 int get_nclu(void * p){
-    return (int)(((p - disk->data)/BytsClus)+2);
+    return (int)(((p - disk->data)/BytsClus));
 }
 
 
