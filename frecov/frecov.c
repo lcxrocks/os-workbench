@@ -475,7 +475,7 @@ void write_image(int fd, image_t * ptr){
             return;
         }
         else{
-            //printf("Conlusion: no.%3d cluster at : %5d, p: %p\n", num, get_nclu(p), p);
+            printf("Conlusion: no.%3d cluster at : %5d, p: %p\n", num, get_nclu(p), p);
             write(fd, p, BytsClus);
         }
         lseek += BytsClus;
