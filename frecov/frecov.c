@@ -171,7 +171,7 @@ int RsvdBytes;
 int longname_cnt;
 fat *disk;
 int label[64000];
-
+int true_label[64000];
 int main(int argc, char *argv[]) {
     /* Check_basic info */
     check_info(argc);
@@ -393,7 +393,7 @@ bool dir_handler(void *c){
     return true;
 }
 
-void check_rgb(int width, int left ,void **p_t, int skip, int (*label_cp)[64000]){
+void check_rgb(int width, int left ,void **p_t, int skip){
     uint8_t *prev_line_1 = calloc(40960, sizeof(uint8_t));
     uint8_t *prev_line_2 = calloc(40960, sizeof(uint8_t));
     uint8_t *next_line_1 = calloc(40960, sizeof(uint8_t));
@@ -419,7 +419,7 @@ void check_rgb(int width, int left ,void **p_t, int skip, int (*label_cp)[64000]
         free(next_line_2);
         free(next_line_1);
         *p_t = p;
-        *label_cp[get_nclu(p)] = USED;
+        label[get_nclu(p)] = USED;
         return ;
     }
     // else{
@@ -430,7 +430,7 @@ void check_rgb(int width, int left ,void **p_t, int skip, int (*label_cp)[64000]
     for (void *ptr = disk->data; ptr < disk->end; ptr+=BytsClus)
     {
         cnt = 0;
-        if(*label_cp[get_nclu(ptr)]!=BMP_DATA) continue;
+        if(label[get_nclu(ptr)]!=BMP_DATA) continue;
         memcpy(next_line_1, ptr, width-left);
         memcpy(next_line_2, ptr + width - left, left);
         cnt += compare(prev_line_1 + left, next_line_1, width - left - skip, 100);
@@ -445,7 +445,7 @@ void check_rgb(int width, int left ,void **p_t, int skip, int (*label_cp)[64000]
             free(next_line_1);
             p = ptr;
             *p_t = p;
-            *label_cp[get_nclu(p)] = USED;
+            label[get_nclu(p)] = USED;
             //printf("\033[31mptr at: %p, p should be: %p\033[0m\n", ptr, p);
             return ;
         }
@@ -472,10 +472,9 @@ void write_image(int fd, image_t * ptr){
     int lseek = BytsClus - offset;
     int x = lseek % (w); //rest line 
     
-    int label_copy[64000];
-    memcpy(label_copy, label, 64000);
+    memcpy(true_label, label, 64000);
     while(num){
-        check_rgb(w, x, &p, skip, &label_copy);
+        check_rgb(w, x, &p, skip);
         if(num==1){
             write(fd, p, size);
             return;
@@ -490,6 +489,7 @@ void write_image(int fd, image_t * ptr){
         size -= BytsClus;
         num--; 
     }
+    memcpy(label, true_label, 64000);
 
     //printf("\033[32m >>File: \033[0m \033[33m%s \033[0m\033[32mhas %d clusters to write.\033[0m\n", ptr->name, num);
 
