@@ -271,7 +271,7 @@ int main(int argc, char *argv[]) {
     while(p->next){
         num++;
         p = p->next;
-        if(num != 3) continue;
+        if(num != 4) continue;
         
         char path_name[128] = "../../tmp/";
         strcat(path_name, p->name);
