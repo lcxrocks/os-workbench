@@ -407,8 +407,9 @@ void check_rgb(int width, int left ,void *p, int skip){
     int cnt = 0;
     cnt += compare(prev_line_1 + left, next_line_1, width - left -skip, 100);
     cnt += compare(prev_line_2, next_line_2, left, 100);
-
+    
     if(cnt <= width/2){
+        printf("cnt/width: %d/%d\n", cnt, width);
         free(prev_line_2);
         free(prev_line_1);
         free(next_line_2);
@@ -462,7 +463,7 @@ void write_image(int fd, image_t * ptr){
             return;
         }
         else{
-            printf("no.%d cluster at : %d\n", num, get_nclu(p));
+            printf("no.%3d cluster at : %d\n", num, get_nclu(p));
             write(fd, p, BytsClus);
         }
         lseek += BytsClus;
