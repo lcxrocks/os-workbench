@@ -409,8 +409,8 @@ void check_rgb(int width, int left ,void **p_t, int skip){
     cnt += compare(prev_line_1 + left, next_line_1, width - left -skip, 100);
     cnt += compare(prev_line_2, next_line_2, left, 100);
     
-    if(cnt <= width/6){
-       printf("continus! ");
+    if(cnt <= width/2){
+        printf("continus! ");
         printf("cnt/width: %d/%d\n", cnt, width);
         free(prev_line_2);
         free(prev_line_1);
@@ -470,7 +470,7 @@ void write_image(int fd, image_t * ptr){
     p += BytsClus; num--; size-=BytsClus;// first byte
     int lseek = BytsClus - offset;
     int x = lseek % (w); //rest line 
-
+    memcpy(label, true_label, 64000*4);
     while(num){
         check_rgb(w, x, &p, skip);
         if(num==1){
@@ -487,7 +487,7 @@ void write_image(int fd, image_t * ptr){
         size -= BytsClus;
         num--; 
     }
-    memcpy(label, true_label, 64000*4);
+    
 
     //printf("\033[32m >>File: \033[0m \033[33m%s \033[0m\033[32mhas %d clusters to write.\033[0m\n", ptr->name, num);
 
