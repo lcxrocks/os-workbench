@@ -409,7 +409,7 @@ void check_rgb(int width, int left ,void **p_t, int skip){
     cnt += compare(prev_line_1 + left, next_line_1, width - left -skip, 100);
     cnt += compare(prev_line_2, next_line_2, left, 100);
     
-    if(cnt <= width/2){
+    if(cnt <= width/3){
         printf("continus! ");
         printf("cnt/width: %d/%d\n", cnt, width);
         free(prev_line_2);
@@ -435,16 +435,16 @@ void check_rgb(int width, int left ,void **p_t, int skip){
         cnt += compare(prev_line_2, next_line_2, left, 100);
         
         if(cnt <= width/8){ 
-             printf("not continus! ");
-             printf("cnt: %d \n", cnt);
+            //  printf("not continus! ");
+            //  printf("cnt: %d \n", cnt);
             free(prev_line_2);
             free(prev_line_1);
             free(next_line_2);
             free(next_line_1);
             p = ptr; *p_t = p;
             label[get_nclu(p)] = USED;
-            printf("\033[31mptr at: %p, p should be: %p\033[0m\n", ptr, p);
-            printf("disk->data:%p\n", disk->data);
+            // printf("\033[31mptr at: %p, p should be: %p\033[0m\n", ptr, p);
+            // printf("disk->data:%p\n", disk->data);
             return ;
         }
     }
