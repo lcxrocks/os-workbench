@@ -443,6 +443,9 @@ void check_rgb(int width, int left ,void **p_t, int skip){
             free(next_line_1);
             p = ptr;
             *p_t = p;
+            if(p == disk->data){
+                printf("p==disk->data!!, nr_clu:%d\n", get_nclu(p));
+            }
             label[get_nclu(p)] = USED;
             printf("\033[31mptr at: %p, p should be: %p\033[0m\n", ptr, p);
             printf("disk->data:%p\n", disk->data);
@@ -456,7 +459,6 @@ void check_rgb(int width, int left ,void **p_t, int skip){
 
 void write_image(int fd, image_t * ptr){
     int w = ptr->bmp->info->biWidth;
-    printf("%d\n", get_nclu(disk->data));
     int h = ptr->bmp->info->biHeight; // default: 24bit bmp file
     int offset = ptr->bmp->header->bfOffBits;
     int bytesPerLine=((w*24+31)>>5)<<2;
