@@ -471,7 +471,7 @@ void write_image(int fd, image_t * ptr){
     int x = lseek % (w); //rest line 
     
     while(num){
-        check_rgb(w, x, p, skip);
+        check_rgb(w, x, &p, skip);
         if(num==1){
             write(fd, p, size);
             return;
