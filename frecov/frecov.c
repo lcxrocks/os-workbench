@@ -424,8 +424,9 @@ void check_rgb(int width, int left ,void *p, int skip){
         if(label[get_nclu(p)]!=BMP_DATA) continue;
         memcpy(next_line_1, p, width-left);
         memcpy(next_line_2, p + width - left, left);
-        cnt += compare(prev_line_1 + left, next_line_1, width - left, 100);
+        cnt += compare(prev_line_1 + left, next_line_1, width - left - skip, 100);
         cnt += compare(prev_line_2, next_line_2, left, 100);
+        printf("cnt: %d\n", cnt);
         if(cnt <= width/8){
             free(prev_line_2);
             free(prev_line_1);
