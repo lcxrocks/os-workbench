@@ -273,7 +273,7 @@ int main(int argc, char *argv[]) {
     while(p->next){
         num++;
         p = p->next;
-        if(num < 96) continue;
+        //if(num < 96) continue;
         
         char path_name[128] = "../../tmp/";
         strcat(path_name, p->name);
@@ -412,8 +412,8 @@ void check_rgb(int width, int left ,void **p_t, int skip){
     cnt += compare(prev_line_2, next_line_2, left, 100);
     
     if(cnt <= width/4){
-        printf("continus! ");
-        printf("cnt/width: %d/%d\n", cnt, width);
+       // printf("continus! ");
+        //printf("cnt/width: %d/%d\n", cnt, width);
         free(prev_line_2);
         free(prev_line_1);
         free(next_line_2);
@@ -421,9 +421,9 @@ void check_rgb(int width, int left ,void **p_t, int skip){
         *p_t = p;
         return ;
     }
-    else{
-        printf("cnt: %d at cluster: %d with p :%p\n", cnt, get_nclu(p), p);
-    }
+    // else{
+    //     printf("cnt: %d at cluster: %d with p :%p\n", cnt, get_nclu(p), p);
+    // }
     
     p = disk->data;
     for (void *ptr = disk->data; ptr < disk->end; ptr+=BytsClus)
@@ -436,15 +436,15 @@ void check_rgb(int width, int left ,void **p_t, int skip){
         cnt += compare(prev_line_2, next_line_2, left, 100);
         
         if(cnt <= width/8){ 
-            printf("not continus! ");
-            printf("cnt: %d \n", cnt);
+            // printf("not continus! ");
+            // printf("cnt: %d \n", cnt);
             free(prev_line_2);
             free(prev_line_1);
             free(next_line_2);
             free(next_line_1);
             p = ptr;
             *p_t = p;
-            printf("\033[31mptr at: %p, p should be: %p\033[0m\n", ptr, p);
+            //printf("\033[31mptr at: %p, p should be: %p\033[0m\n", ptr, p);
             return ;
         }
     }
@@ -477,7 +477,7 @@ void write_image(int fd, image_t * ptr){
             return;
         }
         else{
-            printf("Conlusion: no.%3d cluster at : %5d, p: %p\n", num, get_nclu(p), p);
+            //printf("Conlusion: no.%3d cluster at : %5d, p: %p\n", num, get_nclu(p), p);
             write(fd, p, BytsClus);
         }
         lseek += BytsClus;
