@@ -276,7 +276,7 @@ int main(int argc, char *argv[]) {
         char path_name[128] = "../../tmp/";
         strcat(path_name, p->name);
         int fd = open(path_name, O_CREAT | O_WRONLY, S_IRWXU);
-        if((num%2)==0){
+        if((num%4)==0){
            write(fd, p->bmp->header, p->size); // 连续的size大小
         }
         else
