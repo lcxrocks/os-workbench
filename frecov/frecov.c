@@ -430,7 +430,7 @@ void check_rgb(int width, int left ,void *p, int skip){
         if(label[get_nclu(ptr)]!=BMP_DATA) continue;
         memcpy(next_line_1, ptr, width-left);
         memcpy(next_line_2, ptr + width - left, left);
-        if(get_nclu(ptr) == 16348) printf("ptr at: %p\n", ptr);
+        if(get_nclu(ptr) == 16348) printf("\033[31mptr at: %p\033[0m\n", ptr);
         cnt += compare(prev_line_1 + left, next_line_1, width - left - skip, 100);
         cnt += compare(prev_line_2, next_line_2, left, 100);
         
