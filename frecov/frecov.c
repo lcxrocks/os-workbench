@@ -273,15 +273,15 @@ int main(int argc, char *argv[]) {
     while(p->next){
         num++;
         p = p->next;
-        //if(num < 96) continue;
+        if(num < 96) continue;
         
         char path_name[128] = "../../tmp/";
         strcat(path_name, p->name);
         int fd = open(path_name, O_CREAT | O_WRONLY, S_IRWXU);
-        if((num%2)==0){
-           write(fd, p->bmp->header, p->size); // 连续的size大小
-        }
-        else
+        // if((num%2)==0){
+        //    write(fd, p->bmp->header, p->size); // 连续的size大小
+        // }
+        // else
             write_image(fd, p);
         char sha1sum[256] = "sha1sum ";
         strcat(sha1sum, path_name);
@@ -477,7 +477,7 @@ void write_image(int fd, image_t * ptr){
             return;
         }
         else{
-            //printf("Conlusion: no.%3d cluster at : %5d, p: %p\n", num, get_nclu(p), p);
+            printf("Conlusion: no.%3d cluster at : %5d, p: %p\n", num, get_nclu(p), p);
             write(fd, p, BytsClus);
         }
         lseek += BytsClus;
