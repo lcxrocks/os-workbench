@@ -280,7 +280,7 @@ int main(int argc, char *argv[]) {
         //    write(fd, p->bmp->header, p->size); // 连续的size大小
         // }
         // else
-          //  write_image(fd, p);
+            write_image(fd, p);
         char sha1sum[256] = "sha1sum ";
         strcat(sha1sum, path_name);
         FILE *fp = popen(sha1sum, "r");
@@ -289,15 +289,15 @@ int main(int argc, char *argv[]) {
         memset(buf, 0, sizeof(buf));
         fscanf(fp, "%s", buf); // Get it!
         /***check***/
-            // char mnt_path[128] = "/mnt/DCIM/";
-            // strcat(mnt_path, p->name);
-            // char sha[256] = "sha1sum ";
-            // strcat(sha, mnt_path); 
-            // FILE *fp1 = popen(sha, "r");
-            // char tmp[256];
-            // memset(tmp, 0, sizeof(tmp));
-            // fscanf(fp1, "%s", tmp);
-            // if(!strcmp(buf, tmp)) eq_cnt++;
+            char mnt_path[128] = "/mnt/DCIM/";
+            strcat(mnt_path, p->name);
+            char sha[256] = "sha1sum ";
+            strcat(sha, mnt_path); 
+            FILE *fp1 = popen(sha, "r");
+            char tmp[256];
+            memset(tmp, 0, sizeof(tmp));
+            fscanf(fp1, "%s", tmp);
+            if(!strcmp(buf, tmp)) eq_cnt++;
         /***check****/
         pclose(fp);
         printf("%s %s\n", buf, p->name);
