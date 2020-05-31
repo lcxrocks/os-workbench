@@ -271,7 +271,7 @@ int main(int argc, char *argv[]) {
     while(p->next){
         num++;
         p = p->next;
-        if(num != 1) continue;
+        if(num != 3) continue;
         
         char path_name[128] = "../../tmp/";
         strcat(path_name, p->name);
@@ -450,7 +450,7 @@ void check_rgb(int width, int left ,void **p_t, int skip){
         //     return ;
         // }
     }
-    if(p+BytsClus < disk->end) printf("hh\n");
+    //if(p+BytsClus < disk->end) printf("hh\n");
     *p_t = p+BytsClus > disk->end? tmp:p;
     label[get_nclu(p)] = USED;
     return ;
