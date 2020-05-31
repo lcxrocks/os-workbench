@@ -271,6 +271,7 @@ int main(int argc, char *argv[]) {
     image_t *p = &list_head;
     int eq_cnt = 0;int num =0;
     while(p->next){
+        num++;
         if(num < 95) continue;
         p = p->next;
         char path_name[128] = "../../tmp/";
@@ -281,7 +282,6 @@ int main(int argc, char *argv[]) {
         // }
         // else
             write_image(fd, p);
-        num++;
         char sha1sum[256] = "sha1sum ";
         strcat(sha1sum, path_name);
         FILE *fp = popen(sha1sum, "r");
