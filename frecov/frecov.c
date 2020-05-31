@@ -425,6 +425,7 @@ void check_rgb(int width, int left ,void **p_t, int skip){
     int best_fit = width; //max
     for (void *ptr = disk->data; ptr < disk->end; ptr+=BytsClus)
     {
+        printf("hah\n");
         cnt = 0;
         if(label[get_nclu(ptr)]!=BMP_DATA) continue;
         memcpy(next_line_1, ptr, width-left);
