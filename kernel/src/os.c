@@ -40,7 +40,7 @@ static void os_run() {
   // }
   // could have printf bug
   printf("Hello World from CPU #%d\n",_cpu());
-  _intr_write(1); //开中断（write(0)为关中断）
+  //_intr_write(1); //开中断（write(0)为关中断）
   while (1) ; //keep waiting 
 }
 
