@@ -18,9 +18,9 @@ static void os_run() {
   // for (const char *s = "Hello World from CPU #*\n"; *s; s++) {
   //   _putc(*s == '*' ? '0' + _cpu() : *s);
   // }
-  // could have printf bug
+  // have printf() bug. plz use native  
   printf("Hello World from CPU #%d\n",_cpu());
-  //_intr_write(1); //开中断（write(0)为关中断）
+  _intr_write(1); //开中断（write(0)为关中断）
   while (1) ; //keep waiting 
 }
 
