@@ -1,8 +1,6 @@
 #include <common.h>
 #include <unistd.h>
 #include "pmm.h"
-#include "spinlock.h"
-
 #define INFO_SIZE 128
 #define HDR_SIZE 1024
 #define PAGE_SIZE 8192
@@ -11,11 +9,15 @@
 uintptr_t heap_ptr;
 uintptr_t heap_end;
 
-spinlock_t BIGLOCK;
+typedef struct __lock_t {
+  intptr_t flag;
+}pmm_spinlock_t;
+
+pmm_spinlock_t BIGLOCK;
 
 typedef union page {
   struct {
-    spinlock_t lock; // 锁，用于串行化分配和并发的 free
+    pmm_spinlock_t lock; // 锁，用于串行化分配和并发的 free
     int type; // 分配slab种类
     int max_cnt;
     int obj_cnt;     // 页面中已分配的对象数，减少到 0 时回收页面(暂时不管)
@@ -53,6 +55,19 @@ size_t ALIGN(size_t v){
   v |= v >> 16;
   v++;
   return v;
+}
+
+void init(pmm_spinlock_t *mutex){
+  mutex->flag = 0;
+}
+
+void inline lock(pmm_spinlock_t *mutex){
+  while(_atomic_xchg(&(mutex->flag), 1) == 1)
+    ;
+}
+
+void inline unlock(pmm_spinlock_t *mutex){
+  _atomic_xchg(&(mutex->flag), 0);
 }
 
 void inline *sbrk(intptr_t increment){
@@ -104,7 +119,7 @@ static void *kalloc(size_t size) {
     case 4096: hp->_4096= page_head; break;
     }
     p = page_head;
-    spin_init(&page_head->lock, "page_head");
+    init(&page_head->lock);
     memset(page_head->data,0,sizeof(page_head->data));
     memset(page_head->bitmap,0,sizeof(page_head->bitmap));
     //printf("created head for %d slab @ %p\n ",flag, p);
@@ -171,7 +186,7 @@ static void kfree(void *ptr) {
 static void pmm_init() {
   heap_ptr = (uintptr_t) _heap.start;
   heap_end = (uintptr_t) _heap.end;
-  spin_init(&BIGLOCK, "BIGLOCK");
+  init(&BIGLOCK);
   // for (int i = 0; i < _ncpu(); i++)
   //   memset(CPU(i),0,sizeof(CPU(i)));
 }

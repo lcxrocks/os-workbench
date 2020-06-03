@@ -1,5 +1,6 @@
 #ifndef COMMON_H
 #define COMMON_H
+#define DEBUG
 #include <kernel.h>
 #include <klib.h>
 #include <klib-macros.h>

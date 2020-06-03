@@ -4,11 +4,14 @@
 // #define ALIGNMENT 8
 // #define ALIGN(a) ROUNDUP(a,ALIGNMENT)
 static void test();
+
 static void os_init() {
   pmm->init();
   kmt->init();
   //dev-init();
+#ifdef DEBUG
   test();// here;
+#endif
 }
 
 static void test(){
@@ -42,6 +45,17 @@ static void os_run() {
 }
 
 _Context *os_trap(_Event ev, _Context *context){
+  // _Context *next = NULL;
+  // for (auto &h: handlers_sorted_by_seq) { // retrival of handlers 
+  //   if (h.event == _EVENT_NULL || h.event == ev.event) {
+  //     _Context *r = h.handler(ev, ctx);
+  //     panic_on(r && next, "returning multiple contexts");
+  //     if (r) next = r;
+  //   }
+  // }
+  // panic_on(!next, "returning NULL context");
+  // panic_on(sane_context(next), "returning to invalid context");
+  // return next;
   return NULL;
 };
 
