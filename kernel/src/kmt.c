@@ -1,5 +1,4 @@
 //#include <common.h>
-//#include <kernel.h>
 #include "../include/common.h"
 
 void kmt_spin_init(spinlock_t *lock, const char* name){
