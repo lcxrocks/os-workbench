@@ -8,6 +8,9 @@
 #define RED 31
 #define GREEN 32
 #define YELLOW 33
+#define BLUE 34
+#define PURPLE 35
+#define CYAN 36
 
 #define r_panic_on(cond, s) \
     c_panic_on(RED, cond, s);
