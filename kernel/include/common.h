@@ -1,6 +1,6 @@
 #ifndef COMMON_H
 #define COMMON_H
-#define DEBUG
+//#define DEBUG
 #include <kernel.h>
 #include <klib.h>
 #include <klib-macros.h>
@@ -15,7 +15,7 @@
 #define c_panic_on(color, cond, s) \
 do{ \
     if(cond) {\
-        printf("\033[36m[cpu(%d)]:\033[0m");\
+        printf("\033[36m[cpu(%d)]:\033[0m", _cpu());\
         printf("\033[%dm", color); \
         panic_on(cond, s); \
         printf("\033[0m"); \
@@ -23,7 +23,7 @@ do{ \
 }while(0)
 
 #define c_log(color, ...) \
-    printf("\033[32m[cpu(%d)]:\033[0m");\
+    printf("\033[32m[cpu(%d)]:\033[0m", _cpu());\
     printf("\033[%dm", color); \
     printf(__VA_ARGS__); \
     printf("\033[0m");

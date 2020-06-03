@@ -3,7 +3,7 @@
 
 // #define ALIGNMENT 8
 // #define ALIGN(a) ROUNDUP(a,ALIGNMENT)
-static void test();
+//static void test();
 
 static void os_init() {
   pmm->init();
@@ -12,26 +12,6 @@ static void os_init() {
 #ifdef DEBUG
   test();// here;
 #endif
-}
-
-static void test(){
-  for (int i = 1; i <= 10; i++)
-  {
-    printf("-----------------i = %d ---------------------\n",i);
-    void *p = pmm->alloc(1023);
-    if(p) printf("alloc success! at %p\n",p);
-    else printf("alloc fail!");
-
-  }
-  for (int i = 1; i <= 5; i++)
-  {
-    printf("--------------------------------------------\n",i);
-    void *p = pmm->alloc(2047);
-    if(p) printf("alloc success! at %p\n",p);
-    else printf("alloc fail!");
-    pmm->free(p);
-  }
-  return ;
 }
 
 static void os_run() {
@@ -69,3 +49,23 @@ MODULE_DEF(os) = {
   .trap = os_trap,
   .on_irq = os_on_irq,
 };
+
+// static void test(){
+//   for (int i = 1; i <= 10; i++)
+//   {
+//     printf("-----------------i = %d ---------------------\n",i);
+//     void *p = pmm->alloc(1023);
+//     if(p) printf("alloc success! at %p\n",p);
+//     else printf("alloc fail!");
+
+//   }
+//   for (int i = 1; i <= 5; i++)
+//   {
+//     printf("--------------------------------------------\n",i);
+//     void *p = pmm->alloc(2047);
+//     if(p) printf("alloc success! at %p\n",p);
+//     else printf("alloc fail!");
+//     pmm->free(p);
+//   }
+//   return ;
+// }
