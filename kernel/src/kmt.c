@@ -41,6 +41,7 @@ void sem_signal(sem_t *sem){
 }
 
 void kmt_init(){
+    c_log(GREEN, "Welcome to L2 World!\n");
     return ;
 }
 
