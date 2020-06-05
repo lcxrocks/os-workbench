@@ -7,7 +7,7 @@ int main() {
   struct kvdb *db;
   const char *key = "operating-systems";
   char *value;
-
+  printf("hahhahahah!\n");
   panic_on(!(db = kvdb_open("a.db")), "cannot open db"); // 打开数据库
 
   kvdb_put(db, key, "three-easy-pieces"); // db[key] = "three-easy-pieces"
