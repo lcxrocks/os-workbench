@@ -14,7 +14,7 @@ int kvdb_close(struct kvdb *db) {
 }
 
 int kvdb_put(struct kvdb *db, const char *key, const char *value) {
-  return -1;
+  return -1; 
 }
 
 char *kvdb_get(struct kvdb *db, const char *key) {
