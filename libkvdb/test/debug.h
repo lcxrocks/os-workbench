@@ -16,8 +16,7 @@
 
 #define panic(s) panic_on(1, s)
 
-#define r_panic_on(cond, s) \
-    c_panic_on(RED, cond, s);
+#define r_panic_on(cond, s) c_panic_on(RED, cond, s);
 
 #define c_panic_on(color, cond, s) \
 do{ \
@@ -33,4 +32,5 @@ do{ \
     printf("\033[32m[cpu(%d)]:\033[0m", _cpu());\
     printf("\033[%dm", color); \
     printf(__VA_ARGS__); \
-    printf("\033[0m"); \
+    printf("\033[0m"); 
+    
