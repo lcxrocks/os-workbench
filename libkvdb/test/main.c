@@ -7,8 +7,8 @@ int main() {
   struct kvdb *db;
   const char *key = "operating-systems";
   char *value;
-  printf("hahhahahah!\n");
-  panic_on(!(db = kvdb_open("a.db")), "cannot open db"); // 打开数据库
+  r_panic_on(sizeof(log_t)!=17*MB, "Wrong log header");
+  panic_on(!(db = kvdb_open("/tmp/a.db")), "cannot open db"); // 打开数据库
 
   kvdb_put(db, key, "three-easy-pieces"); // db[key] = "three-easy-pieces"
   value = kvdb_get(db, key); // value = db[key];
