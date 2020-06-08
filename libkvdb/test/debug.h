@@ -31,3 +31,4 @@ do{ \
     printf("\033[%dm", color); \
     printf(__VA_ARGS__); \
     printf("\033[0m"); 
+
