@@ -22,6 +22,7 @@ typedef struct log{
   int TxE; // TxB = 1: End writing.
   char key[KEYLEN];
   char padding[PADSZ];
+  char data[DATALEN];
 }__attribute__((packed)) log_t;
 
 struct kvdb;
