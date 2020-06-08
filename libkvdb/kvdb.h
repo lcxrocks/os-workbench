@@ -8,13 +8,15 @@
 #include <unistd.h>
 #include <string.h>
 
+#define KB 1024
 #define MB (1024 * 1024)
 #define KEYLEN 128
 #define BLOCKSZ 4096
 #define DATALEN (4096*BLOCKSZ)
 #define LOG_HDR (3*sizeof(int) + 128*sizeof(char))
-#define PADSZ (1*MB - LOG_HDR) 
-#define RSVDSZ 17*MB
+#define PADSZ (1*MB - LOG_HDR)
+#define KEYNUM 4096 // For one table 
+#define RSVDSZ 18*MB
 
 typedef struct log{
   int commit;
@@ -24,6 +26,14 @@ typedef struct log{
   char padding[PADSZ];
   char data[DATALEN];
 }__attribute__((packed)) log_t;
+
+typedef struct key_table{
+  char key[KEYNUM][KEYLEN];
+  int  start[KEYNUM];
+  int  len[KEYNUM];
+  struct table *next;
+  char padding[480*KB - sizeof(struct table *)];
+}__attribute__((packed)) table_t;
 
 struct kvdb;
 struct kvdb *kvdb_open(const char *filename);
