@@ -26,9 +26,9 @@ int kvdb_close(struct kvdb *db) {
     c_log(RED, "Close file failed : ");
     c_log(CYAN, "[%s]\n", db->filename);
   };
-  free(db);
   c_log(GREEN, ">> Closed database : ");
   c_log(CYAN, "[%s]\n", db->filename);
+  free(db);
   return 0;
 }
 
