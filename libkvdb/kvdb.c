@@ -151,8 +151,10 @@ void write_log(int fd, const char *key, const char *value){
   Log.cur_key_id = (key_id == -1) ? Table.key_cnt : key_id; 
   strcpy(Log.key, key);
   strcpy(Log.data, value);
-  Log.commit = 1; // finish writing log
   write_fd(fd, &Log, 0, LOG_HDR + len);
+  fsync(fd);
+  Log.commit = 1; // finish writing log
+  write_fd(fd, &Log, 0, sizeof(int));
   fsync(fd);
 }
 
