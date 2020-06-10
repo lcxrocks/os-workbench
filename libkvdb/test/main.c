@@ -18,6 +18,7 @@ int main() {
     sprintf(num, "%d", i);
     kvdb_put(db, num, "haha");
   }
+  c_log(GREEN, "Finished kvdb_put()!\n");
   // for (int i = 0; i < 10000; i++)
   // {
   //   char num[256];
