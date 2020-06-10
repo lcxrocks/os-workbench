@@ -4,8 +4,10 @@ log_t Log;
 table_t Table;
 
 void read_hdr(kvdb_t *db){
-  read(db->fd, &Log, 17*MB);
-  read(db->fd, &Table, 1*MB);  
+  lseek(db->fd, 0, SEEK_SET);
+  read(db->fd, &Log, sizeof(log_t));
+  lseek(db->fd, 17*MB, SEEK_SET);
+  read(db->fd, &Table, sizeof(table_t));  
 }
 
 void log_clean(kvdb_t *db){
