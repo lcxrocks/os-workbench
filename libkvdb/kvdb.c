@@ -157,7 +157,7 @@ void write_log(int fd, const char *key, const char *value){
 
 void write_table_and_file(int fd, const char *key, const char *value){
   int key_id = find_key(key); // RE-find.
-  printf("cur key id: %d/%d\n", key_id, Table.key_cnt);
+  //printf("cur key id: %d/%d\n", key_id, Table.key_cnt);
   int len = strlen(value) + 1;
   if( key_id != -1){
     //case 1: key.len (old)>= Log.nr_block(new)
@@ -220,7 +220,7 @@ char *kvdb_get(struct kvdb *db, const char *key) {
     return NULL;
   }
   char *ret = malloc(Table.len[key_id] * BLOCKSZ);
-  printf("key: %d, start: %llx, len: %d\n", key_id, Table.start[key_id], Table.len[key_id]);
+  //printf("key: %d, start: %llx, len: %d\n", key_id, Table.start[key_id], Table.len[key_id]);
   lseek(db->fd, Table.start[key_id], SEEK_SET);
   int bytes= read(db->fd, ret, Table.len[key_id]*BLOCKSZ);
   //int length = printf("%s\n", ret);
