@@ -14,14 +14,14 @@ int main() {
   panic_on(!(db = kvdb_open("/tmp/a.db")), "cannot open db"); // 打开数据库
   for (int i = 0; i < 100; i++)
   {
-    char num[256];
+    char num[127];
     sprintf(num, "%d", i);
     kvdb_put(db, num, "haha");
   }
   c_log(GREEN, "Finished kvdb_put()!\n");
   for (int i = 0; i < 100; i++)
   {
-    char num[256];
+    char num[127];
     c_log(YELLOW, "GETTING NUM:%d\n", i);
     sprintf(num, "%d", i);
     value = kvdb_get(db, num);
