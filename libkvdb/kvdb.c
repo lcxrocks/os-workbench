@@ -76,8 +76,8 @@ int find_key(const char *key){
   return -1;
 }// return key number 
 
-void write_fd(int fd, const void *buf, off_t offset, int len, int MODE){
-    lseek(fd, offset, MODE);
+void write_fd(int fd, const void *buf, off_t offset, int len){
+    lseek(fd, offset, SEEK_SET);
     write(fd, buf, len);
     fsync(fd);
 }
@@ -99,8 +99,8 @@ void write_hdr(int fd, const char *key, const char *value){
     Table.len[Table.key_cnt] = Log.nr_block;
     Table.key_cnt++;
     Table.block_cnt += Log.nr_block;
-    write_fd(fd, &Table, 17*MB, 1*MB, SEEK_SET); // write in table
-    write_fd(fd, value, RSVDSZ + (Table.block_cnt- Log.nr_block)*BLOCKSZ, Table.len[key_id] * BLOCKSZ, SEEK_SET);
+    write_fd(fd, &Table, 17*MB, 1*MB); // write in table
+    write_fd(fd, value, RSVDSZ + (Table.block_cnt- Log.nr_block)*BLOCKSZ, strlen(value)+1);
   }
   Log.TxE = 1;
 
