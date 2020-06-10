@@ -42,7 +42,7 @@ int main() {
     printf("[%s]: [%s]\n", num, value);
   }
   kvdb_put(db, key, "three-easy-pieces"); // db[key] = "three-easy-pieces"
-  kvdb_put(db, key, "three-hard-pieces");
+  //kvdb_put(db, key, "three-hard-pieces");
   value = kvdb_get(db, key); // value = db[key];
   kvdb_close(db); // 关闭数据库
   printf("[%s]: [%s]\n", key, value);
