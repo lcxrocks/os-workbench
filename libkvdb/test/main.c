@@ -27,23 +27,12 @@ int main() {
   //   printf("[%s]: [%s]\n", num, value);
   // }
 
-  for (int i = 0; i < 250; i++)
-  {
-    char num[127];
-    sprintf(num, "%d", 37);
-    kvdb_put(db, num, num);
-  }
-
-  for (int i = 0; i < 250; i++)
-  {
-    char num[127];
-    sprintf(num, "%d", i);
-    value = kvdb_get(db, num);
-    printf("[%s]: [%s]\n", num, value);
-  }
+  kvdb_put(db, "lcx", "good");
   kvdb_put(db, key, "three-easy-pieces"); // db[key] = "three-easy-pieces"
   //kvdb_put(db, key, "three-hard-pieces");
   value = kvdb_get(db, key); // value = db[key];
+  char *lcx = kvdb_get(db, "lcx");
+  printf("[%s]: [%s]\n", "lcx", lcx);
   kvdb_close(db); // 关闭数据库
   printf("[%s]: [%s]\n", key, value);
   free(value);
