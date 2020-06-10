@@ -197,6 +197,7 @@ void write_hdr(int fd, const char *key, const char *value){
   write_log(fd, key, value);
   write_table_and_file(fd, key, value);
   write_fd(fd, &Log, 0, sizeof(int));
+  printf("更新成功\n");
   fsync(fd);
 }
 
