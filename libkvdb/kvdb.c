@@ -134,7 +134,7 @@ int kvdb_put(struct kvdb *db, const char *key, const char *value) {
 
 char *kvdb_get(struct kvdb *db, const char *key) {
   flock(db->fd, LOCK_EX);
-  fsck(db);
+  //fsck(db);
   // read the data
   int key_id = find_key(key);
 
