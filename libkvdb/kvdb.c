@@ -167,6 +167,7 @@ void write_table_and_file(int fd, const char *key, const char *value){
       write_fd(fd, &Table, 17*MB, 1*MB); // write in table
       write_fd(fd, value, Table.start[key_id], strlen(value)+1);
       Log.commit = 0;
+      fsync(fd);
     }
     else{
       Table.len[key_id] = Log.nr_block;
@@ -175,6 +176,7 @@ void write_table_and_file(int fd, const char *key, const char *value){
       write_fd(fd, &Table, 17*MB, 1*MB); // write in table
       write_fd(fd, value, RSVDSZ + (Table.block_cnt- Log.nr_block)*BLOCKSZ, strlen(value)+1);
       Log.commit = 0;
+      fsync(fd);
     }
   }
   else{ // didn't find
@@ -190,6 +192,7 @@ void write_table_and_file(int fd, const char *key, const char *value){
     write_fd(fd, &Table, 17*MB, 1*MB); // write in table
     write_fd(fd, value, RSVDSZ + (Table.block_cnt- Log.nr_block)*BLOCKSZ, strlen(value)+1);
     Log.commit = 0;
+    fsync(fd);
   }
 }
 
