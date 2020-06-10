@@ -184,6 +184,7 @@ void write_table_and_file(int fd, const char *key, const char *value){
     Table.start[Table.key_cnt] = DATA_START + Table.block_cnt * BLOCKSZ;
     Table.len[Table.key_cnt] = Log.nr_block;
     Table.key_cnt++;
+    printf("key table cnt:%d\n", Table.key_cnt);
     Table.block_cnt += Log.nr_block;
     write_fd(fd, &Table, 17*MB, 1*MB); // write in table
     write_fd(fd, value, RSVDSZ + (Table.block_cnt- Log.nr_block)*BLOCKSZ, strlen(value)+1);
