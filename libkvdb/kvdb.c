@@ -224,7 +224,7 @@ char *kvdb_get(struct kvdb *db, const char *key) {
     return NULL;
   }
   char *ret = malloc(Table.len[key_id] * BLOCKSZ);
-  printf("key: %d, start: %zx, len: %d\n", key_id, Table.start[key_id], Table.len[key_id]);
+  printf("key: %d, start: %llx, len: %d\n", key_id, Table.start[key_id], Table.len[key_id]);
   lseek(db->fd, Table.start[key_id], SEEK_SET);
   int bytes= read(db->fd, ret, Table.len[key_id]*BLOCKSZ);
   //int length = printf("%s\n", ret);
