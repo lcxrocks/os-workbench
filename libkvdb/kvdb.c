@@ -97,7 +97,6 @@ void write_hdr(int fd, const char *key, const char *value){
     Table.len[Table.key_cnt] = Log.nr_block;
     Table.key_cnt++;
     Table.block_cnt += Log.nr_block;
-    //printf("value [writing]: %s\n", );
     write_fd(fd, &Table, 17*MB, 1*MB, SEEK_SET); // write in table
     write_fd(fd, value, RSVDSZ, Table.len[key_id] * BLOCKSZ, SEEK_SET);
   }
