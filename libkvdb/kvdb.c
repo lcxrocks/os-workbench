@@ -167,6 +167,7 @@ void write_table_and_file(int fd, const char *key, const char *value){
       write_fd(fd, &Table, 17*MB, 1*MB); // write in table
       write_fd(fd, value, Table.start[key_id], strlen(value)+1);
       Log.commit = 0;
+      write_fd(fd, &Log, 0, sizeof(int));
       fsync(fd);
     }
     else{
@@ -176,6 +177,7 @@ void write_table_and_file(int fd, const char *key, const char *value){
       write_fd(fd, &Table, 17*MB, 1*MB); // write in table
       write_fd(fd, value, RSVDSZ + (Table.block_cnt- Log.nr_block)*BLOCKSZ, strlen(value)+1);
       Log.commit = 0;
+      write_fd(fd, &Log, 0, sizeof(int));
       fsync(fd);
     }
   }
@@ -192,6 +194,7 @@ void write_table_and_file(int fd, const char *key, const char *value){
     write_fd(fd, &Table, 17*MB, 1*MB); // write in table
     write_fd(fd, value, RSVDSZ + (Table.block_cnt- Log.nr_block)*BLOCKSZ, strlen(value)+1);
     Log.commit = 0;
+    write_fd(fd, &Log, 0, sizeof(int));
     fsync(fd);
   }
 }
@@ -199,9 +202,6 @@ void write_table_and_file(int fd, const char *key, const char *value){
 void write_hdr(int fd, const char *key, const char *value){
   write_log(fd, key, value);
   write_table_and_file(fd, key, value);
-  write_fd(fd, &Log, 0, sizeof(int));
-  printf("更新成功\n");
-  fsync(fd);
 }
 
 int kvdb_put(struct kvdb *db, const char *key, const char *value) {
