@@ -83,6 +83,8 @@ void write_hdr(int fd, const char *key, const char *value){
   if( key_id != -1){
     //case 1: key.len > Log.nr_block
     //case 2: key.len <= Log.nr_block
+    printf("Already have this key!\n");
+    return ;
   }
   else{ // didn't find
     key_id = Table.key_cnt;
