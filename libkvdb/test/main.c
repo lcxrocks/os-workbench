@@ -29,7 +29,8 @@ int main() {
 
   kvdb_put(db, "lcx", "good");
   kvdb_put(db, key, "three-easy-pieces"); // db[key] = "three-easy-pieces"
-  //kvdb_put(db, key, "three-hard-pieces");
+  kvdb_put(db, key, "three-hard-pieces");
+  kvdb_put(db, "lcx", "very good");
   value = kvdb_get(db, key); // value = db[key];
   char *lcx = kvdb_get(db, "lcx");
   printf("[%s]: [%s]\n", "lcx", lcx);
