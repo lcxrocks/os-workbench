@@ -30,7 +30,7 @@ typedef struct __log{
 
 typedef struct key_table{
   char key[KEYNUM][KEYLEN];
-  intptr_t  start[KEYNUM];
+  uintptr_t  start[KEYNUM];
   int  len[KEYNUM];
   //struct table *next;
   int  block_cnt;
