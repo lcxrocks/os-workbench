@@ -121,7 +121,7 @@ void read_hdr(kvdb_t *db){
 int find_key(const char *key){
   for (int i = 0; i < Table.key_cnt; i++)
   {
-    c_log(CYAN, "checking for key[%d]\n", i);
+    //c_log(CYAN, "checking for key[%d]\n", i);
     if(!strcmp(key, Table.key[i])) return i;
   }
   return -1;
@@ -162,6 +162,7 @@ void write_table_and_file(int fd, const char *key, const char *value){
   if( key_id != -1){
     //case 1: key.len (old)>= Log.nr_block(new)
     //case 2: key.len (old)< Log.nr_block(new)
+    printf("new value!\n");
     if(Log.nr_block <= Table.len[key_id]){
       Table.len[key_id] = Log.nr_block;
       write_fd(fd, &Table, 17*MB, 1*MB); // write in table
