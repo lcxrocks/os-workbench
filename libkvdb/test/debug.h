@@ -10,7 +10,7 @@
     if (cond) { \
       printf("%s", s); \
       printf(" Line:  %d\n", __LINE__); \
-      return 1; \
+      exit(0); \
     } \
   } while (0)
 
