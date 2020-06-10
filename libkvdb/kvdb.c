@@ -157,7 +157,7 @@ void write_log(int fd, const char *key, const char *value){
 
 void write_table_and_file(int fd, const char *key, const char *value){
   int key_id = Log.cur_key_id;
-  printf("cur key id: %d\n", key_id);
+  printf("cur key id: %d/%d\n", key_id, Table.key_cnt);
   int len = strlen(value) + 1;
   if( key_id != -1){
     //case 1: key.len (old)>= Log.nr_block(new)
