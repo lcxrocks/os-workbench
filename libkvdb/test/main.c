@@ -17,7 +17,13 @@ int main() {
     char num[256];
     sprintf(num, "%d", i);
     kvdb_put(db, num, "haha");
-    printf("%s\n", num);
+  }
+  for (int i = 0; i < 10000; i++)
+  {
+    char num[256];
+    sprintf(num, "%d", i);
+    value = kvdb_get(db, num);
+    printf("[%s]: [%s]\n", key, value);
   }
   
   kvdb_put(db, key, "three-easy-pieces"); // db[key] = "three-easy-pieces"
