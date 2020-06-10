@@ -44,7 +44,7 @@ struct kvdb *kvdb_open(const char *filename) {
 }
 
 int kvdb_close(struct kvdb *db) {
-  if(!close(db->fd)) {
+  if(close(db->fd) == -1) {
     c_log(RED, "Close file failed : ");
     c_log(CYAN, "[%s]\n", db->filename);
   };
@@ -97,7 +97,6 @@ void write_hdr(int fd, const char *key, const char *value){
     Table.len[Table.key_cnt] = Log.nr_block;
     Table.key_cnt++;
     Table.block_cnt += Log.nr_block;
-    printf("Before writing in : value: %s\n", value);
     write_fd(fd, &Table, 17*MB, 1*MB, SEEK_SET); // write in table
     write_fd(fd, value, RSVDSZ, Table.len[key_id] * BLOCKSZ, SEEK_SET);
   }
