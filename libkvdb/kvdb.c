@@ -126,7 +126,7 @@ void write_hdr(int fd, const char *key, const char *value){
 
 int kvdb_put(struct kvdb *db, const char *key, const char *value) {
   flock(db->fd, LOCK_EX);
-  fsck(db);
+  //fsck(db);
   write_hdr(db->fd, key, value);
   flock(db->fd, LOCK_UN);
   return 0; 
