@@ -12,14 +12,14 @@ int main() {
   //r_panic_on(sizeof(log_t)!=17*MB, "Wrong log header");
   //r_panic_on(sizeof(table_t)!=1*MB, "Wrong header sz");
   panic_on(!(db = kvdb_open("/tmp/b.db")), "cannot open db"); // 打开数据库
-  for (int i = 0; i < 10000; i++)
+  for (int i = 0; i < 250; i++)
   {
     char num[127];
     sprintf(num, "%d", i);
     kvdb_put(db, num, num);
   }
   c_log(GREEN, "Finished kvdb_put()!\n");
-  for (int i = 0; i < 100; i++)
+  for (int i = 0; i < 250; i++)
   {
     char num[127];
     sprintf(num, "%d", i);
