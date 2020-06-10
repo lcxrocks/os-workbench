@@ -15,8 +15,10 @@ int main() {
   for (int i = 0; i < 250; i++)
   {
     char num[127];
+    sprintf(num, "%d", i);
+    char new_num[127];
     sprintf(num, "%d", 250 - i);
-    kvdb_put(db, num, num);
+    kvdb_put(db, num, new_num);
   }
   c_log(GREEN, "Finished kvdb_put()!\n");
   for (int i = 0; i < 250; i++)
