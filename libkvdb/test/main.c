@@ -14,8 +14,10 @@ int main() {
   panic_on(!(db = kvdb_open("/tmp/a.db")), "cannot open db"); // 打开数据库
   for (int i = 0; i < 10000; i++)
   {
-    kvdb_put(db, DIG(i), "haha");
-    printf("%s ", DIG(i));
+    char num[256];
+    sprintf(num, "%d", i);
+    kvdb_put(db, num, "haha");
+    printf("%s\n", num);
   }
   
   kvdb_put(db, key, "three-easy-pieces"); // db[key] = "three-easy-pieces"
