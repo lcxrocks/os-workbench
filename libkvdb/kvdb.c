@@ -119,14 +119,14 @@ void write_table_and_file(int fd, const char *key, const char *value){
 
 void write_hdr(int fd, const char *key, const char *value){
   write_log(fd, key, value);
-  exit(0);
+  //exit(0);
   write_table_and_file(fd, key, value);
   write_fd(fd, &Log, 0, 5*sizeof(int));
 }
 
 int kvdb_put(struct kvdb *db, const char *key, const char *value) {
   flock(db->fd, LOCK_EX);
-  //fsck(db);
+  fsck(db);
   write_hdr(db->fd, key, value);
   flock(db->fd, LOCK_UN);
   return 0; 
@@ -134,7 +134,7 @@ int kvdb_put(struct kvdb *db, const char *key, const char *value) {
 
 char *kvdb_get(struct kvdb *db, const char *key) {
   flock(db->fd, LOCK_EX);
-  //fsck(db);
+  fsck(db);
   // read the data
   int key_id = find_key(key);
 
