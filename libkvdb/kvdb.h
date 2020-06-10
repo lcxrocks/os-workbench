@@ -9,6 +9,8 @@
 #include <unistd.h>
 #include <string.h>
 
+//#define DEBUG
+
 #define KB 1024
 #define MB (1024 * 1024)
 #define KEYLEN 128
