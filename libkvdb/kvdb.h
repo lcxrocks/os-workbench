@@ -31,8 +31,8 @@ typedef struct __log{
 typedef struct key_table{
   char key[KEYNUM][KEYLEN];
   intptr_t  start[KEYNUM];
-  int  len[KEYNUM];
-  struct table *next;
+  intptr_t  len[KEYNUM];
+  //struct table *next;
   int  block_cnt;
   int  key_cnt;
 }__attribute__((packed)) table_t;
