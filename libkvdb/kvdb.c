@@ -47,9 +47,11 @@ int kvdb_close(struct kvdb *db) {
   if(close(db->fd) == -1) {
     c_log(RED, "Close file failed : ");
     c_log(CYAN, "[%s]\n", db->filename);
-  };
-  c_log(GREEN, ">> Closed database : ");
-  c_log(CYAN, "[%s]\n", db->filename);
+  }
+  else{
+    c_log(GREEN, ">> Closed database : ");
+    c_log(CYAN, "[%s]\n", db->filename);
+  }
   free(db);
   return 0;
 }
@@ -125,7 +127,7 @@ char *kvdb_get(struct kvdb *db, const char *key) {
   char *ret = malloc(4*MB);
   if(key_id != -1){
     lseek(db->fd, Table.start[key_id], SEEK_SET);
-    read(db->fd, ret, Table.len[key_id]);
+    read(db->fd, ret, Table.len[key_id]*BLOCKSZ);
     c_log(GREEN, "value : %s\n", ret);
   }
   else{
