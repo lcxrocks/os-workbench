@@ -31,12 +31,12 @@ typedef struct __log{
 }__attribute__((packed)) log_t;
 
 typedef struct key_table{
+  int  block_cnt;
+  int  key_cnt;
   char key[KEYNUM][KEYLEN];
   long long start[KEYNUM];
   int  len[KEYNUM];
   //struct table *next;
-  int  block_cnt;
-  int  key_cnt;
 }__attribute__((packed)) table_t;
 
 typedef struct kvdb {
@@ -127,22 +127,22 @@ int find_key(const char *key){
   return -1;
 }// return key number 
 
+void write_fd(int fd, const void *buf, off_t offset, int len){
+  lseek(fd, offset, SEEK_SET);
+  write(fd, buf, len);
+}
+
 void fsck(kvdb_t *db){
   read_hdr(db);
   if(Log.commit == 0) return ; // Log already commited.
   if(Log.commit == 1){ // Log didn't commit. Maintenance needed.
     c_log(GREEN, "+++ Doing fsck for : ");
     c_log(CYAN, "[%s]\n", db->filename);
-    panic_on(0, "shouln't do repairing!");
     write_table_and_file(db->fd, Log.key, Log.data);
     c_log(GREEN, "+++ Repair finished!\n");
   }
 }
 
-void write_fd(int fd, const void *buf, off_t offset, int len){
-  lseek(fd, offset, SEEK_SET);
-  write(fd, buf, len);
-}
 
 void write_log(int fd, const char *key, const char *value){
   int len = strlen(value);
@@ -168,17 +168,15 @@ void write_table_and_file(int fd, const char *key, const char *value){
     //printf("new value!\n");
     if(Log.nr_block <= Table.len[key_id]){
       Table.len[key_id] = Log.nr_block;
-      write_fd(fd, &Table, 17*MB, 1*MB); // write in table
+      write_fd(fd, &Table, 17*MB, sizeof(table_t)); // write in table
       write_fd(fd, value, Table.start[key_id], strlen(value)+1);
-      Log.commit = 0;
     }
     else{
       Table.len[key_id] = Log.nr_block;
       Table.start[key_id] = DATA_START + Table.block_cnt * BLOCKSZ;
       Table.block_cnt += Log.nr_block;
-      write_fd(fd, &Table, 17*MB, 1*MB); // write in table
+      write_fd(fd, &Table, 17*MB, sizeof(table_t)); // write in table
       write_fd(fd, value, RSVDSZ + (Table.block_cnt- Log.nr_block)*BLOCKSZ, strlen(value)+1);
-      Log.commit = 0;
     }
   }
   else{ // didn't find
@@ -191,10 +189,12 @@ void write_table_and_file(int fd, const char *key, const char *value){
     Table.key_cnt++;
     //printf("key table cnt:%d\n", Table.key_cnt);
     Table.block_cnt += Log.nr_block;
-    write_fd(fd, &Table, 17*MB, 1*MB); // write in table
+    write_fd(fd, &Table, 17*MB, sizeof(table_t)); // write in table
     write_fd(fd, value, RSVDSZ + (Table.block_cnt- Log.nr_block)*BLOCKSZ, strlen(value)+1);
-    Log.commit = 0;
   }
+  Log.commit = 0;
+  write_fd(fd, &Log, 0, sizeof(int));
+  fsync(fd);
 }
 
 void write_hdr(int fd, const char *key, const char *value){
