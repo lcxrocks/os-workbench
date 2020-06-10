@@ -133,6 +133,7 @@ void fsck(kvdb_t *db){
   if(Log.commit == 1){ // Log didn't commit. Maintenance needed.
     c_log(GREEN, "+++ Doing fsck for : ");
     c_log(CYAN, "[%s]\n", db->filename);
+    panic_on(0, "shouln't do repairing!");
     write_table_and_file(db->fd, Log.key, Log.data);
     c_log(GREEN, "+++ Repair finished!\n");
   }
