@@ -132,7 +132,7 @@ char *kvdb_get(struct kvdb *db, const char *key) {
     char *p = ret;
     for (int i = 0; i < Table.len[key_id]; i++)
     {
-      printf("%d", (int *) p);
+      printf("%zd", (int *) p);
       p++;
     }
     
