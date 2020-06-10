@@ -25,7 +25,7 @@ int main() {
     c_log(YELLOW, "GETTING NUM:%d\n", i);
     sprintf(num, "%d", i);
     value = kvdb_get(db, num);
-    printf("[%s]: [%s]\n", key, value);
+    printf("[%s]: [%s]\n", num, value);
   }
   
   kvdb_put(db, key, "three-easy-pieces"); // db[key] = "three-easy-pieces"
