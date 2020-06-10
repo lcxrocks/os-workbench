@@ -202,7 +202,6 @@ void write_table_and_file(int fd, const char *key, const char *value){
 
 void write_hdr(int fd, const char *key, const char *value){
   write_log(fd, key, value);
-  //exit(0);
   write_table_and_file(fd, key, value);
   write_fd(fd, &Log, 0, 5*sizeof(int));
   fsync(fd);
@@ -233,7 +232,7 @@ char *kvdb_get(struct kvdb *db, const char *key) {
   int bytes= read(db->fd, ret, Table.len[key_id]*BLOCKSZ);
   //int length = printf("%s\n", ret);
   //printf("len: %d\n", length);
-  //c_log(GREEN, "bytes : %d\n", bytes);
+  c_log(GREEN, "bytes : %d\n", bytes);
 
   flock(db->fd, LOCK_UN);
   return ret;
