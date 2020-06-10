@@ -126,6 +126,7 @@ char *kvdb_get(struct kvdb *db, const char *key) {
   int key_id = find_key(key);
   char *ret = malloc(4*MB);
   if(key_id != -1){
+    printf("key: %d, start: %zx, len: %d\n", key_id, Table.start[key_id], Table.len[key_id]);
     lseek(db->fd, Table.start[key_id], SEEK_SET);
     read(db->fd, ret, Table.len[key_id]*BLOCKSZ);
     c_log(GREEN, "value : %s\n", ret);
