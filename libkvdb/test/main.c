@@ -30,10 +30,10 @@ int main() {
   for (int i = 0; i < 250; i++)
   {
     char num[127];
-    sprintf(num, "%d", 250-i);
+    sprintf(num, "%d", 37);
     kvdb_put(db, num, num);
   }
-  
+
   for (int i = 0; i < 250; i++)
   {
     char num[127];
