@@ -17,7 +17,7 @@ int main() {
     char num[127];
     sprintf(num, "%d", i);
     char new_num[127];
-    sprintf(num, "%d", 250 - i);
+    sprintf(num, "%d", 250-i);
     kvdb_put(db, num, new_num);
   }
   c_log(GREEN, "Finished kvdb_put()!\n");
