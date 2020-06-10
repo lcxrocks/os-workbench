@@ -17,15 +17,13 @@
 #define KEYLEN 128
 #define BLOCKSZ 4096
 #define DATALEN (4096*BLOCKSZ)
-#define LOG_HDR (5*sizeof(int) + KEYLEN*sizeof(char))
-#define KEYNUM 4096 // For one table 
+#define LOG_HDR (3*sizeof(int) + KEYLEN*sizeof(char))
+#define KEYNUM 257 // For one table 
 #define RSVDSZ 18*MB
 #define DATA_START RSVDSZ
 
 typedef struct __log{
   int commit;
-  int TxB; // TxB = 1: Begin writing.
-  int TxE; // TxB = 1: End writing.
   int nr_block; // how long is the new value
   int cur_key_id;
   char key[KEYLEN];
@@ -130,20 +128,13 @@ int find_key(const char *key){
 
 void fsck(kvdb_t *db){
   read_hdr(db);
-  // if(!Log.TxB){
-  //   return ;
-  // }// No current log. proceed.
-  // if(Log.TxB == 1 && Log.TxE == 0){
-  //   return ;
-  // }// Data lost. break when writing LOG. Usr to blame. proceed.
-  if(Log.commit == 1) return ; // Log already commited.
-  if(Log.commit == 0){
-    // Table (check). Log (check). File (false).
+  if(Log.commit == 0) return ; // Log already commited.
+  if(Log.commit == 1){ // Log didn't commit. Maintenance needed.
     c_log(GREEN, "+++ Doing fsck for : ");
     c_log(CYAN, "[%s]\n", db->filename);
     write_table_and_file(db->fd, Log.key, Log.data);
     c_log(GREEN, "+++ Repair finished!\n");
-  }// Log didn't commit. Maintenance needed.
+  }
 }
 
 void write_fd(int fd, const void *buf, off_t offset, int len){
@@ -158,9 +149,8 @@ void write_log(int fd, const char *key, const char *value){
   Log.cur_key_id = (key_id == -1) ? Table.key_cnt : key_id; 
   strcpy(Log.key, key);
   strcpy(Log.data, value);
+  Log.commit = 1; // finish writing log
   write_fd(fd, &Log, 0, LOG_HDR + len);
-  Log.commit = 0; // finish writing log
-  write_fd(fd, &Log, 0, 5*sizeof(int));
   fsync(fd);
 }
 
@@ -174,7 +164,7 @@ void write_table_and_file(int fd, const char *key, const char *value){
       Table.len[key_id] = Log.nr_block;
       write_fd(fd, &Table, 17*MB, 1*MB); // write in table
       write_fd(fd, value, Table.start[key_id], strlen(value)+1);
-      Log.commit = 1;
+      Log.commit = 0;
     }
     else{
       Table.len[key_id] = Log.nr_block;
@@ -182,7 +172,7 @@ void write_table_and_file(int fd, const char *key, const char *value){
       Table.block_cnt += Log.nr_block;
       write_fd(fd, &Table, 17*MB, 1*MB); // write in table
       write_fd(fd, value, RSVDSZ + (Table.block_cnt- Log.nr_block)*BLOCKSZ, strlen(value)+1);
-      Log.commit = 1;
+      Log.commit = 0;
     }
   }
   else{ // didn't find
@@ -196,14 +186,14 @@ void write_table_and_file(int fd, const char *key, const char *value){
     Table.block_cnt += Log.nr_block;
     write_fd(fd, &Table, 17*MB, 1*MB); // write in table
     write_fd(fd, value, RSVDSZ + (Table.block_cnt- Log.nr_block)*BLOCKSZ, strlen(value)+1);
-    Log.commit = 1;
+    Log.commit = 0;
   }
 }
 
 void write_hdr(int fd, const char *key, const char *value){
   write_log(fd, key, value);
   write_table_and_file(fd, key, value);
-  write_fd(fd, &Log, 0, 5*sizeof(int));
+  write_fd(fd, &Log, 0, sizeof(int));
   fsync(fd);
 }
 
