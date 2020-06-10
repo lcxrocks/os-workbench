@@ -14,7 +14,7 @@
 #define KEYLEN 128
 #define BLOCKSZ 4096
 #define DATALEN (4096*BLOCKSZ)
-#define LOG_HDR (4*sizeof(int) + KEYLEN*sizeof(char))
+#define LOG_HDR (5*sizeof(int) + KEYLEN*sizeof(char))
 #define KEYNUM 4096 // For one table 
 #define RSVDSZ 18*MB
 #define DATA_START RSVDSZ
@@ -24,6 +24,7 @@ typedef struct __log{
   int TxB; // TxB = 1: Begin writing.
   int TxE; // TxB = 1: End writing.
   int nr_block; // how long is the new value
+  int cur_key_id;
   char key[KEYLEN];
   char data[DATALEN];
 }__attribute__((packed)) log_t;

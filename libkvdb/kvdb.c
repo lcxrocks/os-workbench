@@ -2,6 +2,7 @@
 
 log_t Log;
 table_t Table;
+void write_table_and_file(int fd, const char *key, const char *value);
 
 struct kvdb *kvdb_open(const char *filename) {
   kvdb_t *db = malloc(sizeof(kvdb_t));
@@ -45,29 +46,16 @@ void fsck(kvdb_t *db){
   if(!Log.TxB){
     return ;
   }// No current log. proceed.
-  if(Log.TxB == 1 && Log.TxE == 1 && Log.commit == 1){
-    return ;
-  }// Log already commited. proceed.
   if(Log.TxB == 1 && Log.TxE == 0){
     return ;
-  }// Data lost. break when writing data. Usr to blame. proceed.
+  }// Data lost. break when writing LOG. Usr to blame. proceed.
   if(Log.TxB == 1 && Log.TxE == 1 && Log.commit == 0){
-    // REPAIR!!!
+    // Table (check). Log (check). File (false).
+    c_log(GREEN, "+++ Doing fsck for : ");
+    c_log(CYAN, "[%s]\n", db->filename);
+    write_table_and_file(db->fd, Log.key, Log.data);
+    c_log(GREEN, "+++ Repair finished!\n");
   }// Log didn't commit. Maintenance needed.
-  c_log(GREEN, "+++ Doing fsck for : ");
-  c_log(CYAN, "[%s]\n", db->filename);
-}
-
-void write_log(int fd, const char *key, const char *value){
-  int len = strlen(value);
-  Log.TxB = 1;
-  Log.TxE = 0;
-  Log.commit = 0;
-  Log.nr_block = (len / BLOCKSZ) + 1; // data size
-  strcpy(Log.key, key);
-  strcpy(Log.data, value);
-  write(fd, &Log, LOG_HDR + len);
-  fsync(fd);
 }
 
 void write_fd(int fd, const void *buf, off_t offset, int len){
@@ -76,18 +64,30 @@ void write_fd(int fd, const void *buf, off_t offset, int len){
   fsync(fd);
 }
 
-void write_hdr(int fd, const char *key, const char *value){
-  write_log(fd, key, value);
+void write_log(int fd, const char *key, const char *value){
+  int len = strlen(value);
   int key_id = find_key(key);
+  Log.TxB = 1;
+  Log.TxE = 0;
+  Log.commit = 0;
+  Log.nr_block = (len / BLOCKSZ) + 1; // data size
+  Log.cur_key_id = (key_id == -1) ? Table.key_cnt : key_id; 
+  strcpy(Log.key, key);
+  strcpy(Log.data, value);
+  write_fd(fd, &Log, 0, LOG_HDR + len);
+  Log.TxE = 1;
+  write_fd(fd, &Log, 0, 5*sizeof(int));
+}
+
+void write_table_and_file(int fd, const char *key, const char *value){
+  int key_id = Log.cur_key_id;
   int len = strlen(value) + 1;
   if( key_id != -1){
     //case 1: key.len (old)>= Log.nr_block(new)
     //case 2: key.len (old)< Log.nr_block(new)
-    printf("Already have this key!\n");
     if(Log.nr_block <= Table.len[key_id]){
       Table.len[key_id] = Log.nr_block;
       write_fd(fd, &Table, 17*MB, 1*MB); // write in table
-      Log.TxE = 1;
       write_fd(fd, value, Table.start[key_id], strlen(value)+1);
       Log.commit = 1;
       Log.TxB = 0;
@@ -97,7 +97,6 @@ void write_hdr(int fd, const char *key, const char *value){
       Table.start[key_id] = DATA_START + Table.block_cnt * BLOCKSZ;
       Table.block_cnt += Log.nr_block;
       write_fd(fd, &Table, 17*MB, 1*MB); // write in table
-      Log.TxE = 1;
       write_fd(fd, value, RSVDSZ + (Table.block_cnt- Log.nr_block)*BLOCKSZ, strlen(value)+1);
       Log.commit = 1;
       Log.TxB = 0;
@@ -113,12 +112,15 @@ void write_hdr(int fd, const char *key, const char *value){
     Table.key_cnt++;
     Table.block_cnt += Log.nr_block;
     write_fd(fd, &Table, 17*MB, 1*MB); // write in table
-    Log.TxE = 1;
     write_fd(fd, value, RSVDSZ + (Table.block_cnt- Log.nr_block)*BLOCKSZ, strlen(value)+1);
     Log.commit = 1;
   }
-  write(fd, &Log, 4*sizeof(int));
-  fsync(fd);
+}
+
+void write_hdr(int fd, const char *key, const char *value){
+  write_log(fd, key, value);
+  write_table_and_file(fd, key, value);
+  write_fd(fd, &Log, 0, 5*sizeof(int));
 }
 
 int kvdb_put(struct kvdb *db, const char *key, const char *value) {
@@ -141,12 +143,12 @@ char *kvdb_get(struct kvdb *db, const char *key) {
     return NULL;
   }
   char *ret = malloc(Table.len[key_id] * BLOCKSZ);
-  printf("key: %d, start: %zx, len: %d\n", key_id, Table.start[key_id], Table.len[key_id]);
+  //printf("key: %d, start: %zx, len: %d\n", key_id, Table.start[key_id], Table.len[key_id]);
   lseek(db->fd, Table.start[key_id], SEEK_SET);
   int bytes= read(db->fd, ret, Table.len[key_id]*BLOCKSZ);
   int length = printf("%s\n", ret);
-  printf("len: %d\n", length);
-  c_log(GREEN, "bytes : %d\n", bytes);
+  //printf("len: %d\n", length);
+  //c_log(GREEN, "bytes : %d\n", bytes);
 
   flock(db->fd, LOCK_UN);
   return ret;
