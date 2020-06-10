@@ -78,7 +78,13 @@ do{ \
 
 #define r_panic_on(cond, s) c_panic_on(RED, cond, s);
 
-#define c_log(color, ...) \
+
+#ifdef DEBUG
+  #define c_log(color, ...) \
     printf("\033[%dm", color); \
     printf(__VA_ARGS__); \
     printf("\033[0m"); 
+#else
+  #define c_log(color, ...) \
+    ;
+#endif
