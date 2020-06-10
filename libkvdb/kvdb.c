@@ -100,7 +100,6 @@ void write_hdr(int fd, const char *key, const char *value){
     Table.key_cnt++;
     Table.block_cnt += Log.nr_block;
     write_fd(fd, &Table, 17*MB, 1*MB, SEEK_SET); // write in table
-    printf("key[%d].len: %d\n", key_id, Table.len[key_id]);
     write_fd(fd, value, RSVDSZ, Table.len[key_id] * BLOCKSZ, SEEK_SET);
   }
   Log.TxE = 1;
@@ -129,8 +128,8 @@ char *kvdb_get(struct kvdb *db, const char *key) {
   if(key_id != -1){
     printf("key: %d, start: %zx, len: %d\n", key_id, Table.start[key_id], Table.len[key_id]);
     lseek(db->fd, Table.start[key_id], SEEK_SET);
-    read(db->fd, ret, Table.len[key_id]*BLOCKSZ);
-    c_log(GREEN, "value : %s\n", ret);
+    int bytes= read(db->fd, ret, Table.len[key_id]*BLOCKSZ);
+    c_log(GREEN, "bytes : %d\n", bytes);
   }
   else{
     c_log(RED, "didn't find key\n");
