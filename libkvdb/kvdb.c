@@ -71,9 +71,9 @@ void write_log(int fd, const char *key, const char *value){
 }
 
 void write_fd(int fd, const void *buf, off_t offset, int len){
-    lseek(fd, offset, SEEK_SET);
-    write(fd, buf, len);
-    fsync(fd);
+  lseek(fd, offset, SEEK_SET);
+  write(fd, buf, len);
+  fsync(fd);
 }
 
 void write_hdr(int fd, const char *key, const char *value){
@@ -81,8 +81,8 @@ void write_hdr(int fd, const char *key, const char *value){
   int key_id = find_key(key);
   int len = strlen(value) + 1;
   if( key_id != -1){
-    //case 1: key.len (old)> Log.nr_block(new)
-    //case 2: key.len <= Log.nr_block
+    //case 1: key.len (old)>= Log.nr_block(new)
+    //case 2: key.len (old)< Log.nr_block(new)
     printf("Already have this key!\n");
     if(Log.nr_block <= Table.len[key_id]){
       Table.len[key_id] = Log.nr_block;
@@ -90,6 +90,7 @@ void write_hdr(int fd, const char *key, const char *value){
       Log.TxE = 1;
       write_fd(fd, value, Table.start[key_id], strlen(value)+1);
       Log.commit = 1;
+      Log.TxB = 0;
     }
     else{
       Table.len[key_id] = Log.nr_block;
@@ -99,6 +100,7 @@ void write_hdr(int fd, const char *key, const char *value){
       Log.TxE = 1;
       write_fd(fd, value, RSVDSZ + (Table.block_cnt- Log.nr_block)*BLOCKSZ, strlen(value)+1);
       Log.commit = 1;
+      Log.TxB = 0;
     } 
   }
   else{ // didn't find
@@ -132,7 +134,6 @@ char *kvdb_get(struct kvdb *db, const char *key) {
   fsck(db);
   // read the data
   int key_id = find_key(key);
-  
 
   if(key_id == -1){
     c_log(RED, "didn't find key\n");
@@ -146,8 +147,7 @@ char *kvdb_get(struct kvdb *db, const char *key) {
   int length = printf("%s\n", ret);
   printf("len: %d\n", length);
   c_log(GREEN, "bytes : %d\n", bytes);
-  
-  // char value[SUPER_BIG] = malloc(value);
+
   flock(db->fd, LOCK_UN);
   return ret;
 }
