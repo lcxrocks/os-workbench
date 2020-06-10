@@ -22,7 +22,6 @@ int main() {
   for (int i = 0; i < 100; i++)
   {
     char num[127];
-    c_log(YELLOW, "GETTING NUM:%d\n", i);
     sprintf(num, "%d", i);
     value = kvdb_get(db, num);
     printf("[%s]: [%s]\n", num, value);
