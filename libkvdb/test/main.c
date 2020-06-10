@@ -19,7 +19,7 @@ int main() {
     kvdb_put(db, num, "haha");
   }
   c_log(GREEN, "Finished kvdb_put()!\n");
-  for (int i = 0; i < 1000; i++)
+  for (int i = 0; i < 100; i++)
   {
     char num[256];
     c_log(YELLOW, "GETTING NUM:%d\n", i);
