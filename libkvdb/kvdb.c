@@ -10,12 +10,6 @@ void read_hdr(kvdb_t *db){
   read(db->fd, &Table, sizeof(table_t));  
 }
 
-// void log_clean(kvdb_t *db){
-//   memset(&Log, 0, 17*MB);
-//   write(db->fd, &Log, 17*MB);
-//   fsync(db->fd);
-// }
-
 void fsck(kvdb_t *db){
   read_hdr(db);
   if(!Log.TxB){
