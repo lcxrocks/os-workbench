@@ -11,7 +11,7 @@ int main() {
   char *value;
   //r_panic_on(sizeof(log_t)!=17*MB, "Wrong log header");
   //r_panic_on(sizeof(table_t)!=1*MB, "Wrong header sz");
-  panic_on(!(db = kvdb_open("/tmp/b.db")), "cannot open db"); // 打开数据库
+  panic_on(!(db = kvdb_open("/tmp/c.db")), "cannot open db"); // 打开数据库
   for (int i = 0; i < 250; i++)
   {
     char num[127];
