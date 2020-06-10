@@ -100,8 +100,8 @@ void write_hdr(int fd, const char *key, const char *value){
     Table.key_cnt++;
     Table.block_cnt += Log.nr_block;
     write_fd(fd, &Table, 17*MB, 1*MB, SEEK_SET); // write in table
+    printf("key[%d].len: %d\n", key_id, Table.len[key_id]);
     write_fd(fd, value, RSVDSZ, Table.len[key_id] * BLOCKSZ, SEEK_SET);
-    printf("%x\n", 18*MB);
   }
   Log.TxE = 1;
 
