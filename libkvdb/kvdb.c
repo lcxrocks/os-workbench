@@ -129,13 +129,8 @@ char *kvdb_get(struct kvdb *db, const char *key) {
     printf("key: %d, start: %zx, len: %d\n", key_id, Table.start[key_id], Table.len[key_id]);
     lseek(db->fd, Table.start[key_id], SEEK_SET);
     int bytes= read(db->fd, ret, Table.len[key_id]*BLOCKSZ);
-    char *p = ret;
-    for (int i = 0; i < Table.len[key_id]; i++)
-    {
-      printf("%zc", (char *) p);
-      p++;
-    }
-    
+    int length = printf("%s\n", ret);
+    printf("%d\n", length);
     c_log(GREEN, "bytes : %d\n", bytes);
   }
   else{
