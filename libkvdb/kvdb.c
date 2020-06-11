@@ -113,9 +113,9 @@ int kvdb_close(struct kvdb *db) {
 
 void read_hdr(kvdb_t *db){
   lseek(db->fd, 0, SEEK_SET);
-  read(db->fd, &Log, sizeof(int));
+  read(db->fd, &Log, 3*sizeof(int));
   if(Log.commit == 1)
-    read(db->fd, &Log.nr_block, sizeof(log_t) - sizeof(int));
+    read(db->fd, &Log.key, Log.nr_block*BLOCKSZ + KEYLEN *sizeof(char));
   lseek(db->fd, 17*MB, SEEK_SET);
   read(db->fd, &Table, sizeof(table_t));  
 }
