@@ -18,7 +18,7 @@
 #define BLOCKSZ 4096
 #define DATALEN (4096*BLOCKSZ)
 #define LOG_HDR (3*sizeof(int) + KEYLEN*sizeof(char))
-#define KEYNUM 257 // For one table 
+#define KEYNUM 310 // For one table 
 #define RSVDSZ 18*MB
 #define DATA_START RSVDSZ
 
