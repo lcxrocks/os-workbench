@@ -115,7 +115,7 @@ void read_hdr(kvdb_t *db){
   lseek(db->fd, 0, SEEK_SET);
   read(db->fd, &Log, sizeof(int));
   if(Log.commit == 1)
-    read(db->fd, &Log.nr_block, sizeof(log_t));
+    read(db->fd, &Log.nr_block, sizeof(log_t) - sizeof(int));
   lseek(db->fd, 17*MB, SEEK_SET);
   read(db->fd, &Table, sizeof(table_t));  
 }
