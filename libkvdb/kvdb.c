@@ -121,7 +121,7 @@ void read_hdr(kvdb_t *db){
 }
 
 int find_key(const char *key){
-  for (int i = 0; i < Table.key_cnt; i++)
+  for (int i = 0; i < Table.key_cnt + 1; i++)
   {
     //c_log(CYAN, "checking for key[%d]\n", i);
     if(!strcmp(key, Table.key[i])) return i;
