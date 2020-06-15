@@ -11,6 +11,10 @@ typedef struct task {
   uint8_t stack[4096];
 } task_t;
 
+typedef struct cpu{
+  task_t *current;
+}cpu_t;
+
 void kmt_init();
 int  kcreate(task_t *task, const char *name, void (*entry)(void *arg), void *arg);
 void teardown(task_t *task);

@@ -40,7 +40,8 @@ _Context *os_trap(_Event ev, _Context *context){
 };
 
 void os_on_irq(int seq, int event, handler_t handler){
-  return ;
+  c_log(CYAN, "Event[%d] handler added.(seq: %d)\n", event, seq);
+  return ; //register the ev.handler.
 };
 
 MODULE_DEF(os) = {
@@ -49,23 +50,3 @@ MODULE_DEF(os) = {
   .trap = os_trap,
   .on_irq = os_on_irq,
 };
-
-// static void test(){
-//   for (int i = 1; i <= 10; i++)
-//   {
-//     printf("-----------------i = %d ---------------------\n",i);
-//     void *p = pmm->alloc(1023);
-//     if(p) printf("alloc success! at %p\n",p);
-//     else printf("alloc fail!");
-
-//   }
-//   for (int i = 1; i <= 5; i++)
-//   {
-//     printf("--------------------------------------------\n",i);
-//     void *p = pmm->alloc(2047);
-//     if(p) printf("alloc success! at %p\n",p);
-//     else printf("alloc fail!");
-//     pmm->free(p);
-//   }
-//   return ;
-// }

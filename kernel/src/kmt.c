@@ -42,7 +42,7 @@ void sem_wait(sem_t *sem){
     }
     sem->value--;
     kmt_unlock(&sem->lock);
-    while(finish_waiting){ //wait finished 
+    while(finish_waiting){
         _yield();
     }
 }
@@ -51,7 +51,7 @@ void sem_signal(sem_t *sem){
     kmt_lock(&sem->lock);
     sem->value++;
     //cond_signal; 
-    // _yield()
+    _yield();
     kmt_unlock(&sem->lock);
 }
 
