@@ -21,7 +21,7 @@ static void os_run() {
   // have printf() bug. plz use native  
   printf("Hello World from CPU #%d\n",_cpu());
   _intr_write(1); //开中断（write(0)为关中断）
-  while (1) ; //keep waiting 
+  while (1) ; //should not keep waiting 
 }
 
 _Context *os_trap(_Event ev, _Context *context){
