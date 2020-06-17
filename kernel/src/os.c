@@ -4,8 +4,9 @@
 // #define ALIGNMENT 8
 // #define ALIGN(a) ROUNDUP(a,ALIGNMENT)
 //static void test();
+#define _EVENT_HEAD 999
 
-trap_handler_t *head;
+trap_handler_t head = {0, _EVENT_HEAD, NULL, NULL};
 
 static void os_init() {
   pmm->init();
@@ -14,16 +15,6 @@ static void os_init() {
 #ifdef DEBUG
   test();// here;
 #endif
-}
-
-void trap_handler_init(){
-  r_panic_on(_cpu() != 0, "Multi cpu detected!");
-  c_log(GREEN, "It's a trap!\n");
-  head = malloc(sizeof(trap_handler_t));
-  head->event = 999;
-  head->seq = 999;
-  head->handler = NULL;
-  head->next = NULL;
 }
 
 static void os_run() {
@@ -38,7 +29,7 @@ static void os_run() {
 
 _Context *os_trap(_Event ev, _Context *context){
   _Context *next = NULL;
-  trap_handler_t *h = head->next;
+  trap_handler_t *h = head.next;
   while(h){
     if (h->event == _EVENT_NULL || h->event == ev.event) {
       _Context *r = h->handler(ev, context);
@@ -58,12 +49,12 @@ void os_on_irq(int seq, int event, handler_t handler){
   h->seq = seq;
   h->handler = handler;
   h->next = NULL;
-  trap_handler_t *p = head;
+  trap_handler_t *p = &head;
   while(p->next){
     p = p->next;
   }
   p->next = h;
-  r_panic_on(head->next==NULL, "Adding event_handler failed\n");
+  r_panic_on(head.next==NULL, "Adding event_handler failed\n");
   c_log(CYAN, "Event[%d] handler added.(seq: %d)\n", event, seq);
   return ; //register the ev.handler.
 };

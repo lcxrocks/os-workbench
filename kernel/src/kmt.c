@@ -67,9 +67,18 @@ void sem_signal(sem_t *sem){
     kmt_unlock(&sem->lock);
 }
 
+_Context *kmt_context_save(_Event ev, _Context *ctx){
+    return NULL;
+}
+
+_Context *kmt_schedule(_Event ev, _Context *ctx){
+    return NULL;
+}
+
 void kmt_init(){
-    c_log(CYAN, "Welcome to L2 World!\n");
-    trap_handler_init();
+    c_log(CYAN, "In kmt_init\n");
+    os->on_irq(INT32_MIN, _EVENT_NULL, kmt_context_save);
+    os->on_irq(INT32_MAX, _EVENT_NULL, kmt_schedule);
     return ;
 }
 
