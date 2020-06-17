@@ -32,14 +32,12 @@ do{ \
     printf("\033[0m");
 
 
-// xv6 checking double lock;
-// int holding (struct spinlock *lock){
-//   int r;
-//   pushcli();
-//   r  = lock->locked && lock->cpu == mycpu();
-//   popcli();
-//   return r;
-// }
+typedef struct trap_handler{
+  int event;
+  int seq;
+  handler_t handler;
+  struct trap_handler *next;
+} trap_handler_t;
 
 struct spinlock{
   intptr_t locked;       // Is the lock held?

@@ -5,6 +5,8 @@
 // #define ALIGN(a) ROUNDUP(a,ALIGNMENT)
 //static void test();
 
+trap_handler_t *head;
+
 static void os_init() {
   pmm->init();
   kmt->init();
@@ -12,6 +14,16 @@ static void os_init() {
 #ifdef DEBUG
   test();// here;
 #endif
+}
+
+void trap_handler_init(){
+  r_panic_on(_cpu() != 0, "Multi cpu detected!");
+  c_log(GREEN, "It's a trap!\n");
+  head = malloc(sizeof(trap_handler_t));
+  head->event = 999;
+  head->seq = 999;
+  head->handler = NULL;
+  head->next = NULL;
 }
 
 static void os_run() {
@@ -25,21 +37,33 @@ static void os_run() {
 }
 
 _Context *os_trap(_Event ev, _Context *context){
-  // _Context *next = NULL;
-  // for (auto &h: handlers_sorted_by_seq) { // retrival of handlers 
-  //   if (h.event == _EVENT_NULL || h.event == ev.event) {
-  //     _Context *r = h.handler(ev, ctx);
-  //     panic_on(r && next, "returning multiple contexts");
-  //     if (r) next = r;
-  //   }
-  // }
-  // panic_on(!next, "returning NULL context");
-  // panic_on(sane_context(next), "returning to invalid context");
-  // return next;
-  return NULL;
+  _Context *next = NULL;
+  trap_handler_t *h = head->next;
+  while(h){
+    if (h->event == _EVENT_NULL || h->event == ev.event) {
+      _Context *r = h->handler(ev, context);
+      panic_on(r && next, "returning multiple contexts");
+      if (r) next = r;
+    }
+  }
+  panic_on(!next, "returning NULL context");
+  //panic_on(sane_context(next), "returning to invalid context");
+  return next;
 };
 
 void os_on_irq(int seq, int event, handler_t handler){
+  //should add lock (common space)
+  trap_handler_t *h = malloc(sizeof(trap_handler_t));
+  h->event = event;
+  h->seq = seq;
+  h->handler = handler;
+  h->next = NULL;
+  trap_handler_t *p = head;
+  while(p->next){
+    p = p->next;
+  }
+  p->next = h;
+  r_panic_on(head->next==NULL, "Adding event_handler failed\n");
   c_log(CYAN, "Event[%d] handler added.(seq: %d)\n", event, seq);
   return ; //register the ev.handler.
 };

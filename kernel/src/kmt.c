@@ -1,6 +1,9 @@
 //#include <common.h>
 #include "../include/common.h"
 //#define current 
+extern void os_on_irq(int seq, int event, handler_t handler);
+extern void trap_handler_init();
+
 void kmt_spin_init(spinlock_t *lock, const char* name){
    lock->name = (char *) name;
    lock->locked = 0;  
@@ -25,6 +28,15 @@ void kmt_unlock(spinlock_t *lock){
     r_panic_on(lock->cpu != _cpu(), "wrong thd unlock!\n"); //holding(lock) check
     r_panic_on(lock->intr != _intr_read(), "sti() failed in kmt_unlock!\n");
 }
+
+int holding(struct spinlock *lock){
+  int r = 0;
+  int i = _intr_read();
+  _intr_write(0);
+  r  = lock->locked && lock->cpu == _cpu();
+  if(i == 1) _intr_write(1);
+  return r;
+}// xv6 checking double lock;
 
 void sem_init(sem_t *sem, const char *name, int value){
     sem->name = (char *) name;
@@ -57,6 +69,7 @@ void sem_signal(sem_t *sem){
 
 void kmt_init(){
     c_log(CYAN, "Welcome to L2 World!\n");
+    trap_handler_init();
     return ;
 }
 
