@@ -44,7 +44,7 @@ _Context *os_trap(_Event ev, _Context *context){
 
 void os_on_irq(int seq, int event, handler_t handler){
   //should add lock (common space)
-  trap_handler_t *h = malloc(sizeof(trap_handler_t));
+  trap_handler_t *h = pmm->alloc(sizeof(trap_handler_t));
   h->event = event;
   h->seq = seq;
   h->handler = handler;
