@@ -24,7 +24,7 @@ static void os_run() {
   // have printf() bug. plz use native  
   printf("Hello World from CPU #%d\n",_cpu());
   //_intr_write(1); //开中断（write(0)为关中断）
-  trap_handler_t *p = head.next;
+  trap_handler_t *p = &head;
   while(p->next){
     c_log(GREEN, "EVENT_%d handler added, seq: %d\n", p->event, p->seq);
     p = p->next;
