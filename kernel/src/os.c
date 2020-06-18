@@ -64,15 +64,29 @@ void os_on_irq(int seq, int event, handler_t handler){
     }
   }
   if(same_event){ // stop at the first trap_handler with the same event no.
-    while(seq > p->seq && p->next!=NULL){
+    while(seq > p->seq && p->next!=NULL && p->next->event != event){
       p = p->next;
     }
     r_panic_on(p->prev == NULL, "p->prev is NULL\n");
     r_panic_on(p->prev->next != p, "linked list is buggy\n");
-    p->prev->next = h;
-    h->prev = p->prev;
-    p->prev = h;
-    h->next = p;
+    if(p->seq < seq){
+      if(p->next){ // p->next->event != event
+        p->next->prev = h;
+        h->next = p->next;
+        p->next = h;
+        h->prev = p;
+      }
+      else{ // p->next = NULL
+        p->next = h;
+        h->prev = p;
+      }
+    } // common case
+    else{
+      p->prev->next = h;
+      h->prev = p->prev;
+      p->prev = h;
+      h->next = p;
+    }
   }
   if(!same_event){
     p->next = h;
