@@ -36,6 +36,7 @@ typedef struct trap_handler{
   int event;
   int seq;
   handler_t handler;
+  struct trap_handler *prev;
   struct trap_handler *next;
 } trap_handler_t;
 

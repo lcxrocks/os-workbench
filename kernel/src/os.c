@@ -6,7 +6,7 @@
 //static void test();
 #define _EVENT_HEAD 999
 
-trap_handler_t head = {0, _EVENT_HEAD, NULL, NULL};
+trap_handler_t head = {0, _EVENT_HEAD, NULL, NULL, NULL};
 
 static void os_init() {
   pmm->init();
@@ -23,8 +23,13 @@ static void os_run() {
   // }
   // have printf() bug. plz use native  
   printf("Hello World from CPU #%d\n",_cpu());
-  _intr_write(1); //开中断（write(0)为关中断）
-  while (1) ; //should not keep waiting 
+  //_intr_write(1); //开中断（write(0)为关中断）
+  trap_handler_t *p = head.next;
+  while(p->next){
+    c_log(GREEN, "EVENT_%d handler added, seq: %d\n", p->event, p->seq);
+    p = p->next;
+  }
+  //while (1) ; //should not keep waiting 
 }
 
 _Context *os_trap(_Event ev, _Context *context){
@@ -43,17 +48,37 @@ _Context *os_trap(_Event ev, _Context *context){
 };
 
 void os_on_irq(int seq, int event, handler_t handler){
-  //should add lock (common space)
   trap_handler_t *h = pmm->alloc(sizeof(trap_handler_t));
   h->event = event;
   h->seq = seq;
   h->handler = handler;
   h->next = NULL;
+  h->prev = NULL;
   trap_handler_t *p = &head;
+  bool same_event = false;
   while(p->next){
     p = p->next;
+    if(p->event == event){
+      same_event = true;
+      break;
+    }
   }
-  p->next = h;
+  if(same_event){ // stop at the first trap_handler with the same event no.
+    while(seq > p->seq && p->next!=NULL){
+      p = p->next;
+    }
+    r_panic_on(p->prev == NULL, "p->prev is NULL\n");
+    r_panic_on(p->prev->next != p, "linked list is buggy\n");
+    p->prev->next = h;
+    h->prev = p->prev;
+    p->prev = h;
+    h->next = p;
+  }
+  if(!same_event){
+    p->next = h;
+    h->prev = p;
+  } // no event no.
+
   r_panic_on(head.next==NULL, "Adding event_handler failed\n");
   c_log(CYAN, "Event[%d] handler added.(seq: %d)\n", event, seq);
   return ; //register the ev.handler.
