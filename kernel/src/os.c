@@ -29,6 +29,7 @@ static void os_run() {
     c_log(GREEN, "EVENT_%d handler added, seq: %d\n", p->event, p->seq);
     p = p->next;
   }
+  while(1);
   //while (1) ; //should not keep waiting 
 }
 
@@ -41,6 +42,7 @@ _Context *os_trap(_Event ev, _Context *context){
       panic_on(r && next, "returning multiple contexts");
       if (r) next = r;
     }
+    h = h->next;
   }
   panic_on(!next, "returning NULL context");
   //panic_on(sane_context(next), "returning to invalid context");
