@@ -29,7 +29,9 @@ static void os_run() {
     c_log(GREEN, "EVENT_%d handler added, seq: %d\n", p->event, p->seq);
     p = p->next;
   }
-  while(1);
+  while(1){
+    c_log(CYAN, "os running\n");
+  }
   //while (1) ; //should not keep waiting 
 }
 
