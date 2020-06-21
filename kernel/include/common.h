@@ -5,6 +5,9 @@
 #include <klib.h>
 #include <klib-macros.h>
 
+#define MAX_CPU 8
+#define NRTASK 64
+
 #define RED 31
 #define GREEN 32
 #define YELLOW 33
@@ -12,16 +15,17 @@
 #define PURPLE 35
 #define CYAN 36
 
-#define r_panic_on(cond, s) \
-    c_panic_on(RED, cond, s);
+#define r_panic_on(cond, ...) \
+    c_panic_on(RED, cond, __VA_ARGS__);
 
-#define c_panic_on(color, cond, s) \
+#define c_panic_on(color, cond, ...) \
 do{ \
     if(cond) {\
         printf("\033[36m[cpu(%d)]:\033[0m", _cpu());\
         printf("\033[%dm", color); \
-        panic_on(cond, s); \
+        printf(__VA_ARGS__); \
         printf("\033[0m"); \
+        _halt(1);\
     }\
 }while(0)
 
@@ -58,13 +62,23 @@ struct semaphore{
 
 struct task {
   struct {
-    const char *name;
-    struct task *next;
+    int stat;
+    int pid;
+    void *entry;
+    const char *name; // debugging
+    struct task *next; 
     _Context   *context;
-    //For debugging:
-    int cpu;
   };
   uint8_t stack[4096]; //4096-HDRsize
 };
 
-#endif
+struct cpu_local{
+  task_t *current; // the process running on this cpu or null
+  void *idle; // void *chan
+}cpu_info[MAX_CPU];
+
+enum stat { UNUSED, EMBRYO, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
+
+#define current cpu_info[_cpu()].current
+
+#endif 

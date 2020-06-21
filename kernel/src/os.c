@@ -30,7 +30,7 @@ static void os_run() {
     p = p->next;
   }
   while(1){
-    c_log(CYAN, "os running\n");
+    //c_log(CYAN, "os running\n");
   }
   //while (1) ; //should not keep waiting 
 }
