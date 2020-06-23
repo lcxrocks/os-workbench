@@ -86,6 +86,7 @@ _Context *kmt_context_save(_Event ev, _Context *ctx){
 
 _Context *kmt_schedule(_Event ev, _Context *ctx){
     _Context *ret = NULL;
+    c_log(YELLOW, "in kmt schedule!\n");
     if(current == NULL){
         task_t *p = &task_head;
         while(p->stat != RUNNABLE && p->stat != EMBRYO) p = p->next; 
