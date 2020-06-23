@@ -44,6 +44,7 @@ static void os_run() {
 
 _Context *os_trap(_Event ev, _Context *context){
   _Context *next = NULL;
+  c_log(YELLOW, "in os->trap!\n");
   trap_handler_t *h = head.next;
   while(h){
     if (h->event == _EVENT_NULL || h->event == ev.event) {
