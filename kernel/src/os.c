@@ -17,6 +17,12 @@ static void os_init() {
 #endif
 }
 
+void test_entry(void *num){
+  c_log(YELLOW, "test on %d\n", *((int *)(num)));
+}
+
+int num = 10;
+
 static void os_run() {
   // for (const char *s = "Hello World from CPU #*\n"; *s; s++) {
   //   _putc(*s == '*' ? '0' + _cpu() : *s);
@@ -29,6 +35,7 @@ static void os_run() {
     c_log(GREEN, "EVENT_%d handler added, seq: %d\n", p->event, p->seq);
     p = p->next;
   }
+  kmt->create(pmm->alloc(sizeof(task_t)) ,"test", test_entry, &num);
   while(1){
     //c_log(CYAN, "os running\n");
   }

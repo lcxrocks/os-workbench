@@ -57,36 +57,44 @@ void sem_init(sem_t *sem, const char *name, int value){
 
 void sem_wait(sem_t *sem){
     kmt_lock(&sem->lock);
-    int finish_waiting = 0;
     while(sem->value <= 0){
-        finish_waiting = 1;
-        //:cond_wait()
         current->stat = SLEEPING;
-        //mark current as not runable.
-        
-        //_yield();
+        _yield();
     }
     sem->value--;
     kmt_unlock(&sem->lock);
-    while(finish_waiting){
-        _yield();
-    }
 }
 
 void sem_signal(sem_t *sem){
     kmt_lock(&sem->lock);
     sem->value++;
-    //cond_signal; 
+    // find the first task sleeping on sem (basic implementation)
+    task_t *p = &task_head;
+    while(p->sem != sem) p= p->next;
+    r_panic_on(p == NULL, "No task waiting on sem: %s\n", sem->name);
+    p->stat = RUNNABLE;
+    p->sem = NULL;
     _yield();
     kmt_unlock(&sem->lock);
 }
 
 _Context *kmt_context_save(_Event ev, _Context *ctx){
-    return NULL;    
+    //should check whether the context is in the stack
+    current->context = ctx;
+    current->stat = SLEEPING;
+    return NULL;
 }
 
 _Context *kmt_schedule(_Event ev, _Context *ctx){
-    return NULL;
+    _Context *ret = NULL;
+    if(current == NULL){
+        task_t *p = &task_head;
+        while(p->stat != RUNNABLE && p->stat != EMBRYO) p = p->next; 
+        current = p;
+        ret = current->context;
+    }
+    r_panic_on(ret == NULL, "Schedule failed. No RUNNABLE TASK!\n");
+    return ret;
 }
 
 void kmt_init(){
@@ -97,13 +105,15 @@ void kmt_init(){
     task_head.next = NULL;
     task_head.entry = NULL;
     task_head.pid = next_pid;
+    task_head.stat = -1;
     panic_on(task_head.pid!=0, "task_head pid != 0.");
     os->on_irq(INT32_MIN, _EVENT_NULL, kmt_context_save);
+    //...
     os->on_irq(INT32_MAX, _EVENT_NULL, kmt_schedule);
     return ;
 }
 
-int  kcreate(task_t *task, const char *name, void (*entry)(void *arg), void *arg){
+int kcreate(task_t *task, const char *name, void (*entry)(void *arg), void *arg){
     kmt_lock(&task_lock);
     task->pid = next_pid++;
     task->name = name;

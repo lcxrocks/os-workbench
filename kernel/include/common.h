@@ -65,6 +65,7 @@ struct task {
     int stat;
     int pid;
     void *entry;
+    struct semaphore *sem; // sleeping on sem
     const char *name; // debugging
     struct task *next; 
     _Context   *context;
