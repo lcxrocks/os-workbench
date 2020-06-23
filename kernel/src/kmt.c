@@ -126,6 +126,7 @@ int kcreate(task_t *task, const char *name, void (*entry)(void *arg), void *arg)
     while(p->next) p = p->next;
     p->next = task;
     
+    c_log(YELLOW, "task: %s created!\n", name);
     kmt_unlock(&task_lock);
     return 0;
 }
