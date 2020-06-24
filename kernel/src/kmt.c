@@ -81,6 +81,7 @@ _Context *kmt_context_save(_Event ev, _Context *ctx){
     //should check whether the context is in the stack
     current->context = ctx;
     current->stat = SLEEPING;
+    c_log(BLUE, "IN handler kmt_context_save\n");
     return NULL;
 }
 
