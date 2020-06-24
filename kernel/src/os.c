@@ -48,7 +48,7 @@ _Context *os_trap(_Event ev, _Context *context){
   trap_handler_t *h = head.next;
   while(h){
     if (h->event == _EVENT_NULL || h->event == ev.event) {
-      c_log(YELLOW, "Try calling handler for evnet no.%d", h->event);
+      c_log(YELLOW, "Try calling handler for evnet no.%d\n", h->event);
       _Context *r = h->handler(ev, context);
       panic_on(r && next, "returning multiple contexts");
       if (r) next = r;
