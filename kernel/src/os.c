@@ -30,11 +30,11 @@ static void os_run() {
   // have printf() bug. plz use native  
   printf("Hello World from CPU #%d\n",_cpu());
   _intr_write(1); //开中断（write(0)为关中断）
-  trap_handler_t *p = &head;
-  while(p){
-    c_log(GREEN, "EVENT_%d handler added, seq: %d\n", p->event, p->seq);
-    p = p->next;
-  }
+  //trap_handler_t *p = &head;
+  // while(p){
+  //   c_log(GREEN, "EVENT_%d handler added, seq: %d\n", p->event, p->seq);
+  //   p = p->next;
+  // }
   kmt->create(pmm->alloc(sizeof(task_t)) ,"test", test_entry, &num);
   while(1){
     //c_log(CYAN, "os running\n");
