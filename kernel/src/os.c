@@ -46,6 +46,7 @@ _Context *os_trap(_Event ev, _Context *context){
   _Context *next = NULL;
   c_log(YELLOW, "in os->trap!\n");
   trap_handler_t *h = head.next;
+  r_panic_on( h == NULL, "No trap handler\n");
   while(h){
     if (h->event == _EVENT_NULL || h->event == ev.event) {
       c_log(YELLOW, "Try calling handler for evnet no.%d\n", h->event);
