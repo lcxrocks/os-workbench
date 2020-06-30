@@ -102,9 +102,15 @@ void kstack_check(task_t *stk) {
 _Context *kmt_context_save(_Event ev, _Context *ctx){
     // ctx should be in current's stack
     
-    r_panic_on(current == NULL, "No current task.\n");
-    current->context = ctx;
-    current->stat = SLEEPING;
+    //r_panic_on(current == NULL, "No current task.\n");
+    if(current != NULL){
+        current->context = ctx;
+        current->stat = SLEEPING;
+    }
+    else{
+        c_log(CYAN, "Here I am!\n");
+    }
+    
 
     c_log(BLUE, "IN handler kmt_context_save\n");
     return NULL;
