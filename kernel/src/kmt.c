@@ -95,8 +95,8 @@ void canary_check(canary_t *c, const char *msg) {
 }
 
 void kstack_check(task_t *stk) {
-  canary_check(&stk->__c1, "kernel stack overflow");
-  canary_check(&stk->__c2, "kernel stack underflow");
+  canary_check(&stk->__c1, "kernel stack overflow\n");
+  canary_check(&stk->__c2, "kernel stack underflow\n");
 }
 
 _Context *kmt_context_save(_Event ev, _Context *ctx){
@@ -137,6 +137,8 @@ int kcreate(task_t *task, const char *name, void (*entry)(void *arg), void *arg)
     task->name = name;
     task->entry = entry;
     memset(task->stack, 0, sizeof(task->stack));
+    canary_init(&task->__c1);
+    canary_init(&task->__c2);
     _Area stack = {(void *)task->stack, (void *)task->stack+sizeof(task->stack)};
     task->context = _kcontext(stack, entry, arg);
     task->stat = EMBRYO;
