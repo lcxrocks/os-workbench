@@ -83,11 +83,11 @@ struct task {
 
 struct cpu_local{
   task_t *current; // the process running on this cpu or null
-  void *idle; // void *chan
+  task_t *idle; // task_t *chan
 }cpu_info[MAX_CPU];
 
 enum stat { UNUSED, EMBRYO, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
 
 #define current cpu_info[_cpu()].current
-
+#define idle cpu_info[_cpu()].idle
 #endif 

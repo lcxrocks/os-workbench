@@ -108,10 +108,11 @@ _Context *kmt_context_save(_Event ev, _Context *ctx){
         current->stat = SLEEPING;
     }
     else{
-        c_log(CYAN, "Here I am!\n");
+        idle->context = ctx;
+        idle->stat = SLEEPING;
+        idle->name = "os->run";
+        printf("idle->name: %s\n", idle->name);
     }
-    
-
     c_log(BLUE, "IN handler kmt_context_save\n");
     return NULL;
 }
@@ -119,7 +120,9 @@ _Context *kmt_context_save(_Event ev, _Context *ctx){
 _Context *kmt_schedule(_Event ev, _Context *ctx){
     _Context *ret = NULL;
     c_log(YELLOW, "in kmt schedule!\n");
-    if(current == NULL){
+    // if current != NULL
+    //
+    if(current == NULL){ // 
         task_t *p = &task_head;
         while(p->stat != RUNNABLE && p->stat != EMBRYO) p = p->next; 
         current = p;
