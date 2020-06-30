@@ -5,7 +5,7 @@
 // #define ALIGN(a) ROUNDUP(a,ALIGNMENT)
 //static void test();
 #define _EVENT_HEAD 999
-
+extern spinlock_t task_lock;
 trap_handler_t head = {0, _EVENT_HEAD, NULL, NULL, NULL};
 
 static void os_init() {
@@ -24,10 +24,6 @@ void test_entry(void *num){
 int num = 10;
 
 static void os_run() {
-  // for (const char *s = "Hello World from CPU #*\n"; *s; s++) {
-  //   _putc(*s == '*' ? '0' + _cpu() : *s);
-  // }
-  // have printf() bug. plz use native  
   printf("Hello World from CPU #%d\n",_cpu());
   _intr_write(1); //开中断（write(0)为关中断）
   //trap_handler_t *p = &head;
@@ -37,9 +33,8 @@ static void os_run() {
   // }
   kmt->create(pmm->alloc(sizeof(task_t)) ,"test", test_entry, &num);
   while(1){
-    //c_log(CYAN, "os running\n");
+    c_log(CYAN, "os running\n");
   }
-  //while (1) ; //should not keep waiting 
 }
 
 _Context *os_trap(_Event ev, _Context *context){
@@ -63,6 +58,7 @@ _Context *os_trap(_Event ev, _Context *context){
 };
 
 void os_on_irq(int seq, int event, handler_t handler){
+  kmt->spin_lock(&task_lock);
   trap_handler_t *h = pmm->alloc(sizeof(trap_handler_t));
   h->event = event;
   h->seq = seq;
@@ -110,6 +106,7 @@ void os_on_irq(int seq, int event, handler_t handler){
 
   r_panic_on(head.next==NULL, "Adding event_handler failed\n");
   c_log(CYAN, "Event[%d] handler added.(seq: %d)\n", event, seq);
+  kmt->spin_unlock(&task_lock);
   return ; //register the ev.handler.
 };
 
