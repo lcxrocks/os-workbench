@@ -63,7 +63,7 @@ struct semaphore{
 #define N 4
 #define MAGIC 0x5a5aa5a5
 typedef uint32_t canary_t[N];
-#define TASK_HEAD (2*sizeof(int) + sizeof(void *) + sizeof(struct semaphore) + \
+#define TASK_HEAD (2*sizeof(int) + sizeof(void *) + sizeof(struct semaphore *) + \
   sizeof(char *) + sizeof(struct task *) +sizeof(_Context *) + 2*sizeof(canary_t))\
 
 struct task {
