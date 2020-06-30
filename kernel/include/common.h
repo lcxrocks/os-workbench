@@ -60,6 +60,12 @@ struct semaphore{
     int cpu;
 };
 
+#define N 4
+#define MAGIC 0x5a5aa5a5
+typedef uint32_t canary_t[N];
+#define TASK_HEAD (2*sizeof(int) + sizeof(void *) + sizeof(struct semaphore) + \
+  sizeof(char *) + sizeof(struct task *) +sizeof(_Context *) + 2*sizeof(canary_t))\
+
 struct task {
   struct {
     int stat;
@@ -70,7 +76,9 @@ struct task {
     struct task *next; 
     _Context   *context;
   };
-  uint8_t stack[4096]; //4096-HDRsize
+  canary_t __c1;
+  uint8_t stack[4096 - TASK_HEAD]; //4096-HDRsize
+  canary_t __c2;
 };
 
 struct cpu_local{

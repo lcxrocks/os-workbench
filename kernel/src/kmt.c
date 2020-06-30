@@ -7,6 +7,15 @@ int next_pid = 0;
 spinlock_t task_lock;
 task_t task_head;
 
+// void stop_intr(int *i){
+//     i = _intr_read();
+//     _intr_write(0);
+// }
+
+// void restart_intr(int *i){
+//     if(i == 1) _intr_write(1);
+// }
+
 int holding(struct spinlock *lock){
   int r = 0;
   int i = _intr_read();
@@ -77,6 +86,19 @@ void sem_signal(sem_t *sem){
     kmt_unlock(&sem->lock);
 }
 
+void canary_init(canary_t *c) {
+  for (int i = 0; i < N; i++) (*c)[i] = MAGIC; 
+}
+
+void canary_check(canary_t *c, const char *msg) {
+  for (int i = 0; i < N; i++) r_panic_on((*c)[i] != MAGIC, msg);
+}
+
+void kstack_check(task_t *stk) {
+  canary_check(&stk->__c1, "kernel stack overflow");
+  canary_check(&stk->__c2, "kernel stack underflow");
+}
+
 _Context *kmt_context_save(_Event ev, _Context *ctx){
     //should check whether the context is in the stack
     current->context = ctx;
@@ -93,26 +115,12 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
         while(p->stat != RUNNABLE && p->stat != EMBRYO) p = p->next; 
         current = p;
         ret = current->context;
-    }
+    }// cpu(now) don't have any task.
+    // what if current != NULL ?
     r_panic_on(ret == NULL, "Schedule failed. No RUNNABLE TASK!\n");
+    kstack_check(current);
     return ret;
-}
-
-void kmt_init(){
-    c_log(CYAN, "In kmt_init\n");
-    kmt_spin_init(&task_lock, "task_lock");
-    task_head.name = "TASK HEAD";
-    task_head.entry = NULL;
-    task_head.next = NULL;
-    task_head.entry = NULL;
-    task_head.pid = next_pid;
-    task_head.stat = -1;
-    panic_on(task_head.pid!=0, "task_head pid != 0.");
-    os->on_irq(INT32_MIN, _EVENT_NULL, kmt_context_save);
-    //...
-    os->on_irq(INT32_MAX, _EVENT_NULL, kmt_schedule);
-    return ;
-}
+}// return any task's _Context.
 
 int kcreate(task_t *task, const char *name, void (*entry)(void *arg), void *arg){
     kmt_lock(&task_lock);
@@ -131,6 +139,23 @@ int kcreate(task_t *task, const char *name, void (*entry)(void *arg), void *arg)
     c_log(YELLOW, "task: %s created!\n", name);
     kmt_unlock(&task_lock);
     return 0;
+}
+
+void kmt_init(){
+    c_log(CYAN, "In kmt_init\n");
+    kmt_spin_init(&task_lock, "task_lock");
+    r_panic_on(sizeof(task_t)!=4096, "Wrong Task Size. Re-check task header size.\n");
+    task_head.name = "TASK HEAD";
+    task_head.entry = NULL;
+    task_head.next = NULL;
+    task_head.entry = NULL;
+    task_head.pid = next_pid;
+    task_head.stat = -1;
+    panic_on(task_head.pid!=0, "task_head pid != 0.");
+    os->on_irq(INT32_MIN, _EVENT_NULL, kmt_context_save);
+    //...
+    os->on_irq(INT32_MAX, _EVENT_NULL, kmt_schedule);
+    return ;
 }
 
 void kteardown(task_t *task){
