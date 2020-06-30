@@ -40,7 +40,7 @@ static void os_run() {
 
 _Context *os_trap(_Event ev, _Context *context){
   _Context *next = NULL;
-  c_log(YELLOW, "in os->trap!\n");
+  c_log(RED, "OS->TRAP!\n");
   trap_handler_t *h = head.next;
   r_panic_on( h == NULL, "No trap handler\n");
   if(ev.event == _EVENT_YIELD){
