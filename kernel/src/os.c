@@ -34,6 +34,7 @@ static void os_run() {
   printf("tried to create task\n");
   kmt->create(pmm->alloc(sizeof(task_t)) ,"idle", test_entry, &num);
   while(1){
+    printf("here in os->run !\n");
     _yield();
   }
 }
@@ -46,7 +47,7 @@ _Context *os_trap(_Event ev, _Context *context){
   if(ev.event == _EVENT_YIELD){
     c_log(CYAN, "EVENT YIELD!\n");
     return context;
-  } 
+  }
   while(h){
     if (h->event == _EVENT_NULL || h->event == ev.event) {
       c_log(YELLOW, "Try calling handler for evnet no.%d\n", h->event);
