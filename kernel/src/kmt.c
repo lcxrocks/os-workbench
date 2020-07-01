@@ -80,6 +80,7 @@ void sem_signal(sem_t *sem){
     task_t *p = &task_head;
     while(p->sem != sem) p= p->next;
     r_panic_on(p == NULL, "No task waiting on sem: %s\n", sem->name);
+    r_panic_on(p->stat!=SLEEPING, "Task:[%s] is not sleeping.\n", p->name);
     p->stat = RUNNABLE;
     p->sem = NULL;
     _yield();
@@ -106,10 +107,8 @@ _Context *kmt_context_save(_Event ev, _Context *ctx){
     if(current != NULL){
         current->context = ctx;
         current->stat = SLEEPING;
-        
     }
     else{
-        printf("esp0: %x, esp: %x\n", ctx->rsp0, ctx->rsp);
         idle->context = ctx;
         idle->stat = SLEEPING;
         idle->name = "os->run";
@@ -122,15 +121,17 @@ _Context *kmt_context_save(_Event ev, _Context *ctx){
 _Context *kmt_schedule(_Event ev, _Context *ctx){
     _Context *ret = NULL;
     c_log(YELLOW, "in kmt schedule!\n");
-    // if current != NULL
-    //
-    if(current == NULL){ // 
-        task_t *p = &task_head;
-        while(p->stat != RUNNABLE && p->stat != EMBRYO) p = p->next; 
+    task_t *p = &task_head;
+    while(p->stat != RUNNABLE && p->stat != EMBRYO) p = p->next; 
+    if(p != NULL){ // found an excutable task
         current = p;
-        ret = current->context;
-    }// cpu(now) don't have any task.
-    // what if current != NULL ?
+        current->stat = RUNNING;
+        ret = current->context;  
+    }
+    else{ // return to idle process
+        current = NULL;
+        ret = idle->context;
+    }
     r_panic_on(ret == NULL, "Schedule failed. No RUNNABLE TASK!\n");
     kstack_check(current);
     return ret;
