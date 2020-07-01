@@ -34,7 +34,7 @@ do{ \
     printf("\033[%dm", color); \
     printf(__VA_ARGS__); \
     printf("\033[0m");
-    
+
 #define RANGE(st, ed) (_Area) { .start = (void *)(st), .end = (void *)(ed) }
 #define IN_RANGE(ptr, area) ((area).start <= (ptr) && (ptr) < (area).end)
 
@@ -65,13 +65,14 @@ struct semaphore{
 #define N 4
 #define MAGIC 0x5a5aa5a5
 typedef uint32_t canary_t[N];
-#define TASK_HEAD (2*sizeof(int) + sizeof(void *) + sizeof(struct semaphore *) + \
+#define TASK_HEAD (3*sizeof(int) + sizeof(void *) + sizeof(struct semaphore *) + \
   sizeof(char *) + sizeof(struct task *) +sizeof(_Context *) + 2*sizeof(canary_t))\
 
 struct task {
   struct {
     int stat;
     int pid;
+    int cpu;
     void *entry;
     struct semaphore *sem; // sleeping on sem
     const char *name; // debugging

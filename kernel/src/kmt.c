@@ -125,8 +125,13 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
     bool flag = false;
     while(p->next){
         if(p->stat == RUNNABLE || p->stat == EMBRYO){
-            flag = true;
-            break;
+            if(p->cpu != _cpu()){
+                flag = true;
+                break;
+            }
+            else{
+                p->cpu = -1; // reset p->cpu, so that it can be scheduled to this cpu on next interrupt.
+            }
         }
         p = p->next;
     }
@@ -151,6 +156,7 @@ int kcreate(task_t *task, const char *name, void (*entry)(void *arg), void *arg)
     task->name = name;
     task->entry = entry;
     task->next = NULL;
+    task->cpu = -1; // can be scheduled to any cpu at the beginning.
     memset(task->stack, 0, sizeof(task->stack));
     canary_init(&task->__c1);
     canary_init(&task->__c2);
@@ -163,7 +169,7 @@ int kcreate(task_t *task, const char *name, void (*entry)(void *arg), void *arg)
        p = p->next; 
     }
     p->next = task;
-    c_log(YELLOW, "task: %s created!\n", name);
+    c_log(YELLOW, "task[%d]: %s created!\n", task->pid, name);
     kmt_unlock(&task_lock);
     return 0;
 }
