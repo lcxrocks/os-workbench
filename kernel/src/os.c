@@ -1,6 +1,6 @@
 #include "../include/common.h"
 #include "pmm.h"
-
+extern uint8_t _etext;
 // #define ALIGNMENT 8
 // #define ALIGN(a) ROUNDUP(a,ALIGNMENT)
 //static void test();
@@ -55,6 +55,7 @@ _Context *os_trap(_Event ev, _Context *context){
     h = h->next;
   }
   panic_on(!next, "returning NULL context");
+  panic_on(!IN_RANGE((void *)next->rip, RANGE(0x100000, &_etext)), "Returned wrong rip.\n");
   //panic_on(sane_context(next), "returning to invalid context");
   return next;
 };

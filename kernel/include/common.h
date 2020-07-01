@@ -34,7 +34,9 @@ do{ \
     printf("\033[%dm", color); \
     printf(__VA_ARGS__); \
     printf("\033[0m");
-
+    
+#define RANGE(st, ed) (_Area) { .start = (void *)(st), .end = (void *)(ed) }
+#define IN_RANGE(ptr, area) ((area).start <= (ptr) && (ptr) < (area).end)
 
 typedef struct trap_handler{
   int event;

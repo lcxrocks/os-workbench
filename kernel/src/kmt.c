@@ -133,7 +133,7 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
     if(flag == true){ // found an excutable task
         current = p;
         current->stat = RUNNING;
-        ret = current->context;  
+        ret = current->context; 
     }
     else{ // return to idle process
         current = NULL;
