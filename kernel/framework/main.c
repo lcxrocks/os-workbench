@@ -3,7 +3,7 @@
 #include <common.h>
 int tid = 0;
 
-void printer()  { tid++; while (1) { printf("%d", tid); } }
+void printer()  {  while (1) { tid++;printf("%d", tid); } }
 void printer2()  {  while (1) { printf("hahhaha %d", tid); } }
 
 int main() {
