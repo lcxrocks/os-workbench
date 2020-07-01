@@ -122,8 +122,15 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
     _Context *ret = NULL;
     c_log(YELLOW, "in kmt schedule!\n");
     task_t *p = &task_head;
-    while(p->stat != RUNNABLE && p->stat != EMBRYO && p != NULL) p = p->next; 
-    if(p != NULL){ // found an excutable task
+    bool flag = false;
+    while(p->next){
+        if(p->stat == RUNNABLE || p->stat == EMBRYO){
+            flag = true;
+            break;
+        }
+        p = p->next;
+    }
+    if(flag == true){ // found an excutable task
         current = p;
         current->stat = RUNNING;
         ret = current->context;  
@@ -155,7 +162,6 @@ int kcreate(task_t *task, const char *name, void (*entry)(void *arg), void *arg)
        p = p->next; 
     }
     p->next = task;
-    
     c_log(YELLOW, "task: %s created!\n", name);
     kmt_unlock(&task_lock);
     return 0;
