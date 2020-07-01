@@ -127,6 +127,7 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
         current = p;
         current->stat = RUNNING;
         ret = current->context;  
+        printf("hahahhahah");
     }
     else{ // return to idle process
         current = NULL;
