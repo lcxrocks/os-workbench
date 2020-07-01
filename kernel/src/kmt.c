@@ -122,7 +122,7 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
     _Context *ret = NULL;
     c_log(YELLOW, "in kmt schedule!\n");
     task_t *p = &task_head;
-    while(p->stat != RUNNABLE && p->stat != EMBRYO) p = p->next; 
+    while(p->stat != RUNNABLE && p->stat != EMBRYO && p != NULL) p = p->next; 
     if(p != NULL){ // found an excutable task
         current = p;
         current->stat = RUNNING;
@@ -132,7 +132,6 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
         current = NULL;
         ret = idle->context;
     }
-    printf("wtf?\n");
     r_panic_on(ret == NULL, "Schedule failed. No RUNNABLE TASK!\n");
     kstack_check(current);
     return ret;
