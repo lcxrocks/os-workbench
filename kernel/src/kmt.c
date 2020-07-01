@@ -127,12 +127,12 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
         current = p;
         current->stat = RUNNING;
         ret = current->context;  
-        printf("hahahhahah");
     }
     else{ // return to idle process
         current = NULL;
         ret = idle->context;
     }
+    printf("wtf?\n");
     r_panic_on(ret == NULL, "Schedule failed. No RUNNABLE TASK!\n");
     kstack_check(current);
     return ret;
