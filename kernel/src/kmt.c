@@ -106,11 +106,11 @@ _Context *kmt_context_save(_Event ev, _Context *ctx){
     //r_panic_on(current == NULL, "No current task.\n");
     if(current != NULL){
         current->context = ctx;
-        current->stat = SLEEPING;
+        current->stat = RUNNABLE;
     }
     else{
         idle->context = ctx;
-        idle->stat = SLEEPING;
+        idle->stat = RUNNABLE;
         idle->name = "os->run";
         idle->next = NULL;
     }
