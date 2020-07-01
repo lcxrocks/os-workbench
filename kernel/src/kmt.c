@@ -152,7 +152,6 @@ int kcreate(task_t *task, const char *name, void (*entry)(void *arg), void *arg)
     
     task_t *p = &task_head;
     while(p->next) {
-       printf(",,,,");
        p = p->next; 
     }
     p->next = task;
