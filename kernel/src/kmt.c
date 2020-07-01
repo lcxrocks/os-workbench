@@ -170,7 +170,7 @@ int kcreate(task_t *task, const char *name, void (*entry)(void *arg), void *arg)
        p = p->next; 
     }
     p->next = task;
-    c_log(YELLOW, "task[%d]: %s created!\n", task->pid, name);
+    c_log(YELLOW, "task[%d]: %s created, stat: %d!\n", task->pid, name, task->stat);
     kmt_unlock(&task_lock);
     return 0;
 }
