@@ -126,6 +126,7 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
     while(p->next){
         if(p->stat == RUNNABLE || p->stat == EMBRYO){
             if(p->cpu != _cpu()){
+                p->cpu = _cpu();
                 flag = true;
                 break;
             }
@@ -152,7 +153,7 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
 
 int kcreate(task_t *task, const char *name, void (*entry)(void *arg), void *arg){
     kmt_lock(&task_lock);
-    task->pid = next_pid++;
+    task->pid = ++next_pid;
     task->name = name;
     task->entry = entry;
     task->next = NULL;
