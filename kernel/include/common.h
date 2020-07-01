@@ -78,7 +78,7 @@ struct task {
     const char *name; // debugging
     struct task *next; 
     _Context   *context;
-  };
+  }__attribute__((packed));
   canary_t __c1;
   uint8_t stack[4096 - TASK_HEAD]; //4096-HDRsize
   canary_t __c2;
