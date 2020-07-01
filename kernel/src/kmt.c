@@ -122,10 +122,7 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
     _Context *ret = NULL;
     c_log(YELLOW, "in kmt schedule!\n");
     task_t *p = &task_head;
-    while(p->stat != RUNNABLE && p->stat != EMBRYO && p != NULL){
-         p = p->next; 
-         printf(".");
-    }
+    while(p->stat != RUNNABLE && p->stat != EMBRYO && p != NULL) p = p->next; 
     if(p != NULL){ // found an excutable task
         current = p;
         current->stat = RUNNING;
@@ -145,6 +142,7 @@ int kcreate(task_t *task, const char *name, void (*entry)(void *arg), void *arg)
     task->pid = next_pid++;
     task->name = name;
     task->entry = entry;
+    task->next = NULL;
     memset(task->stack, 0, sizeof(task->stack));
     canary_init(&task->__c1);
     canary_init(&task->__c2);
