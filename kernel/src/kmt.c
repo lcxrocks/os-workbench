@@ -151,7 +151,10 @@ int kcreate(task_t *task, const char *name, void (*entry)(void *arg), void *arg)
     task->stat = EMBRYO;
     
     task_t *p = &task_head;
-    while(p->next) p = p->next;
+    while(p->next) {
+       printf(",,,,");
+       p = p->next; 
+    }
     p->next = task;
     
     c_log(YELLOW, "task: %s created!\n", name);
