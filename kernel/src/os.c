@@ -31,8 +31,6 @@ static void os_run() {
   //   c_log(GREEN, "EVENT_%d handler added, seq: %d\n", p->event, p->seq);
   //   p = p->next;
   // }
-  printf("tried to create task\n");
-  kmt->create(pmm->alloc(sizeof(task_t)) ,"idle", test_entry, &num);
   while(1){
     _yield();
   }

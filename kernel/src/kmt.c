@@ -106,12 +106,14 @@ _Context *kmt_context_save(_Event ev, _Context *ctx){
     if(current != NULL){
         current->context = ctx;
         current->stat = SLEEPING;
+        
     }
     else{
+        printf("esp0: %x, esp: %x\n", ctx->rsp0, ctx->rsp);
         idle->context = ctx;
         idle->stat = SLEEPING;
         idle->name = "os->run";
-        printf("idle->name: %s\n", idle->name);
+        idle->next = NULL;
     }
     c_log(BLUE, "IN handler kmt_context_save\n");
     return NULL;
