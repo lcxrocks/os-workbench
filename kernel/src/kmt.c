@@ -140,7 +140,7 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
         ret = idle->context;
     }
     r_panic_on(ret == NULL, "Schedule failed. No RUNNABLE TASK!\n");
-    kstack_check(current);
+    if(current) kstack_check(current);
     return ret;
 }// return any task's _Context.
 
