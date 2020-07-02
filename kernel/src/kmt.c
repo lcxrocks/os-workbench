@@ -109,7 +109,7 @@ _Context *kmt_context_save(_Event ev, _Context *ctx){
         current->stat = RUNNABLE;
     }// current == NULL ----> idle->stat = RUNNING.
     else if(idle == NULL){
-        //pmm->alloc(sizeof(task_t *))
+        idle = pmm->alloc(sizeof(task_t));
         //panic_on(1, "stop.");
         idle->context = ctx;
         idle->stat = RUNNABLE;
