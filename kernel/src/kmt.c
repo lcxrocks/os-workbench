@@ -5,6 +5,7 @@ extern void os_on_irq(int seq, int event, handler_t handler);
 extern void trap_handler_init();
 int next_pid = 0;
 spinlock_t task_lock;
+spinlock_t info_lock;
 task_t task_head;
 
 // void stop_intr(int *i){

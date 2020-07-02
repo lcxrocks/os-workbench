@@ -7,7 +7,7 @@ void printer()  { tid++; while (1) { printf("%d", tid); } }
 void printer2()  {  while (1) { printf("."); } }
 
 int main() {
-  c_log(RED, "CPU reset.\n");
+  printf("CPU reset.\n");
   _ioe_init();
   _cte_init(os->trap);
   //_vme_init(pmm->alloc, pmm->free);

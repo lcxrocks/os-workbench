@@ -6,8 +6,9 @@ extern uint8_t _etext;
 //static void test();
 #define _EVENT_HEAD 999
 extern spinlock_t task_lock;
+extern spinlock_t info_lock;
 trap_handler_t head = {0, _EVENT_HEAD, NULL, NULL, NULL};
-spinlock_t info_lock;
+
 static void os_init() {
   pmm->init();
   kmt->init();
