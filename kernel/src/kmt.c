@@ -110,10 +110,11 @@ _Context *kmt_context_save(_Event ev, _Context *ctx){
     }// current == NULL ----> idle->stat = RUNNING.
     else if(idle == NULL){
         //pmm->alloc(sizeof(task_t *))
-        panic_on(1, "stop.");
+        //panic_on(1, "stop.");
         idle->context = ctx;
         idle->stat = RUNNABLE;
         idle->name = "os->run";
+        r_panic_on(1, "idle:%s\n", idle->name);
         idle->cpu = _cpu();
         idle->next = NULL;
     }
