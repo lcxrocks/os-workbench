@@ -110,17 +110,15 @@ _Context *kmt_context_save(_Event ev, _Context *ctx){
     }// current == NULL ----> idle->stat = RUNNING.
     else if(idle == NULL){
         idle = pmm->alloc(sizeof(task_t));
-        //panic_on(1, "stop.");
         idle->context = ctx;
         idle->stat = RUNNABLE;
         idle->name = "os->run";
-        r_panic_on(1, "idle:%s(%p)\n", idle->name, &idle->name);
         idle->cpu = _cpu();
         idle->next = NULL;
     }
     else{
         panic_on(idle->stat!=RUNNING, "This cpu has nothing to do.\n");
-        //idle->context
+        idle->context = ctx;
     }
     c_log(BLUE, "IN handler kmt_context_save\n");
     return NULL;
@@ -149,6 +147,7 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
     else{
         current = IDLE;
         next = idle->context;
+        idle->stat = RUNNING;
         kstack_check(idle);
     }
     r_panic_on(next == NULL, "Schedule failed. No RUNNABLE TASK!\n");
