@@ -114,7 +114,7 @@ _Context *kmt_context_save(_Event ev, _Context *ctx){
         idle->context = ctx;
         idle->stat = RUNNABLE;
         idle->name = "os->run";
-        r_panic_on(1, "idle:%s\n", idle->name);
+        r_panic_on(1, "idle:%s(%p)\n", idle->name, &idle->name);
         idle->cpu = _cpu();
         idle->next = NULL;
     }
