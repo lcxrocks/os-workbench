@@ -65,6 +65,7 @@ void sem_wait(sem_t *sem){
     kmt_lock(&sem->lock);
     while(sem->value <= 0){
         current->stat = SLEEPING;
+        kmt_unlock(&sem->lock);
         _yield();
     }
     sem->value--;
