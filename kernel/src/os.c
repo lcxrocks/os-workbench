@@ -25,7 +25,11 @@ int num = 10;
 
 static void os_run() {
   //printf("Hello World from CPU #%d\n",_cpu());
+  spinlock_t info_lock;
+  kmt->spin_init(&info_lock, "info_lock");
+  kmt->spin_lock(&info_lock);
   c_log(PURPLE, "Hello world from CPU #%d\n", _cpu());
+  kmt->spin_unlock(&info_lock);
   //_intr_write(1); //开中断（write(0)为关中断）
   //trap_handler_t *p = &head;
   // while(p){
