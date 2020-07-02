@@ -7,10 +7,11 @@ extern uint8_t _etext;
 #define _EVENT_HEAD 999
 extern spinlock_t task_lock;
 trap_handler_t head = {0, _EVENT_HEAD, NULL, NULL, NULL};
-
+spinlock_t info_lock;
 static void os_init() {
   pmm->init();
   kmt->init();
+  kmt->spin_init(&info_lock, "info_lock");
   //dev-init();
 #ifdef DEBUG
   test();// here;
@@ -25,8 +26,6 @@ int num = 10;
 
 static void os_run() {
   //printf("Hello World from CPU #%d\n",_cpu());
-  spinlock_t info_lock;
-  kmt->spin_init(&info_lock, "info_lock");
   kmt->spin_lock(&info_lock);
   c_log(PURPLE, "Hello world from CPU #%d\n", _cpu());
   kmt->spin_unlock(&info_lock);
