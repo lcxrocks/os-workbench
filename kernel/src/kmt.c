@@ -63,14 +63,14 @@ void sem_init(sem_t *sem, const char *name, int value){
 
 void sem_wait(sem_t *sem){
     kmt_lock(&sem->lock);
-    while(sem->value <= 0){
-        current->stat = SLEEPING;
-        kmt_unlock(&sem->lock);
-        _yield();
+    bool flag =false;
+    if(sem->value <= 0){
+        flag = true;
+        current->stat = SLEEPING;   
     }
-    current->stat = RUNNABLE;
     sem->value--;
     kmt_unlock(&sem->lock);
+    if(flag) _yield();
 }
 
 void sem_signal(sem_t *sem){
@@ -78,6 +78,7 @@ void sem_signal(sem_t *sem){
     sem->value++;
     task_t *p = task_head.next;
     while(p) {
+        printf(".");
         if(p->sem == sem){
             p->stat = RUNNABLE;
             p->sem = NULL;
