@@ -15,11 +15,13 @@
 #define PURPLE 35
 #define CYAN 36
 
+#ifdef DEBUG
 #define r_panic_on(cond, ...) \
     c_panic_on(RED, cond, __VA_ARGS__);
 
-#define c_panic_on(color, cond, ...) \
-do{ \
+
+  #define c_panic_on(color, cond, ...) \
+  do{ \
     if(cond) {\
         printf("\033[36m[cpu(%d)]:\033[0m", _cpu());\
         printf("\033[%dm", color); \
@@ -27,8 +29,7 @@ do{ \
         printf("\033[0m"); \
         _halt(1);\
     }\
-}while(0) \
-
+  }while(0) \
 
 #define c_log(color, ...) \
     printf("\033[32m[cpu(%d)]:\033[0m", _cpu());\
@@ -37,6 +38,11 @@ do{ \
     printf("\033[0m"); 
     //kmt->spin_unlock(&info_lock);
     //kmt->spin_lock(&info_lock);
+#else
+  #define r_panic_on(cond, ...) ;
+  #define c_panic_on(color, cond, ...) ;
+  #define c_log(color, ...) ;
+#endif
 
 #define RANGE(st, ed) (_Area) { .start = (void *)(st), .end = (void *)(ed) }
 #define IN_RANGE(ptr, area) ((area).start <= (ptr) && (ptr) < (area).end)
