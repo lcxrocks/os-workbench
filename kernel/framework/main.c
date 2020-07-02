@@ -20,7 +20,7 @@ int main() {
   //_vme_init(pmm->alloc, pmm->free);
   os->init();
   kmt->sem_init(&empty, "empty", 1);
-  kmt->sem_init(&fill, "fill", 1);
+  kmt->sem_init(&fill, "fill", 0);
   kmt->create(pmm->alloc(sizeof(task_t)), "producer", producer, NULL);
   kmt->create(pmm->alloc(sizeof(task_t)), "consumer", consumer, NULL);
   _mpe_init(os->run); //call-user-entry(os->run)
