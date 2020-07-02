@@ -9,9 +9,8 @@ sem_t fill;
 
 void printer()  { tid++; while (1) { printf("%d", tid); } }
 void printer2()  {  while (1) { printf("."); } }
-void producer() { while (1) { P(&empty); _putc('('); V(&fill);  } }
-void consumer() { while (1) { P(&fill);  _putc(')'); V(&empty); } }
-
+void producer() { while (1) { P(&empty); tid++; printf("%d", tid); V(&fill);  } }
+void consumer() { while (1) { P(&fill);  tid--; printf("%d", tid);; V(&empty); } }
 
 int main() {
   printf("CPU reset.\n");
