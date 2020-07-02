@@ -24,12 +24,7 @@ static void os_run() {
   kmt->spin_lock(&info_lock);
   c_log(PURPLE, "Hello world from CPU #%d\n", _cpu());
   kmt->spin_unlock(&info_lock);
-  //_intr_write(1); //开中断（write(0)为关中断）
-  //trap_handler_t *p = &head;
-  // while(p){
-  //   c_log(GREEN, "EVENT_%d handler added, seq: %d\n", p->event, p->seq);
-  //   p = p->next;
-  // }
+  _intr_write(1); //开中断（write(0)为关中断）
   while(1){
     _yield();
   }
