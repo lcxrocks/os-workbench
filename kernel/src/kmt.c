@@ -51,7 +51,7 @@ void kmt_unlock(spinlock_t *lock){
     //__sync_synchronize();
     _atomic_xchg(&(lock->locked), 0);
     if(lock->intr) _intr_write(1);
-    r_panic_on(lock->locked != 0, "lock[%s] unlock failed!\n", lock->name);
+    r_panic_on(lock->locked != 0, "lock[%s] unlock failed!%d\n", lock->name,_cpu());
     r_panic_on(lock->intr != _intr_read(), "sti() failed in kmt_unlock!\n");
 }
 
