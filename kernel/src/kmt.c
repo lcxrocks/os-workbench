@@ -48,7 +48,7 @@ void kmt_unlock(spinlock_t *lock){
     r_panic_on(!holding(lock), "lock(%s) tried to release itself without holding.\n", lock->name);
     lock->cpu = -1;
 
-    __sync_synchronize();
+    //__sync_synchronize();
     _atomic_xchg(&(lock->locked), 0);
     if(lock->intr) _intr_write(1);
     r_panic_on(lock->locked != 0, "unlock failed!\n");
