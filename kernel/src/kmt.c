@@ -137,6 +137,7 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
     while(t){
         printf("task:[%s], stat: %d\n", t->name, t->stat);
         t = t->next;
+        printf(".");
     }
     printf("========================================================\n");
     task_t *p = task_head.next;
