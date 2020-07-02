@@ -132,6 +132,11 @@ _Context *kmt_context_save(_Event ev, _Context *ctx){
 _Context *kmt_schedule(_Event ev, _Context *ctx){
     _Context *next = NULL;
     c_log(YELLOW, "in kmt schedule!\n");
+    task_t *t = task_head.next;
+    while(t){
+        printf("task:[%s], stat: %d\n", t->name, t->stat);
+        t = t->next;
+    }
     task_t *p = task_head.next;
     while(p){
         if(p->stat == EMBRYO || p->stat == RUNNABLE){
