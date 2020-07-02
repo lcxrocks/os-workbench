@@ -78,17 +78,17 @@ void sem_signal(sem_t *sem){
     sem->value++;
     task_t *p = task_head.next;
     while(p) {
-        printf(".");
         if(p->sem == sem){
             p->stat = RUNNABLE;
             p->sem = NULL;
+            break;
         }
        p = p->next;
     }
     //r_panic_on(p == NULL, "No task waiting on sem: %s\n", sem->name);
     //r_panic_on(p->stat!=SLEEPING, "Task:[%s] is not sleeping.\n", p->name);
     kmt_unlock(&sem->lock);
-    _yield(); 
+    _yield();
 }
 
 void canary_init(canary_t *c) {
