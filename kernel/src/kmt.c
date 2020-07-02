@@ -144,7 +144,7 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
         current = p;
         kstack_check(current);
         current->stat = RUNNING;
-        current->cpu = (current->cpu+1)%_ncpu(); // Round-robin to next cpu.
+        //current->cpu = (current->cpu+1)%_ncpu(); // Round-robin to next cpu.
     }
     else{
         current = IDLE;
@@ -201,6 +201,11 @@ void kmt_init(){
 }
 
 void kteardown(task_t *task){
+    kmt_lock(&task_lock);
+    task_t *p = task_head.next;
+    while(p->next!=task) p = p->next;
+    p->next = task->next;
+    kmt_unlock(&task_lock);
     return ;
 }
 
