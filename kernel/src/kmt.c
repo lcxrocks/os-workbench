@@ -76,14 +76,13 @@ void sem_wait(sem_t *sem){
 void sem_signal(sem_t *sem){
     kmt_lock(&sem->lock);
     sem->value++;
-    // find the first task sleeping on sem (basic implementation)
     task_t *p = task_head.next;
     while(p) {
         if(p->sem == sem){
             p->stat = RUNNABLE;
-            p->sem = NULL;
+            //p->sem = NULL;
         }
-       p= p->next;
+       p = p->next;
     }
     //r_panic_on(p == NULL, "No task waiting on sem: %s\n", sem->name);
     //r_panic_on(p->stat!=SLEEPING, "Task:[%s] is not sleeping.\n", p->name);
