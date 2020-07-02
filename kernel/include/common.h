@@ -93,4 +93,5 @@ enum stat { UNUSED, EMBRYO, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
 
 #define current cpu_info[_cpu()].current
 #define idle cpu_info[_cpu()].idle
+#define IDLE NULL
 #endif 

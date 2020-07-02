@@ -91,13 +91,13 @@ void canary_init(canary_t *c) {
   for (int i = 0; i < N; i++) (*c)[i] = MAGIC; 
 }
 
-void canary_check(canary_t *c, const char *msg) {
-  for (int i = 0; i < N; i++) r_panic_on((*c)[i] != MAGIC, msg);
+void canary_check(canary_t *c, const char *msg, const char *task_name) {
+  for (int i = 0; i < N; i++) r_panic_on((*c)[i] != MAGIC, msg, task_name);
 }
 
 void kstack_check(task_t *stk) {
-  canary_check(&stk->__c1, "kernel stack overflow\n");
-  canary_check(&stk->__c2, "kernel stack underflow\n");
+  canary_check(&stk->__c1, "task[%s] kernel stack overflow\n", stk->name);
+  canary_check(&stk->__c2, "task[%s] kernel stack underflow\n", stk->name);
 }
 
 _Context *kmt_context_save(_Event ev, _Context *ctx){
@@ -107,11 +107,13 @@ _Context *kmt_context_save(_Event ev, _Context *ctx){
     if(current != NULL){
         current->context = ctx;
         current->stat = RUNNABLE;
-    }
+    }// current == NULL ----> idle->stat = RUNNING.
     else{
+        panic_on(idle->stat!=RUNNING, "This cpu has nothing to do.\n");
         idle->context = ctx;
         idle->stat = RUNNABLE;
         idle->name = "os->run";
+        idle->cpu = _cpu();
         idle->next = NULL;
     }
     c_log(BLUE, "IN handler kmt_context_save\n");
@@ -119,37 +121,36 @@ _Context *kmt_context_save(_Event ev, _Context *ctx){
 }
 
 _Context *kmt_schedule(_Event ev, _Context *ctx){
-    _Context *ret = NULL;
+    _Context *next = NULL;
     c_log(YELLOW, "in kmt schedule!\n");
-    task_t *p = &task_head;
-    bool flag = false;
-    while(p->next){
-        if(p->stat == RUNNABLE || p->stat == EMBRYO){
-            if(p->cpu != _cpu()){
-                p->cpu = _cpu();
-                flag = true;
+    task_t *p = task_head.next;
+    while(p){
+        if(p->stat == EMBRYO || p->stat == RUNNABLE){
+            if(p->cpu == _cpu()){
+                next = p->context;
                 break;
-            }
-            else{
-                p->cpu = -1; // reset p->cpu, so that it can be scheduled to this cpu on next interrupt.
             }
         }
         p = p->next;
     }
-    if(flag == true){ // found an excutable task
+    if(next){
+        r_panic_on(p->context!=next, "p->context!=next\n");
         current = p;
+        kstack_check(current);
         current->stat = RUNNING;
-        ret = current->context; 
+        current->cpu = (current->cpu+1)%_ncpu(); // Round-robin to next cpu.
     }
-    else{ // return to idle process
-        current = NULL;
-        ret = idle->context;
+    else{
+        current = IDLE;
+        next = idle->context;
+        kstack_check(idle);
     }
-    r_panic_on(ret == NULL, "Schedule failed. No RUNNABLE TASK!\n");
-    if(current) kstack_check(current);
+    r_panic_on(next == NULL, "Schedule failed. No RUNNABLE TASK!\n");
     c_log(GREEN, "Returning task:[%s]\n", current==NULL ? "idle":current->name);
-    return ret;
+    return next;
 }// return any task's _Context.
+
+int init_cpu = 0;
 
 int kcreate(task_t *task, const char *name, void (*entry)(void *arg), void *arg){
     kmt_lock(&task_lock);
@@ -157,7 +158,7 @@ int kcreate(task_t *task, const char *name, void (*entry)(void *arg), void *arg)
     task->name = name;
     task->entry = entry;
     task->next = NULL;
-    task->cpu = -1; // can be scheduled to any cpu at the beginning.
+    task->cpu = (init_cpu++)%_ncpu(); // can be scheduled to any cpu at the beginning.
     memset(task->stack, 0, sizeof(task->stack));
     canary_init(&task->__c1);
     canary_init(&task->__c2);
@@ -170,7 +171,7 @@ int kcreate(task_t *task, const char *name, void (*entry)(void *arg), void *arg)
        p = p->next; 
     }
     p->next = task;
-    c_log(YELLOW, "task[%d]: %s created, stat: %d!\n", task->pid, name, task->stat);
+    c_log(YELLOW, "task[%d]: %s created, init_cpu:(%d)!\n", task->pid, name, task->cpu);
     kmt_unlock(&task_lock);
     return 0;
 }
