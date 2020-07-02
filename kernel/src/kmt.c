@@ -64,7 +64,7 @@ void sem_init(sem_t *sem, const char *name, int value){
 void sem_wait(sem_t *sem){
     kmt_lock(&sem->lock);
     bool flag = false;
-    while(sem->value <= 0){
+    if(sem->value <= 0){
         current->stat = SLEEPING;
         flag = true;
     }
@@ -80,7 +80,7 @@ void sem_signal(sem_t *sem){
     while(p) {
         if(p->sem == sem){
             p->stat = RUNNABLE;
-            //p->sem = NULL;
+            p->sem = NULL;
         }
        p = p->next;
     }
