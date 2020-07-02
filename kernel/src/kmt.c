@@ -108,13 +108,18 @@ _Context *kmt_context_save(_Event ev, _Context *ctx){
         current->context = ctx;
         current->stat = RUNNABLE;
     }// current == NULL ----> idle->stat = RUNNING.
-    else{
-        panic_on(idle->stat!=RUNNING, "This cpu has nothing to do.\n");
+    else if(idle == NULL){
+        //pmm->alloc(sizeof(task_t *))
+        panic_on(1, "stop.");
         idle->context = ctx;
         idle->stat = RUNNABLE;
         idle->name = "os->run";
         idle->cpu = _cpu();
         idle->next = NULL;
+    }
+    else{
+        panic_on(idle->stat!=RUNNING, "This cpu has nothing to do.\n");
+        //idle->context
     }
     c_log(BLUE, "IN handler kmt_context_save\n");
     return NULL;
