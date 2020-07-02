@@ -37,6 +37,7 @@ static void os_run() {
 }
 
 _Context *os_trap(_Event ev, _Context *context){
+  kmt->spin_lock(&task_lock);
   _Context *next = NULL;
   c_log(RED, "OS->TRAP!\n");
   trap_handler_t *h = head.next;
@@ -57,11 +58,11 @@ _Context *os_trap(_Event ev, _Context *context){
   panic_on(!next, "returning NULL context");
   panic_on(!IN_RANGE((void *)next->rip, RANGE(0x100000, &_etext)), "Returned wrong rip.\n");
   //panic_on(sane_context(next), "returning to invalid context");
+    kmt->spin_unlock(&task_lock);
   return next;
 };
 
 void os_on_irq(int seq, int event, handler_t handler){
-  kmt->spin_lock(&task_lock);
   trap_handler_t *h = pmm->alloc(sizeof(trap_handler_t));
   h->event = event;
   h->seq = seq;
@@ -109,7 +110,6 @@ void os_on_irq(int seq, int event, handler_t handler){
 
   r_panic_on(head.next==NULL, "Adding event_handler failed\n");
   c_log(CYAN, "Event[%d] handler added.(seq: %d)\n", event, seq);
-  kmt->spin_unlock(&task_lock);
   return ; //register the ev.handler.
 };
 
