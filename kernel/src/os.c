@@ -32,10 +32,6 @@ _Context *os_trap(_Event ev, _Context *context){
   kmt->spin_lock(&task_lock);
   _Context *next = NULL;
   trap_handler_t *h = head.next;
-  r_panic_on( h == NULL, "No trap handler\n");
-  if(ev.event == _EVENT_YIELD){
-    c_log(CYAN, "EVENT YIELD!\n");
-  }
   while(h){
     if (h->event == _EVENT_NULL || h->event == ev.event) {
       //c_log(YELLOW, "Try calling handler for event no.%d(%p)\n", h->event, h);
