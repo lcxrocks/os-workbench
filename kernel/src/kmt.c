@@ -199,9 +199,9 @@ void kmt_init(){
     task_head.entry = NULL;
     task_head.pid = next_pid;
     task_head.stat = -1;
-    for (int i = 0; i < _ncpu(); i++)
+    for (int i = 0; i < MAX_CPU; i++)
     {
-        cpu_info[i].cpu_idle = pmm->alloc(sizeof(task_t *));
+        cpu_info[i].cpu_idle = pmm->alloc(sizeof(task_t));
         cpu_info[i].cpu_idle->name = "os->run";
         cpu_info[i].cpu_idle->stat = EMBRYO;
         cpu_info[i].cpu_idle->cpu  = i;
