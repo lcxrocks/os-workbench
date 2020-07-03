@@ -45,6 +45,7 @@ void kmt_lock(spinlock_t *lock){
 }
 
 void kmt_unlock(spinlock_t *lock){
+    printf("......");
     r_panic_on(!holding(lock), "lock(%s) tried to release itself without holding.\n", lock->name);
     lock->cpu = -1;
 
