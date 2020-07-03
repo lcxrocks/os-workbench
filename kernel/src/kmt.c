@@ -71,6 +71,7 @@ void sem_wait(sem_t *sem){
     printf("sem[%s] value: %d\n", sem->name, sem->value);
     if(sem->value <= 0){
         flag = true;
+        current->sem = sem;
         current->stat = SLEEPING;
         printf("[%s] now sleeping on sem[%s].\n", current->name, sem->name);   
     }
