@@ -28,7 +28,7 @@ static void os_run() {
 }
 
 _Context *os_trap(_Event ev, _Context *context){
-  c_log(RED, "OS->TRAP!, ev.no: %d, %s\n", ev.event, ev.msg);
+  //c_log(RED, "OS->TRAP!, ev.no: %d, %s\n", ev.event, ev.msg);
   kmt->spin_lock(&task_lock);
   _Context *next = NULL;
   trap_handler_t *h = head.next;
@@ -38,9 +38,9 @@ _Context *os_trap(_Event ev, _Context *context){
   }
   while(h){
     if (h->event == _EVENT_NULL || h->event == ev.event) {
-      c_log(YELLOW, "Try calling handler for event no.%d(%p)\n", h->event, h);
+      //c_log(YELLOW, "Try calling handler for event no.%d(%p)\n", h->event, h);
       _Context *r = h->handler(ev, context);
-      c_log(YELLOW, "Returned from handler for event no.%d\n", h->event);
+      //c_log(YELLOW, "Returned from handler for event no.%d\n", h->event);
       panic_on(r && next, "returning multiple contexts");
       if (r) next = r;
     }
