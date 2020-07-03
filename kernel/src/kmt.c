@@ -110,6 +110,7 @@ void kstack_check(task_t *stk) {
 _Context *kmt_context_save(_Event ev, _Context *ctx){
     // ctx should be in current's stack
     //r_panic_on(current == NULL, "No current task.\n");
+    printf("...");
     if(current != NULL){
         current->context = ctx;
         if(current->stat == RUNNING) current->stat = RUNNABLE;
