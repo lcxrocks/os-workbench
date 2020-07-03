@@ -54,8 +54,8 @@ void kmt_unlock(spinlock_t *lock){
     int i = lock->intr;
     _atomic_xchg(&(lock->locked), 0);
     if(i) _intr_write(1);
-    r_panic_on(lock->locked != 0, "lock[%s] unlock failed!\n", lock->name);
-    r_panic_on(lock->intr != _intr_read(), "sti() failed in kmt_unlock!\n");
+    //r_panic_on(lock->locked != 0, "lock[%s] unlock failed!\n", lock->name);
+    //r_panic_on(lock->intr != _intr_read(), "sti() failed in kmt_unlock!\n");
 }
 
 void sem_init(sem_t *sem, const char *name, int value){
