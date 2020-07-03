@@ -68,12 +68,12 @@ void sem_init(sem_t *sem, const char *name, int value){
 void sem_wait(sem_t *sem){
     kmt_lock(&sem->lock);
     bool flag =false;
-    printf("sem[%s] value: %d\n", sem->name, sem->value);
+    //printf("sem[%s] value: %d\n", sem->name, sem->value);
     if(sem->value <= 0){
         flag = true;
         current->sem = sem;
         current->stat = SLEEPING;
-        printf("[%s] now sleeping on sem[%s].\n", current->name, sem->name);   
+        //printf("[%s] now sleeping on sem[%s].\n", current->name, sem->name);   
     }
     sem->value--;
     kmt_unlock(&sem->lock);
@@ -86,7 +86,7 @@ void sem_signal(sem_t *sem){
     task_t *p = task_head.next;
     while(p) {
         if(p->sem == sem){
-            printf("task[%s] now runnable.\n", p->name);
+            //printf("task[%s] now runnable.\n", p->name);
             p->stat = RUNNABLE;
             p->sem = NULL;
             break;
@@ -132,7 +132,7 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
     _Context *next = NULL;
     c_log(BLUE, "IN handler kmt_schedule!\n");
     task_t *t = task_head.next;
-    printf("--------------------------------------\n");
+    //printf("--------------------------------------\n");
     bool sleep = false;
     while(t){
         if(t->stat == SLEEPING) sleep = true;
@@ -144,7 +144,7 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
         t = t->next;
     }
     panic_on(sleep == true, "All task sleeping.\n");
-    printf("======================================\n");
+    //printf("======================================\n");
     task_t *p = task_head.next;
     while(p){
         if(p->stat == EMBRYO || p->stat == RUNNABLE){
