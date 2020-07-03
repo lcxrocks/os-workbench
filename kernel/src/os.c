@@ -12,24 +12,17 @@ trap_handler_t head = {0, _EVENT_HEAD, NULL, NULL, NULL};
 static void os_init() {
   pmm->init();
   kmt->init();
-  kmt->spin_init(&info_lock, "info_lock");
   //dev-init();
 }
 
 static void os_run() {
   //printf("Hello World from CPU #%d\n",_cpu());
-  kmt->spin_lock(&info_lock);
   c_log(PURPLE, "Hello world from CPU #%d\n", _cpu());
-  kmt->spin_unlock(&info_lock);
   _intr_write(1); //开中断（write(0)为关中断）
   while(1){
     //assert(0);
-    //_yield();
+    _yield();
   }
-}
-
-void b(){
-  return ;
 }
 
 _Context *os_trap(_Event ev, _Context *context){
@@ -38,9 +31,7 @@ _Context *os_trap(_Event ev, _Context *context){
   _Context *next = NULL;
   trap_handler_t *h = head.next;
   while(h){
-    b();
-    if (h->event == _EVENT_NULL || h->event == ev.event) {
-      
+    if (h->event == _EVENT_NULL || h->event == ev.event) {      
       //c_log(YELLOW, "Try calling handler for event no.%d(%p)\n", h->event, h);
       _Context *r = h->handler(ev, context);
       //c_log(YELLOW, "Returned from handler for event no.%d\n", h->event);
