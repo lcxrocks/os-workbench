@@ -36,18 +36,16 @@ _Context *os_trap(_Event ev, _Context *context){
   if(ev.event == _EVENT_YIELD){
     c_log(CYAN, "EVENT YIELD!\n");
   }
-  printf("hah");
   while(h){
     if (h->event == _EVENT_NULL || h->event == ev.event) {
-      //c_log(YELLOW, "Try calling handler for evnet no.%d\n", h->event);
+      c_log(YELLOW, "Try calling handler for evnet no.%d\n", h->event);
       _Context *r = h->handler(ev, context);
-      //c_log(YELLOW, "Returned from handler for event no.%d\n", h->event);
+      c_log(YELLOW, "Returned from handler for event no.%d\n", h->event);
       panic_on(r && next, "returning multiple contexts");
       if (r) next = r;
     }
     h = h->next;
   }
-  printf("..");
   panic_on(!next, "returning NULL context");
   //panic_on(!IN_RANGE((void *)next->rip, RANGE(0x100000, &_etext)), "Returned wrong rip.\n");
   //panic_on(sane_context(next), "returning to invalid context");
