@@ -74,6 +74,7 @@ void sem_wait(sem_t *sem){
     }
     sem->value--;
     kmt_unlock(&sem->lock);
+    printf("zxxxxxxx");
     if(flag) _yield();
 }
 
