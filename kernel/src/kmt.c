@@ -70,7 +70,8 @@ void sem_wait(sem_t *sem){
     bool flag =false;
     if(sem->value <= 0){
         flag = true;
-        current->stat = SLEEPING;   
+        current->stat = SLEEPING;
+        printf("[%s] now sleeping.\n", current->name);   
     }
     sem->value--;
     kmt_unlock(&sem->lock);
