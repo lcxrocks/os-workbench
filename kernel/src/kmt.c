@@ -111,7 +111,7 @@ _Context *kmt_context_save(_Event ev, _Context *ctx){
     //r_panic_on(current == NULL, "No current task.\n");
     if(current != NULL){
         current->context = ctx;
-        current->stat = RUNNABLE;
+        if(current->stat == RUNNING) current->stat = RUNNABLE;
     }// current == NULL ----> idle->stat = RUNNING.
     else if(idle == NULL){
         idle = pmm->alloc(sizeof(task_t));
