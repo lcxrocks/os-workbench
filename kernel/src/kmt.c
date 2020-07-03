@@ -235,6 +235,7 @@ void kteardown(task_t *task){
     task_t *p = task_head.next;
     while(p->next!=task) p = p->next;
     p->next = task->next;
+    pmm->free(task);
     kmt_unlock(&task_lock);
     return ;
 }
