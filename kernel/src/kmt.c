@@ -80,11 +80,11 @@ void sem_wait(sem_t *sem){
 }
 
 void sem_signal(sem_t *sem){
-    printf("hello?\n");
     kmt_lock(&sem->lock);
     sem->value++;
     task_t *p = task_head.next;
     while(p) {
+        printf(".");
         if(p->sem == sem){
             printf("task[%s] now runnable.\n", p->name);
             p->stat = RUNNABLE;
