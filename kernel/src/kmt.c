@@ -33,6 +33,7 @@ void kmt_spin_init(spinlock_t *lock, const char* name){
 
 void kmt_lock(spinlock_t *lock){
     int i = _intr_read(); //cli();
+    printf("locking lock[%s]\n", lock->name);
     _intr_write(0);
     r_panic_on(holding(lock), "lock(%s) tried to acquire itself while holding.\n", lock->name);
     while(_atomic_xchg(&(lock->locked), 1)) ;
