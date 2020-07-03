@@ -80,6 +80,7 @@ void sem_wait(sem_t *sem){
 }
 
 void sem_signal(sem_t *sem){
+    printf("hello?\n");
     kmt_lock(&sem->lock);
     sem->value++;
     task_t *p = task_head.next;
