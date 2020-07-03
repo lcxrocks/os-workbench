@@ -113,17 +113,10 @@ _Context *kmt_context_save(_Event ev, _Context *ctx){
         current->context = ctx;
         if(current->stat == RUNNING) current->stat = RUNNABLE;
     }// current == NULL ----> idle->stat = RUNNING.
-    else if(idle == NULL){
-        idle = pmm->alloc(sizeof(task_t));
-        idle->context = ctx;
-        idle->stat = RUNNABLE;
-        idle->name = "os->run";
-        idle->cpu = _cpu();
-        idle->next = NULL;
-    }
     else{
-        panic_on(idle->stat!=RUNNING, "This cpu has nothing to do.\n");
+        panic_on(idle->stat!=RUNNING || idle->stat!=EMBRYO, "This cpu has nothing to do.\n");
         idle->context = ctx;
+        if(idle->stat == EMBRYO) idle->stat = RUNNABLE;
     }
     c_log(BLUE, "IN handler kmt_context_save\n");
     return NULL;
@@ -203,6 +196,20 @@ void kmt_init(){
     task_head.entry = NULL;
     task_head.pid = next_pid;
     task_head.stat = -1;
+    for (int i = 0; i < _ncpu(); i++)
+    {
+        cpu_info[i].cpu_idle = pmm->alloc(sizeof(task_t *));
+        cpu_info[i].cpu_idle->name = "os->run";
+        cpu_info[i].cpu_idle->stat = EMBRYO;
+        cpu_info[i].cpu_idle->cpu  = i;
+        cpu_info[i].cpu_idle->next = NULL;
+        memset(cpu_info[i].cpu_idle->stack, 0, sizeof(cpu_info[i].cpu_idle->stack));
+        canary_init(&cpu_info[i].cpu_idle->__c1);
+        canary_init(&cpu_info[i].cpu_idle->__c2);
+        _Area stack = {(void *)cpu_info[i].cpu_idle->stack, (void *)cpu_info[i].cpu_idle->stack+sizeof(cpu_info[i].cpu_idle->stack)};
+        cpu_info[i].cpu_idle->context = _kcontext(stack, NULL, NULL);
+    }
+    
     panic_on(task_head.pid!=0, "task_head pid != 0.");
     os->on_irq(INT32_MIN, _EVENT_NULL, kmt_context_save);
     //...
