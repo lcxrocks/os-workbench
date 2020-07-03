@@ -160,7 +160,8 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
         current = p;
         kstack_check(current);
         current->stat = RUNNING;
-        current->cpu = (current->cpu + 1)%_ncpu(); // Round-robin to next cpu.
+        p->cpu = (p->cpu + 1)%_ncpu();
+        //current->cpu = (current->cpu + 1)%_ncpu(); // Round-robin to next cpu.
     }
     else{
         current = IDLE;
