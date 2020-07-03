@@ -21,7 +21,7 @@ static void os_run() {
   _intr_write(1); //开中断（write(0)为关中断）
   while(1){
     //assert(0);
-    _yield();
+    //_yield();
   }
 }
 
@@ -41,7 +41,7 @@ _Context *os_trap(_Event ev, _Context *context){
     h = h->next;
   }
   panic_on(!next, "returning NULL context");
-  r_panic_on(!IN_RANGE((void *)next->rip, RANGE(0x100000, &_etext)), "Returned wrong rip(0x%x).\n", next->rip);
+  //r_panic_on(!IN_RANGE((void *)next->rip, RANGE(0x100000, &_etext)), "Returned wrong rip(0x%x).\n", next->rip);
   kmt->spin_unlock(&task_lock);
   return next;
 };
