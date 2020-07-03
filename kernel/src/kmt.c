@@ -114,7 +114,7 @@ _Context *kmt_context_save(_Event ev, _Context *ctx){
         if(current->stat == RUNNING) current->stat = RUNNABLE;
     }// current == NULL ----> idle->stat = RUNNING.
     else{
-        panic_on(idle->stat!=RUNNING || idle->stat!=EMBRYO, "This cpu has nothing to do.\n");
+        panic_on((idle->stat!=RUNNING || idle->stat!=EMBRYO), "This cpu has nothing to do.\n");
         idle->context = ctx;
         if(idle->stat == EMBRYO) idle->stat = RUNNABLE;
     }
