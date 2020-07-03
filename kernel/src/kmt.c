@@ -3,6 +3,7 @@
 //#define current 
 extern void os_on_irq(int seq, int event, handler_t handler);
 extern void trap_handler_init();
+extern trap_handler_t head;
 int next_pid = 0;
 spinlock_t task_lock;
 spinlock_t info_lock;
@@ -216,6 +217,12 @@ void kmt_init(){
     os->on_irq(INT32_MIN, _EVENT_NULL, kmt_context_save);
     //...
     os->on_irq(INT32_MAX, _EVENT_NULL, kmt_schedule);
+    trap_handler_t *p = &head;
+    while(p){
+        printf("Handler[%d](seq) at %p\n",p->event,p->seq, p);
+        p = p->next;
+    };
+    assert(0);
     return ;
 }
 
