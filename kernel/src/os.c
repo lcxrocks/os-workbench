@@ -28,7 +28,7 @@ static void os_run() {
 }
 
 _Context *os_trap(_Event ev, _Context *context){
-  c_log(RED, "OS->TRAP!\n");
+  c_log(RED, "OS->TRAP!, ev.no: %d\n", ev.event);
   kmt->spin_lock(&task_lock);
   _Context *next = NULL;
   
