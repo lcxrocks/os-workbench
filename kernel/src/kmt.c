@@ -219,7 +219,7 @@ void kmt_init(){
     os->on_irq(INT32_MAX, _EVENT_NULL, kmt_schedule);
     trap_handler_t *p = &head;
     while(p){
-        printf("Handler[%d](seq) at %p\n",p->event,p->seq, p);
+        printf("Handler[%d](%d) at %p\n",p->event,p->seq, p);
         p = p->next;
     };
     assert(0);
