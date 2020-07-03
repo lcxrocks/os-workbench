@@ -162,6 +162,7 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
     if(next){
         r_panic_on(p->context!=next, "p->context!=next\n");
         current = p;
+        current->on_time++;
         kstack_check(current);
         current->stat = RUNNING;
         current->cpu = (current->cpu + 1)%_ncpu(); // Round-robin to next cpu.
