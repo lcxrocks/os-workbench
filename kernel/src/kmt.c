@@ -136,8 +136,11 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
     bool sleep = false;
     while(t){
         if(t->stat == SLEEPING) sleep = true;
-        else sleep = false;
-        printf("[%s]: %d\n", t->name, t->stat);
+        else{
+           sleep = false; 
+           break;
+        }
+        //printf("[%s]: %d\n", t->name, t->stat);
         t = t->next;
     }
     panic_on(sleep == true, "All task sleeping.\n");
