@@ -23,7 +23,8 @@ static void os_run() {
   kmt->spin_unlock(&info_lock);
   _intr_write(1); //开中断（write(0)为关中断）
   while(1){
-    _yield();
+    //assert(0);
+    //_yield();
   }
 }
 
