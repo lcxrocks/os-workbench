@@ -41,8 +41,7 @@ _Context *os_trap(_Event ev, _Context *context){
     h = h->next;
   }
   panic_on(!next, "returning NULL context");
-  //panic_on(!IN_RANGE((void *)next->rip, RANGE(0x100000, &_etext)), "Returned wrong rip.\n");
-  //panic_on(sane_context(next), "returning to invalid context");
+  panic_on(!IN_RANGE((void *)next->rip, RANGE(0x100000, &_etext)), "Returned wrong rip.\n");
   kmt->spin_unlock(&task_lock);
   return next;
 };
