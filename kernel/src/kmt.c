@@ -148,7 +148,11 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
     task_t *p = task_head.next;
     while(p){
         if(p->stat == EMBRYO || p->stat == RUNNABLE){
-            if(p->cpu == _cpu()){
+            if(p->cpu == _cpu()){        
+                if(p->on_time >= MAX_ONTIME){
+                    p->on_time = 0;
+                    continue; 
+                }
                 next = p->context;
                 break;
             }
@@ -160,8 +164,7 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
         current = p;
         kstack_check(current);
         current->stat = RUNNING;
-        p->cpu = (p->cpu + 1)%_ncpu();
-        //current->cpu = (current->cpu + 1)%_ncpu(); // Round-robin to next cpu.
+        current->cpu = (current->cpu + 1)%_ncpu(); // Round-robin to next cpu.
     }
     else{
         current = IDLE;
@@ -182,6 +185,7 @@ int kcreate(task_t *task, const char *name, void (*entry)(void *arg), void *arg)
     task->name = name;
     task->entry = entry;
     task->next = NULL;
+    task->on_time = 0;
     task->cpu = (init_cpu++)%_ncpu(); // can be scheduled to any cpu at the beginning.
     memset(task->stack, 0, sizeof(task->stack));
     canary_init(&task->__c1);
@@ -207,6 +211,7 @@ void kmt_init(){
     task_head.name = "TASK HEAD";
     task_head.entry = NULL;
     task_head.next = NULL;
+    task_head.on_time = 0;
     task_head.entry = NULL;
     task_head.pid = next_pid;
     task_head.stat = -1;
