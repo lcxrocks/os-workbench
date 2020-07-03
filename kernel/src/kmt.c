@@ -46,7 +46,7 @@ void kmt_lock(spinlock_t *lock){
 }
 
 void kmt_unlock(spinlock_t *lock){
-    printf("unclocking lock[%s]\n", lock->name);
+    printf("unlocking lock[%s]\n", lock->name);
     r_panic_on(!holding(lock), "lock(%s) tried to release itself without holding.\n", lock->name);
     lock->cpu = -1;
 
@@ -148,7 +148,7 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
         current = p;
         kstack_check(current);
         current->stat = RUNNING;
-        //current->cpu = (current->cpu+1)%_ncpu(); // Round-robin to next cpu.
+        current->cpu = (current->cpu+1)%_ncpu(); // Round-robin to next cpu.
     }
     else{
         current = IDLE;
