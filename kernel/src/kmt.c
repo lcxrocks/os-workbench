@@ -34,7 +34,7 @@ void kmt_spin_init(spinlock_t *lock, const char* name){
 
 void kmt_lock(spinlock_t *lock){
     int i = _intr_read(); //cli();
-    printf("locking lock[%s]\n", lock->name);
+    //printf("locking lock[%s]\n", lock->name);
     _intr_write(0);
     r_panic_on(holding(lock), "lock(%s) tried to acquire itself while holding.\n", lock->name);
     while(_atomic_xchg(&(lock->locked), 1)) ;
@@ -47,7 +47,7 @@ void kmt_lock(spinlock_t *lock){
 }
 
 void kmt_unlock(spinlock_t *lock){
-    printf("unlocking lock[%s]\n", lock->name);
+    //printf("unlocking lock[%s]\n", lock->name);
     r_panic_on(!holding(lock), "lock(%s) tried to release itself without holding.\n", lock->name);
     lock->cpu = -1;
 
@@ -128,13 +128,13 @@ _Context *kmt_context_save(_Event ev, _Context *ctx){
 _Context *kmt_schedule(_Event ev, _Context *ctx){
     _Context *next = NULL;
     c_log(BLUE, "IN handler kmt_schedule!\n");
-    task_t *t = task_head.next;
-    printf("--------------------------------------\n");
-    while(t){
-        printf("[%s]: %d\n", t->name, t->stat);
-        t = t->next;
-    }
-    printf("======================================\n");
+    // task_t *t = task_head.next;
+    // printf("--------------------------------------\n");
+    // while(t){
+    //     printf("[%s]: %d\n", t->name, t->stat);
+    //     t = t->next;
+    // }
+    // printf("======================================\n");
     task_t *p = task_head.next;
     while(p){
         if(p->stat == EMBRYO || p->stat == RUNNABLE){
@@ -199,7 +199,7 @@ void kmt_init(){
     task_head.entry = NULL;
     task_head.pid = next_pid;
     task_head.stat = -1;
-    for (int i = 0; i < MAX_CPU; i++)
+    for (int i = 0; i < _ncpu(); i++)
     {
         cpu_info[i].cpu_idle = pmm->alloc(sizeof(task_t));
         cpu_info[i].cpu_idle->name = "os->run";
