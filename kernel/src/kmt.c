@@ -85,6 +85,7 @@ void sem_signal(sem_t *sem){
     task_t *p = task_head.next;
     while(p) {
         if(p->sem == sem){
+            printf("task[%s] now runnable.\n", p->name);
             p->stat = RUNNABLE;
             p->sem = NULL;
             break;
