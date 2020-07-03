@@ -222,7 +222,6 @@ void kmt_init(){
         printf("Handler[%d](%d) at %p\n",p->event,p->seq, p);
         p = p->next;
     };
-    assert(0);
     return ;
 }
 

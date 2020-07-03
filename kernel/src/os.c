@@ -33,6 +33,7 @@ _Context *os_trap(_Event ev, _Context *context){
   _Context *next = NULL;
   
   trap_handler_t *h = head.next;
+  printf("h: %p, (%p)", h, head.next);
   r_panic_on( h == NULL, "No trap handler\n");
   if(ev.event == _EVENT_YIELD){
     c_log(CYAN, "EVENT YIELD!\n");
