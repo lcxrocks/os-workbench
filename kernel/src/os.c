@@ -101,7 +101,7 @@ void os_on_irq(int seq, int event, handler_t handler){
   } // no event no.
 
   r_panic_on(head.next==NULL, "Adding event_handler failed\n");
-  c_log(CYAN, "Event[%d] handler added.(seq: %d)\n", event, seq);
+  c_log(CYAN, "Event[%d] handler added.(seq: %d)(%p)\n", event, seq, &h);
   return ; //register the ev.handler.
 };
 
