@@ -78,7 +78,7 @@ void sem_signal(sem_t *sem){
     while(p) {
         if(p->sem == sem){
             //printf("task[%s] now runnable.\n", p->name);
-            for(volatile int i = 0; i < 1000000; i++) ;
+            p->on_time = -1; // immediately.
             p->stat = RUNNABLE;
             p->sem = NULL;
             break;
@@ -141,6 +141,11 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
     while(p){
         if(p->stat == EMBRYO || p->stat == RUNNABLE){
             if(p->cpu == _cpu()){        
+                if(p->on_time == -1){
+                    next = p->context;
+                    p->on_time = 0;
+                    break;
+                }
                 if(p->on_time >= MAX_ONTIME){
                     p->on_time = 0;
                     continue; 
