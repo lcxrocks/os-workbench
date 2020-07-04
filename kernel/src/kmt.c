@@ -107,6 +107,7 @@ void kstack_check(task_t *stk) {
 _Context *kmt_context_save(_Event ev, _Context *ctx){
     // ctx should be in current's stack
     //r_panic_on(current == NULL, "No current task.\n");
+    c_log(BLUE, "IN handler kmt_context_save\n");
     if(current != NULL){
         current->context = ctx;
         if(current->stat == RUNNING) current->stat = RUNNABLE;
@@ -117,7 +118,6 @@ _Context *kmt_context_save(_Event ev, _Context *ctx){
         c_log(WHITE, "os->run added\n");
         if(idle->stat == EMBRYO) idle->stat = RUNNABLE;
     }
-    c_log(BLUE, "IN handler kmt_context_save\n");
     return NULL;
 }
 
@@ -222,6 +222,7 @@ void kmt_init(){
         memset(cpu_info[i].cpu_idle->stack, 0, sizeof(cpu_info[i].cpu_idle->stack));
         canary_init(&cpu_info[i].cpu_idle->__c1);
         canary_init(&cpu_info[i].cpu_idle->__c2);
+        kstack_check(cpu_info[i].cpu_idle);
         _Area stack = {(void *)cpu_info[i].cpu_idle->stack, (void *)cpu_info[i].cpu_idle->stack+sizeof(cpu_info[i].cpu_idle->stack)};
         cpu_info[i].cpu_idle->context = _kcontext(stack, NULL, NULL);
     }
