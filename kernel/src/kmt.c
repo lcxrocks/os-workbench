@@ -190,7 +190,7 @@ int kcreate(task_t *task, const char *name, void (*entry)(void *arg), void *arg)
     task->entry = entry;
     task->next = NULL;
     task->on_time = 0;
-    task->cpu = (++init_cpu)%_ncpu(); 
+    task->cpu = (init_cpu++)%_ncpu(); 
     canary_init(&task->__c1);
     canary_init(&task->__c2);
     _Area stack = {(void *)task->stack, (void *)task->stack+sizeof(task->stack)};
