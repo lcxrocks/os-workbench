@@ -162,6 +162,7 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
         current->on_time++;
         kstack_check(current);
         current->stat = ZOMBIE;
+        r_panic_on(next->rip == 0, "wrong rip");
         current->cpu = (current->cpu + 1)%_ncpu(); // Round-robin to next cpu.
     }
     else{
