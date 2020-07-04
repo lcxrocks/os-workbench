@@ -111,7 +111,6 @@ _Context *kmt_context_save(_Event ev, _Context *ctx){
     if(current != NULL){
         current->context = ctx;
         if(current->stat == RUNNING) current->stat = RUNNABLE;
-        if(current->stat == ZOMBIE) c_log(WHITE, "zzz\n");
     }// current == NULL ----> idle->stat = RUNNING.
     else{
         panic_on((idle->stat!=RUNNING && idle->stat!=EMBRYO), "This cpu has nothing to do.\n");
@@ -145,10 +144,12 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
             if(p->stat == EMBRYO || p->stat == RUNNABLE || p->stat == ZOMBIE){             
                 if(p->stat == ZOMBIE){
                     p->stat = RUNNABLE;
+                    p = p->next;
                     continue;
                 }
                 if(p->on_time >= MAX_ONTIME){
                     p->on_time--;
+                    p = p->next;
                     continue; 
                 }
                 next = p->context;
