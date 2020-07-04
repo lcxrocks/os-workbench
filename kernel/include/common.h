@@ -24,8 +24,10 @@
   #define c_panic_on(color, cond, ...) \
   do{ \
     if(cond) {\
+        kmt->spin_lock(&info_lock);\
         printf("\033[36m[cpu(%d)]:\033[0m", _cpu());\
         printf("\033[%dm", color); \
+        kmt->spin_unlock(&info_lock); \
         printf(__VA_ARGS__); \
         printf("\033[0m"); \
         _halt(1);\
@@ -38,7 +40,7 @@
     printf("\033[%dm", color); \
     printf(__VA_ARGS__); \
     printf("\033[0m"); \
-    kmt->spin_lock(&info_lock);
+    kmt->spin_unlock(&info_lock);
     //kmt->spin_unlock(&info_lock);
     //kmt->spin_lock(&info_lock);
 #else
