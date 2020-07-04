@@ -21,7 +21,7 @@ static void os_run() {
   //_intr_write(1); //开中断（write(0)为关中断）
   while(1){
     //assert(0);
-    //_yield();
+    _yield();
   }
 }
 
