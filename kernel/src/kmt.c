@@ -21,6 +21,8 @@ int holding(struct spinlock *lock){
 void kmt_spin_init(spinlock_t *lock, const char* name){
    lock->name = (char *) name;
    lock->locked = 0;  
+   lock->intr = 0;
+   lock->cpu = -1;
 }
 
 void kmt_lock(spinlock_t *lock){
