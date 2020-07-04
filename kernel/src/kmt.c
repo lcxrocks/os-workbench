@@ -141,18 +141,17 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
     // }
     // panic_on(sleep == true, "All task sleeping.\n");
     // c_log(WHITE, "======================================\n");
-    task_t *p = task_head.next;
+    task_t *p = &task_head;
     while(p){
+        p = p->next;
         if(p->cpu == _cpu()){       
             if(p->stat == EMBRYO || p->stat == RUNNABLE || p->stat == ZOMBIE){             
                 if(p->stat == ZOMBIE){
                     p->stat = RUNNABLE;
-                    p = p->next;
                     continue;
                 }
-                if(p->on_time >= MAX_ONTIME){
+                if(p->on_time > MAX_ONTIME){
                     p->on_time--;
-                    p = p->next;
                     continue; 
                 }
                 next = p->context; 
@@ -160,7 +159,6 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
                 break;
             }
         }
-        p = p->next;
     }
     if(next){
         r_panic_on(p->context!=next, "p->context!=next\n");
@@ -190,6 +188,7 @@ int kcreate(task_t *task, const char *name, void (*entry)(void *arg), void *arg)
     task->entry = entry;
     task->next = NULL;
     task->on_time = 0;
+    task->sem = NULL;
     task->cpu = (init_cpu++)%_ncpu(); 
     canary_init(&task->__c1);
     canary_init(&task->__c2);
