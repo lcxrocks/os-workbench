@@ -128,11 +128,11 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
     c_log(WHITE, "--------------------------------------\n");
     bool sleep = false;
     while(t){
-        if(t->stat == SLEEPING) sleep = true;
-        else{
-           sleep = false; 
-           break;
-        }
+        // if(t->stat == SLEEPING) sleep = true;
+        // else{
+        //    sleep = false; 
+        //    break;
+        // }
         c_log(WHITE, "[%s]: %d\n", t->name, t->stat);
         t = t->next;
     }
