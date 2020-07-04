@@ -41,7 +41,7 @@ _Context *os_trap(_Event ev, _Context *context){
     h = h->next;
   }
   panic_on(!next, "returning NULL context");
-  r_panic_on(!IN_RANGE((void *)next->rip, RANGE(0x100000, &_etext)), "Returned wrong rip(0x%x).\n", next->rip);
+  r_panic_on(!IN_RANGE((void *)next->rip, RANGE(0x100000, &_etext)), "Returned wrong rip(0x%x):[0x100000, 0x%x].\n", next->rip, &_etext);
   //Read-Copy Update: prevent stack race **important**.
   kmt->spin_unlock(&task_lock);
   return next;
