@@ -143,7 +143,6 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
             if(p->cpu == _cpu()){        
                 if(p->stat == ZOMBIE){
                     p->stat = RUNNABLE;
-                    p->on_time = 0;
                     continue;
                 }
                 if(p->on_time >= MAX_ONTIME){
