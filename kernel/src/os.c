@@ -18,7 +18,7 @@ static void os_init() {
 static void os_run() {
   //printf("Hello World from CPU #%d\n",_cpu());
   c_log(PURPLE, "Hello world from CPU #%d\n", _cpu());
-  _intr_write(1); //开中断（write(0)为关中断）
+  //_intr_write(1); //开中断（write(0)为关中断）
   while(1){
     //assert(0);
     //_yield();
