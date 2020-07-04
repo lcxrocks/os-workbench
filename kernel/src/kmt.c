@@ -152,7 +152,8 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
                     p = p->next;
                     continue; 
                 }
-                next = p->context;
+                next = p->context; 
+                panic_on(p->stat!=RUNNABLE && p->on_time>=MAX_ONTIME, "invalid *next!\n");
                 break;
             }
         }
