@@ -15,6 +15,7 @@
 #define BLUE 34
 #define PURPLE 35
 #define CYAN 36
+#define WHITE 37
 
 #ifdef DEBUG
 #define r_panic_on(cond, ...) \
