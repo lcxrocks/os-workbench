@@ -142,9 +142,9 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
         if(p->stat == EMBRYO || p->stat == RUNNABLE){
             if(p->cpu == _cpu()){        
                 if(p->on_time == -1){
-                    next = p->context;
+                    p->stat = RUNNABLE;
                     p->on_time = 0;
-                    break;
+                    continue;
                 }
                 if(p->on_time >= MAX_ONTIME){
                     p->on_time = 0;
