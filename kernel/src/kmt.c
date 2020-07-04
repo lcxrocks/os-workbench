@@ -143,16 +143,16 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
     while(p){
         if(p->cpu == _cpu()){       
             if(p->stat == EMBRYO || p->stat == RUNNABLE || p->stat == ZOMBIE){             
-                // if(p->stat == ZOMBIE){
-                //     p->stat = RUNNABLE;
-                //     p = p->next;
-                //     continue;
-                // }
-                // if(p->on_time >= MAX_ONTIME){
-                //     p->on_time--;
-                //     p = p->next;
-                //     continue; 
-                // }
+                if(p->stat == ZOMBIE){
+                    p->stat = RUNNABLE;
+                    p = p->next;
+                    continue;
+                }
+                if(p->on_time >= MAX_ONTIME){
+                    p->on_time--;
+                    p = p->next;
+                    continue; 
+                }
                 next = p->context; 
                 //panic_on(p->stat!=RUNNABLE && p->on_time>=MAX_ONTIME, "invalid *next!\n");
                 break;
@@ -165,7 +165,7 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
         current = p;
         current->on_time++;
         kstack_check(current);
-        //current->stat = ZOMBIE;
+        current->stat = ZOMBIE;
         current->cpu = (current->cpu + 1)%_ncpu(); // Round-robin to next cpu.
     }
     else{
