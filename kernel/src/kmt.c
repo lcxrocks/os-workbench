@@ -13,7 +13,7 @@ int holding(struct spinlock *lock){
   int r = 0;
   int i = _intr_read();
   _intr_write(0);
-  r  = lock->locked && lock->cpu == _cpu();
+  r  = (lock->locked) && (lock->cpu == _cpu());
   if(i == 1) _intr_write(1);
   return r;
 }// xv6 checking double lock;

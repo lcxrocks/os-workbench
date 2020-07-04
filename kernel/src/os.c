@@ -23,6 +23,7 @@ static void os_run() {
   while(1){
     //assert(0);
     //_yield();
+    c_log(WHITE, " ");
   }
 }
 
