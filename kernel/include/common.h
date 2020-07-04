@@ -30,13 +30,15 @@
         printf("\033[0m"); \
         _halt(1);\
     }\
-  }while(0) \
+  }while(0); \
 
 #define c_log(color, ...) \
+    kmt->spin_lock(&info_lock);\
     printf("\033[32m[cpu(%d)]:\033[0m", _cpu());\
     printf("\033[%dm", color); \
     printf(__VA_ARGS__); \
-    printf("\033[0m"); 
+    printf("\033[0m"); \
+    kmt->spin_lock(&info_lock);
     //kmt->spin_unlock(&info_lock);
     //kmt->spin_lock(&info_lock);
 #else
