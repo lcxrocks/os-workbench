@@ -79,7 +79,7 @@ void sem_signal(sem_t *sem){
         if(p->sem == sem){
             //printf("task[%s] now runnable.\n", p->name);
             p->on_time = -1; // immediately.
-            p->stat = RUNNABLE;
+            p->stat = ZOMBIE;
             p->sem = NULL;
             break;
         }
@@ -139,9 +139,9 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
     //printf("======================================\n");
     task_t *p = task_head.next;
     while(p){
-        if(p->stat == EMBRYO || p->stat == RUNNABLE){
+        if(p->stat == EMBRYO || p->stat == RUNNABLE || p->stat == ZOMBIE){
             if(p->cpu == _cpu()){        
-                if(p->on_time == -1){
+                if(p->stat == ZOMBIE){
                     p->stat = RUNNABLE;
                     p->on_time = 0;
                     continue;
@@ -162,7 +162,8 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
         current->on_time++;
         kstack_check(current);
         current->stat = RUNNING;
-        if(_ncpu()==6) current->cpu = (current->cpu + 1)%_ncpu(); // Round-robin to next cpu.
+        //if(_ncpu()==6)
+        current->cpu = (current->cpu + 1)%_ncpu(); // Round-robin to next cpu.
         // task_t *rep = pmm->alloc(sizeof(task_t));
         // memcpy(rep->stack, p->stack, sizeof(p->stack)); 
         // rep->context = pmm->alloc(sizeof(_Context));
@@ -190,8 +191,7 @@ int kcreate(task_t *task, const char *name, void (*entry)(void *arg), void *arg)
     task->entry = entry;
     task->next = NULL;
     task->on_time = 0;
-    task->cpu = (init_cpu++)%_ncpu(); // can be scheduled to any cpu at the beginning.
-    memset(task->stack, 0, sizeof(task->stack));
+    task->cpu = (init_cpu++)%_ncpu(); 
     canary_init(&task->__c1);
     canary_init(&task->__c2);
     _Area stack = {(void *)task->stack, (void *)task->stack+sizeof(task->stack)};
