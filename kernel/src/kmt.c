@@ -114,6 +114,7 @@ _Context *kmt_context_save(_Event ev, _Context *ctx){
     else{
         panic_on((idle->stat!=RUNNING && idle->stat!=EMBRYO), "This cpu has nothing to do.\n");
         idle->context = ctx;
+        c_log(WHITE, "os->run added\n");
         if(idle->stat == EMBRYO) idle->stat = RUNNABLE;
     }
     c_log(BLUE, "IN handler kmt_context_save\n");
