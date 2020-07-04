@@ -160,8 +160,7 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
         current = p;
         current->on_time++;
         kstack_check(current);
-        current->stat = RUNNING;
-        //if(_ncpu()==6)
+        current->stat = ZOMBIE;
         current->cpu = (current->cpu + 1)%_ncpu(); // Round-robin to next cpu.
         // task_t *rep = pmm->alloc(sizeof(task_t));
         // memcpy(rep->stack, p->stack, sizeof(p->stack)); 
