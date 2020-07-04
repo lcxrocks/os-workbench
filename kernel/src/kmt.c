@@ -9,15 +9,6 @@ spinlock_t task_lock;
 spinlock_t info_lock;
 task_t task_head;
 
-// void stop_intr(int *i){
-//     i = _intr_read();
-//     _intr_write(0);
-// }
-
-// void restart_intr(int *i){
-//     if(i == 1) _intr_write(1);
-// }
-
 int holding(struct spinlock *lock){
   int r = 0;
   int i = _intr_read();
@@ -87,6 +78,7 @@ void sem_signal(sem_t *sem){
     while(p) {
         if(p->sem == sem){
             //printf("task[%s] now runnable.\n", p->name);
+            for(int volatile i = 0; i < 100000; i++) ;
             p->stat = RUNNABLE;
             p->sem = NULL;
             break;
@@ -166,12 +158,12 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
         kstack_check(current);
         current->stat = RUNNING;
         current->cpu = (current->cpu + 1)%_ncpu(); // Round-robin to next cpu.
-        task_t *rep = pmm->alloc(sizeof(task_t));
-        memcpy(rep->stack, current->stack, sizeof(current->stack)); 
-        _Context *ctx = pmm->alloc(sizeof(_Context));
-        memcpy(ctx, next, sizeof(_Context));
-        ctx->rsp = p->context->rsp + (uint64_t)(rep->stack - p->stack);
-        next = ctx;
+        // task_t *rep = pmm->alloc(sizeof(task_t));
+        // memcpy(rep->stack, current->stack, sizeof(current->stack)); 
+        // _Context *ctx = pmm->alloc(sizeof(_Context));
+        // memcpy(ctx, next, sizeof(_Context));
+        // ctx->rsp = p->context->rsp + (uint64_t)(rep->stack - p->stack);
+        // next = ctx;
     }
     else{
         current = IDLE;
