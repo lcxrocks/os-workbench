@@ -165,7 +165,7 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
         current = p;
         current->on_time++;
         kstack_check(current);
-        current->stat = ZOMBIE;
+        //current->stat = ZOMBIE;
         current->cpu = (current->cpu + 1)%_ncpu(); // Round-robin to next cpu.
     }
     else{
