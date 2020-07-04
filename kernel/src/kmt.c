@@ -166,6 +166,12 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
         kstack_check(current);
         current->stat = RUNNING;
         current->cpu = (current->cpu + 1)%_ncpu(); // Round-robin to next cpu.
+        task_t *rep = pmm->alloc(sizeof(task_t));
+        memcpy(rep->stack, current->stack, sizeof(current->stack)); 
+        _Context *ctx = pmm->alloc(sizeof(_Context));
+        memcpy(ctx, next, sizeof(_Context));
+        ctx->rsp = (uint64_t)rep + (current->context->rsp - (uint64_t)current->stack);
+        next = ctx;
     }
     else{
         current = IDLE;

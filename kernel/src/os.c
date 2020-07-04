@@ -20,7 +20,6 @@ static void os_run() {
   c_log(PURPLE, "Hello world from CPU #%d\n", _cpu());
   _intr_write(1); //开中断（write(0)为关中断）
   while(1){
-    printf(".");
     //assert(0);
     //_yield();
   }
@@ -44,10 +43,8 @@ _Context *os_trap(_Event ev, _Context *context){
   panic_on(!next, "returning NULL context");
   //r_panic_on(!IN_RANGE((void *)next->rip, RANGE(0x100000, &_etext)), "Returned wrong rip(0x%x).\n", next->rip);
   //Read-Copy Update: prevent stack race **important**.
-  _Context *ctx = pmm->alloc(sizeof(_Context));
-  memcpy(ctx, next, sizeof(_Context));
   kmt->spin_unlock(&task_lock);
-  return ctx;
+  return next;
 };
 
 void os_on_irq(int seq, int event, handler_t handler){
