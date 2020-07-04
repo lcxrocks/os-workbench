@@ -165,10 +165,10 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
         current->cpu = (current->cpu + 1)%_ncpu(); // Round-robin to next cpu.
         task_t *rep = pmm->alloc(sizeof(task_t));
         memcpy(rep->stack, p->stack, sizeof(p->stack)); 
-        _Context *ctx = pmm->alloc(sizeof(_Context));
-        memcpy(ctx, next, sizeof(_Context));
-        ctx->rsp = p->context->rsp + (uint64_t)(rep->stack - p->stack);
-        next = ctx;
+        rep->context = pmm->alloc(sizeof(_Context));
+        memcpy(rep->context, p->context, sizeof(_Context));
+        rep->context->rsp = rep->context->rsp + (uint64_t)rep->stack - (uint64_t)p->stack;
+        next = rep->context;
     }
     else{
         current = IDLE;
