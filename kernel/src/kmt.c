@@ -125,7 +125,7 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
     _Context *next = NULL;
     c_log(BLUE, "IN handler kmt_schedule!\n");
     task_t *t = task_head.next;
-    //printf("--------------------------------------\n");
+    c_log(WHITE, "--------------------------------------\n");
     bool sleep = false;
     while(t){
         if(t->stat == SLEEPING) sleep = true;
@@ -133,11 +133,11 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
            sleep = false; 
            break;
         }
-        printf("[%s]: %d\n", t->name, t->stat);
+        c_log(WHITE, "[%s]: %d\n", t->name, t->stat);
         t = t->next;
     }
     panic_on(sleep == true, "All task sleeping.\n");
-    //printf("======================================\n");
+    c_log(WHITE, "======================================\n");
     task_t *p = task_head.next;
     while(p){
         if(p->stat == EMBRYO || p->stat == RUNNABLE || p->stat == ZOMBIE){
