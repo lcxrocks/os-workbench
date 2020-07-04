@@ -6,7 +6,7 @@
 #include <klib-macros.h>
 
 #define MAX_CPU 8
-#define MAX_ONTIME 4
+#define MAX_ONTIME 1
 #define NRTASK 64
 
 #define RED 31
