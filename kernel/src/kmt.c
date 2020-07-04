@@ -170,7 +170,7 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
         memcpy(rep->stack, current->stack, sizeof(current->stack)); 
         _Context *ctx = pmm->alloc(sizeof(_Context));
         memcpy(ctx, next, sizeof(_Context));
-        ctx->rsp = (uint64_t)rep + (p->context->rsp - (uint64_t)p->stack);
+        ctx->rsp = (uint64_t)rep->stack + (p->context->rsp - (uint64_t)p->stack);
         next = ctx;
     }
     else{
