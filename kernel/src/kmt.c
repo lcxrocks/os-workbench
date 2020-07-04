@@ -60,7 +60,6 @@ void sem_init(sem_t *sem, const char *name, int value){
 
 void sem_wait(sem_t *sem){
     kmt_lock(&sem->lock);
-    if(_intr_read()) assert(0);
     bool flag =false;
     c_log(WHITE, "sem[%s] value: %d\n", sem->name, sem->value);
     if(sem->value <= 0){

@@ -28,6 +28,7 @@ static void os_run() {
 
 _Context *os_trap(_Event ev, _Context *context){
   c_log(RED, "OS->TRAP!, ev.no: %d, %s\n", ev.event, ev.msg);
+  if(_intr_read()) assert(0);
   kmt->spin_lock(&task_lock);
   _Context *next = NULL;
   trap_handler_t *h = head.next;
