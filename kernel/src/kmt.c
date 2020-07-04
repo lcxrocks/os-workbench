@@ -111,6 +111,7 @@ _Context *kmt_context_save(_Event ev, _Context *ctx){
     if(current != NULL){
         current->context = ctx;
         if(current->stat == RUNNING) current->stat = RUNNABLE;
+        if(current->stat == ZOMBIE) c_log(WHITE, "zzz\n");
     }// current == NULL ----> idle->stat = RUNNING.
     else{
         panic_on((idle->stat!=RUNNING && idle->stat!=EMBRYO), "This cpu has nothing to do.\n");
@@ -140,8 +141,8 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
     c_log(WHITE, "======================================\n");
     task_t *p = task_head.next;
     while(p){
-        if(p->stat == EMBRYO || p->stat == RUNNABLE || p->stat == ZOMBIE){
-            if(p->cpu == _cpu()){        
+        if(p->cpu == _cpu()){       
+            if(p->stat == EMBRYO || p->stat == RUNNABLE || p->stat == ZOMBIE){             
                 if(p->stat == ZOMBIE){
                     p->stat = RUNNABLE;
                     continue;
@@ -172,7 +173,7 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
         kstack_check(idle);
     }
     r_panic_on(next == NULL, "Schedule failed. No RUNNABLE TASK!\n");
-    c_log(GREEN, "Returning task:[%s]\n", current==NULL ? "idle":current->name);
+    c_log(GREEN, "Returning task:[%s]\n", current==IDLE ? "idle":current->name);
     return next;
 }// return any task's _Context.
 
