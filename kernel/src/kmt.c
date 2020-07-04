@@ -78,7 +78,7 @@ void sem_signal(sem_t *sem){
     while(p) {
         if(p->sem == sem){
             //printf("task[%s] now runnable.\n", p->name);
-            for(int volatile i = 0; i < 100000; i++) ;
+            for(volatile int i = 0; i < 1000000; i++) ;
             p->stat = RUNNABLE;
             p->sem = NULL;
             break;
