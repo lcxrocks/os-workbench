@@ -138,18 +138,28 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
     // panic_on(sleep == true, "All task sleeping.\n");
     // c_log(WHITE, "======================================\n");
     task_t *p = task_head.next;
+    bool all_on = false;
     while(p){
         if(p->cpu != _cpu()){
             p = p->next;
             continue;
         }
+        // if(_ncpu() <= 2){
+        //     if(p->on_time >= cpu_info[p->cpu].nr_task){
+        //         all_on = false;
+        //         p = p->next;
+        //         continue;
+        //     }
+
+        //     //schedule for ncpu=[2]
+        // }
         if(p->stat == ZOMBIE){
             p->stat = RUNNABLE;
             p = p->next;
             continue;
         }
         if(p->stat == EMBRYO || p->stat == RUNNABLE){
-            if(uptime() - p->last_time <= ((_ncpu()== 2) ? 10 :MIN_LASTTIME)){
+            if(uptime() - p->last_time <= MIN_LASTTIME)){
                 p = p->next;
                 continue;
             }
@@ -198,7 +208,8 @@ int kcreate(task_t *task, const char *name, void (*entry)(void *arg), void *arg)
     task->on_time = 0;
     task->sem = NULL;
     task->last_time = 0;
-    task->cpu = (init_cpu++)%_ncpu(); 
+    task->cpu = (init_cpu++)%_ncpu();
+    cpu_info[task->cpu].nr_task++; 
     canary_init(&task->__c1);
     canary_init(&task->__c2);
     _Area stack = {(void *)task->stack, (void *)task->stack+sizeof(task->stack)};
@@ -229,6 +240,7 @@ void kmt_init(){
     task_head.stat = -1;
     for (int i = 0; i < _ncpu(); i++)
     {
+        cpu_info[i].nr_task = 0;
         cpu_info[i].cpu_idle = pmm->alloc(sizeof(task_t));
         cpu_info[i].cpu_idle->name = "os->run";
         cpu_info[i].cpu_idle->stat = EMBRYO;

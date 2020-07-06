@@ -103,6 +103,7 @@ struct task {
 };
 
 struct cpu_local{
+  int nr_task;
   task_t *current; // the process running on this cpu or null
   task_t *cpu_idle; // task_t *chan
 }cpu_info[MAX_CPU];
