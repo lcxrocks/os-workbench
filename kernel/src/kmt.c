@@ -149,7 +149,7 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
             continue;
         }
         if(p->stat == EMBRYO || p->stat == RUNNABLE){
-            if(_ncpu()!=2 && uptime() - p->last_time <= MIN_LASTTIME){
+            if(uptime() - p->last_time <= ((_ncpu()== 2) ? 10 :MIN_LASTTIME)){
                 p = p->next;
                 continue;
             }
