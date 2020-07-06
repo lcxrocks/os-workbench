@@ -138,36 +138,28 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
     // panic_on(sleep == true, "All task sleeping.\n");
     // c_log(WHITE, "======================================\n");
     task_t *p = task_head.next;
-    bool all_on = false;
+    bool all_on = true;
     while(p){
         if(p->cpu != _cpu()){
             p = p->next;
             continue;
         }
-        // if(_ncpu() <= 2){
-        //     if(p->on_time >= cpu_info[p->cpu].nr_task){
-        //         all_on = false;
-        //         p = p->next;
-        //         continue;
-        //     }
-
-        //     //schedule for ncpu=[2]
-        // }
         if(p->stat == ZOMBIE){
             p->stat = RUNNABLE;
             p = p->next;
             continue;
         }
         if(p->stat == EMBRYO || p->stat == RUNNABLE){
-            if(uptime() - p->last_time <= MIN_LASTTIME)){
+            if(uptime() - p->last_time <= MIN_LASTTIME){
                 p = p->next;
                 continue;
             }
             if(p->on_time >= MAX_ONTIME){
-                p->on_time--;
                 p = p->next;
+                all_on = true;
                 continue;
             }
+            all_on = false; // there exsits task scheduable
             next = p->context;
             break;
         }
@@ -175,6 +167,15 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
             panic("shouldn't be running");
         }
         p = p->next;
+    }
+    if(all_on){
+        task_t *tmp = task_head.next;
+        while(tmp){
+            if(p->cpu == _cpu()){
+                p->on_time = 0;
+            }
+            tmp = tmp->next;
+        }
     }
     if(next != NULL){
         r_panic_on(p->context!=next, "p->context!=next\n");
