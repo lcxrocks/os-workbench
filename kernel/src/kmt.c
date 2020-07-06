@@ -138,7 +138,6 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
     // panic_on(sleep == true, "All task sleeping.\n");
     // c_log(WHITE, "======================================\n");
     task_t *p = task_head.next;
-    bool all_on = true;
     while(p){
         if(p->cpu != _cpu()){
             p = p->next;
@@ -156,10 +155,8 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
             }
             if(p->on_time >= MAX_ONTIME){
                 p = p->next;
-                all_on = true;
                 continue;
             }
-            all_on = false; // there exsits task scheduable
             next = p->context;
             break;
         }
@@ -183,12 +180,11 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
         next = idle->context;
         idle->stat = RUNNING;
         kstack_check(idle);
-    }
-    if(all_on){
         task_t *tmp = task_head.next;
         while(tmp){
             if(p->cpu == _cpu()){
-                p->on_time = 0;
+                if(p->stat != SLEEPING)
+                    p->on_time = 0;
             }
             tmp = tmp->next;
         }
