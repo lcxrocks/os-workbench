@@ -150,6 +150,10 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
             continue;
         }
         if(p->stat == EMBRYO || p->stat == RUNNABLE){
+            if(uptime() - p->last_time <= MIN_LASTTIME){
+                p = p->next;
+                continue;
+            }
             if(p->on_time >= MAX_ONTIME){
                 p->on_time--;
                 p = p->next;
@@ -169,6 +173,7 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
         current->on_time++;
         kstack_check(current);
         current->stat = ZOMBIE;
+        current->last_time = uptime();
         current->cpu = (current->cpu + 1)%_ncpu(); // Round-robin to next cpu.
     }
     else{
@@ -192,6 +197,7 @@ int kcreate(task_t *task, const char *name, void (*entry)(void *arg), void *arg)
     task->next = NULL;
     task->on_time = 0;
     task->sem = NULL;
+    task->last_time = 0;
     task->cpu = (init_cpu++)%_ncpu(); 
     canary_init(&task->__c1);
     canary_init(&task->__c2);
@@ -217,6 +223,7 @@ void kmt_init(){
     task_head.entry = NULL;
     task_head.next = NULL;
     task_head.on_time = 0;
+    task_head.last_time =0;
     task_head.entry = NULL;
     task_head.pid = next_pid;
     task_head.stat = -1;

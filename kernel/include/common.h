@@ -7,6 +7,7 @@
 
 #define MAX_CPU 8
 #define MAX_ONTIME 5
+#define MIN_LASTTIME 10
 #define NRTASK 64
 
 #define RED 31
@@ -80,7 +81,7 @@ struct semaphore{
 #define N 4
 #define MAGIC 0x5a5aa5a5
 typedef uint32_t canary_t[N];
-#define TASK_HEAD (4*sizeof(int) + sizeof(void *) + sizeof(struct semaphore *) + \
+#define TASK_HEAD (5*sizeof(int) + sizeof(void *) + sizeof(struct semaphore *) + \
   sizeof(char *) + sizeof(struct task *) +sizeof(_Context *) + 2*sizeof(canary_t))\
 
 struct task {
@@ -89,6 +90,7 @@ struct task {
     int pid;
     int cpu;
     int on_time;
+    int last_time;
     void *entry;
     struct semaphore *sem; // sleeping on sem
     const char *name; // debugging
