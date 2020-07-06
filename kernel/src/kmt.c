@@ -154,7 +154,7 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
                 continue;
             }
             if(p->on_time >= MAX_ONTIME){
-                if(_ncpu()!=2) p->on_time--;
+                //if(_ncpu()!=2) p->on_time--;
                 p = p->next;
                 continue;
             }
@@ -181,7 +181,7 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
         next = idle->context;
         idle->stat = RUNNING;
         kstack_check(idle);
-        if(_ncpu()==2){
+        //if(_ncpu()==2){
             task_t *tmp = task_head.next;
             while(tmp){
                 if(p->cpu == _cpu()){
@@ -190,7 +190,7 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
                 }
             tmp = tmp->next;
             }
-        }
+        //}
     }
     r_panic_on(next == NULL, "Schedule failed. No RUNNABLE TASK!\n");
     c_log(GREEN, "Returning task:[%s]\n", current==IDLE ? "idle":current->name);
