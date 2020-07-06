@@ -7,7 +7,7 @@
 
 #define MAX_CPU 8
 #define MAX_ONTIME 5
-#define MIN_LASTTIME 25
+#define MIN_LASTTIME 40
 #define NRTASK 64
  
 #define RED 31
