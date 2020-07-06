@@ -184,10 +184,10 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
         //if(_ncpu()==2){
             task_t *tmp = task_head.next;
             while(tmp){
-                if(p->cpu == _cpu()){
+                //if(p->cpu == _cpu()){
                     if(p->stat != SLEEPING)
                         p->on_time = 0;
-                }
+                //}
             tmp = tmp->next;
             }
         //}
