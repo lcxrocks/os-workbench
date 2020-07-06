@@ -9,7 +9,7 @@
 #define MAX_ONTIME 5
 #define MIN_LASTTIME 30
 #define NRTASK 64
-
+ 
 #define RED 31
 #define GREEN 32
 #define YELLOW 33
