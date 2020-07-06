@@ -6,7 +6,7 @@
 #include <klib-macros.h>
 
 #define MAX_CPU 8
-#define MAX_ONTIME 1
+#define MAX_ONTIME 3
 #define MIN_LASTTIME 35
 #define NRTASK 64
  
@@ -81,7 +81,7 @@ struct semaphore{
 #define N 4
 #define MAGIC 0x5a5aa5a5
 typedef uint32_t canary_t[N];
-#define TASK_HEAD (5*sizeof(int) + sizeof(void *) + sizeof(struct semaphore *) + \
+#define TASK_HEAD (6*sizeof(int) + sizeof(void *) + sizeof(struct semaphore *) + \
   sizeof(char *) + sizeof(struct task *) +sizeof(_Context *) + 2*sizeof(canary_t))\
 
 struct task {
@@ -89,6 +89,7 @@ struct task {
     int stat;
     int pid;
     int cpu;
+    int ord;
     int on_time;
     int last_time;
     void *entry;

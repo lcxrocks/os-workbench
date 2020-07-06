@@ -138,33 +138,58 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
     // panic_on(sleep == true, "All task sleeping.\n");
     // c_log(WHITE, "======================================\n");
     task_t *p = task_head.next;
-    while(p){
-        if(p->cpu != _cpu()){
-            p = p->next;
-            continue;
-        }
-        if(p->stat == ZOMBIE){
-            p->stat = RUNNABLE;
-            p = p->next;
-            continue;
-        }
-        if(p->stat == EMBRYO || p->stat == RUNNABLE){
-            if(uptime() - p->last_time <= MIN_LASTTIME){
+    if(_ncpu() > 2){
+        while(p){
+            if(p->cpu != _cpu()){
                 p = p->next;
                 continue;
             }
-            if(p->on_time >= MAX_ONTIME){
-                //if(_ncpu()!=2) p->on_time--;
+            if(p->stat == ZOMBIE){
+                p->stat = RUNNABLE;
                 p = p->next;
                 continue;
             }
-            next = p->context;
-            break;
+            if(p->stat == EMBRYO || p->stat == RUNNABLE){
+                if(uptime() - p->last_time <= MIN_LASTTIME){
+                    p = p->next;
+                    continue;
+                }
+                if(p->on_time >= MAX_ONTIME){
+                    p->on_time--;
+                    p = p->next;
+                    continue;
+                }
+                next = p->context;
+                break;
+            }
+            if(p->stat == RUNNING){
+                panic("shouldn't be running");
+            }
+            p = p->next;
+        } 
+    }
+    if(_ncpu() <= 2){
+        task_t *t = task_head.next;
+        while(t){
+            if(t->cpu != _cpu()){
+                t = t->next;
+                continue;
+            }
+            if(t->stat == EMBRYO || t->stat == RUNNABLE){
+                if(uptime() - t->last_time <= MIN_LASTTIME){
+                    t = t->next;
+                    continue;
+                }
+                if(t->on_time >= MAX_ONTIME){
+                    p->on_time--;
+                    t = t->next;
+                    continue;
+                }
+                p = t;
+                next = p->context;
+                break;
+            }
         }
-        if(p->stat == RUNNING){
-            panic("shouldn't be running");
-        }
-        p = p->next;
     }
     if(next != NULL){
         r_panic_on(p->context!=next, "p->context!=next\n");
@@ -172,7 +197,7 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
         current->on_time++;
         kstack_check(current);
         current->stat = ZOMBIE;
-        //current->stat = RUNNING;
+        if(_ncpu()==2)current->stat = RUNNING;
         current->last_time = uptime();
         if(_ncpu()!=2) current->cpu = (current->cpu + 1)%_ncpu(); // Round-robin to next cpu.
     }
@@ -181,16 +206,15 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
         next = idle->context;
         idle->stat = RUNNING;
         kstack_check(idle);
-        //if(_ncpu()==2){
+        if(_ncpu()==2){
             task_t *tmp = task_head.next;
             while(tmp){
-                //if(p->cpu == _cpu()){
-                    if(p->stat != SLEEPING)
+                if(p->cpu == _cpu()){
                         p->on_time = 0;
-                //}
-            tmp = tmp->next;
+                }
+                tmp = tmp->next;
             }
-        //}
+        }
     }
     r_panic_on(next == NULL, "Schedule failed. No RUNNABLE TASK!\n");
     c_log(GREEN, "Returning task:[%s]\n", current==IDLE ? "idle":current->name);
@@ -209,6 +233,7 @@ int kcreate(task_t *task, const char *name, void (*entry)(void *arg), void *arg)
     task->sem = NULL;
     task->last_time = 0;
     task->cpu = (init_cpu++)%_ncpu();
+    task->ord = cpu_info[task->cpu].nr_task;
     cpu_info[task->cpu].nr_task++; 
     canary_init(&task->__c1);
     canary_init(&task->__c2);
