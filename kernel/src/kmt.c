@@ -168,15 +168,6 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
         }
         p = p->next;
     }
-    if(all_on){
-        task_t *tmp = task_head.next;
-        while(tmp){
-            if(p->cpu == _cpu()){
-                p->on_time = 0;
-            }
-            tmp = tmp->next;
-        }
-    }
     if(next != NULL){
         r_panic_on(p->context!=next, "p->context!=next\n");
         current = p;
@@ -192,6 +183,15 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
         next = idle->context;
         idle->stat = RUNNING;
         kstack_check(idle);
+    }
+    if(all_on){
+        task_t *tmp = task_head.next;
+        while(tmp){
+            if(p->cpu == _cpu()){
+                p->on_time = 0;
+            }
+            tmp = tmp->next;
+        }
     }
     r_panic_on(next == NULL, "Schedule failed. No RUNNABLE TASK!\n");
     c_log(GREEN, "Returning task:[%s]\n", current==IDLE ? "idle":current->name);
