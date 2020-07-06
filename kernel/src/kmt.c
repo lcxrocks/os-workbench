@@ -148,7 +148,7 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
         //     p = p->next;
         //     continue;
         // }
-        if(p->stat == ZOMBIE || p->stat == EMBRYO || p->stat == RUNNABLE){
+        if(p->stat == EMBRYO || p->stat == RUNNABLE){
             if(uptime() - p->last_time <= MIN_LASTTIME){
                 p = p->next;
                 continue;
@@ -171,7 +171,8 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
         current = p;
         current->on_time++;
         kstack_check(current);
-        current->stat = ZOMBIE;
+        //current->stat = ZOMBIE;
+        current->stat = RUNNING;
         current->last_time = uptime();
         current->cpu = (current->cpu + 1)%_ncpu(); // Round-robin to next cpu.
     }
