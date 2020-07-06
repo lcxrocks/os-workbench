@@ -154,6 +154,7 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
                 continue;
             }
             if(p->on_time >= MAX_ONTIME){
+                //if(_ncpu()!=2) p->on_time--;
                 p = p->next;
                 continue;
             }
@@ -173,20 +174,22 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
         current->stat = ZOMBIE;
         //current->stat = RUNNING;
         current->last_time = uptime();
-        current->cpu = (current->cpu + 1)%_ncpu(); // Round-robin to next cpu.
+        if(_ncpu()!=2) current->cpu = (current->cpu + 1)%_ncpu(); // Round-robin to next cpu.
     }
     else{
         current = IDLE;
         next = idle->context;
         idle->stat = RUNNING;
         kstack_check(idle);
-        task_t *tmp = task_head.next;
-        while(tmp){
-            if(p->cpu == _cpu()){
-                if(p->stat != SLEEPING)
-                    p->on_time = 0;
-            }
+        if(_ncpu()==2){
+            task_t *tmp = task_head.next;
+            while(tmp){
+                if(p->cpu == _cpu()){
+                    if(p->stat != SLEEPING)
+                        p->on_time = 0;
+                }
             tmp = tmp->next;
+            }
         }
     }
     r_panic_on(next == NULL, "Schedule failed. No RUNNABLE TASK!\n");
