@@ -143,12 +143,12 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
             p = p->next;
             continue;
         }
-        if(p->stat == ZOMBIE){
-            p->stat = RUNNABLE;
-            p = p->next;
-            continue;
-        }
-        if(p->stat == EMBRYO || p->stat == RUNNABLE){
+        // if(p->stat == ZOMBIE){
+        //     p->stat = RUNNABLE;
+        //     p = p->next;
+        //     continue;
+        // }
+        if(p->stat == ZOMBIE || p->stat == EMBRYO || p->stat == RUNNABLE){
             if(uptime() - p->last_time <= MIN_LASTTIME){
                 p = p->next;
                 continue;
