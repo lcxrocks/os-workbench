@@ -154,7 +154,7 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
                 continue;
             }
             if(p->on_time >= MAX_ONTIME){
-                //if(_ncpu()!=2) p->on_time--;
+                if(_ncpu()!=2) p->on_time--;
                 p = p->next;
                 continue;
             }
