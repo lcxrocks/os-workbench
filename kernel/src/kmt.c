@@ -169,26 +169,14 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
         } 
     }
     if(_ncpu() <= 2){
-        task_t *t = task_head.next;
-        while(t){
-            if(t->cpu != _cpu()){
-                t = t->next;
-                continue;
-            }
-            if(t->stat == EMBRYO || t->stat == RUNNABLE){
-                if(uptime() - t->last_time <= MIN_LASTTIME){
-                    t = t->next;
-                    continue;
-                }
-                if(t->on_time >= MAX_ONTIME){
-                    p->on_time--;
-                    t = t->next;
-                    continue;
-                }
-                p = t;
+        while(p){
+        if(p->stat == EMBRYO || p->stat == RUNNABLE){
+            if(p->cpu == _cpu()){
                 next = p->context;
                 break;
+                }
             }
+        p = p->next;
         }
     }
     if(next != NULL){
@@ -197,9 +185,9 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
         current->on_time++;
         kstack_check(current);
         current->stat = ZOMBIE;
-        if(_ncpu()==2)current->stat = RUNNING;
+        if(_ncpu()==2 ) current->stat = RUNNING;
         current->last_time = uptime();
-        if(_ncpu()!=2) current->cpu = (current->cpu + 1)%_ncpu(); // Round-robin to next cpu.
+        current->cpu = (current->cpu + 1)%_ncpu(); // Round-robin to next cpu.
     }
     else{
         current = IDLE;
