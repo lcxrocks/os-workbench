@@ -149,12 +149,11 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
             continue;
         }
         if(p->stat == EMBRYO || p->stat == RUNNABLE){
-            if(uptime() - p->last_time <= MIN_LASTTIME){
+            if(_ncpu()!=2 && uptime() - p->last_time <= MIN_LASTTIME){
                 p = p->next;
                 continue;
             }
             if(p->on_time >= MAX_ONTIME){
-                if(_ncpu() == 2) {  next = p->context; break;}
                 p->on_time--;
                 p = p->next;
                 continue;
