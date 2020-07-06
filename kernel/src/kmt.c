@@ -91,7 +91,7 @@ void sem_signal(sem_t *sem){
     //r_panic_on(p == NULL, "No task waiting on sem: %s\n", sem->name);
     //r_panic_on(p->stat!=SLEEPING, "Task:[%s] is not sleeping.\n", p->name);
     kmt_unlock(&sem->lock);
-    //_yield();
+    _yield();
 }
 
 void canary_init(canary_t *c) {
