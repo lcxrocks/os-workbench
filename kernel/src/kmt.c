@@ -108,8 +108,6 @@ void kstack_check(task_t *stk) {
 }
 
 _Context *kmt_context_save(_Event ev, _Context *ctx){
-    // ctx should be in current's stack
-    //r_panic_on(current == NULL, "No current task.\n");
     c_log(BLUE, "IN handler kmt_context_save\n");
     if(current != NULL){
         current->context = ctx;
@@ -118,7 +116,6 @@ _Context *kmt_context_save(_Event ev, _Context *ctx){
     else{
         panic_on((idle->stat!=RUNNING && idle->stat!=EMBRYO), "This cpu has nothing to do.\n");
         idle->context = ctx;
-        c_log(WHITE, "os->run added\n");
         if(idle->stat == EMBRYO) idle->stat = RUNNABLE;
     }
     return NULL;
@@ -143,26 +140,25 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
     // c_log(WHITE, "======================================\n");
     task_t *p = task_head.next;
     while(p){
-        if(p->cpu == _cpu()){       
-            if(p->stat == EMBRYO || p->stat == RUNNABLE || p->stat == ZOMBIE){             
-                if(p->stat == ZOMBIE){
-                    p->stat = RUNNABLE;
-                    p = p->next;
-                    continue;
-                }
-                if(p->on_time > MAX_ONTIME){
-                    p->on_time--;
-                    p = p->next;
-                    continue; 
-                }
-                next = p->context; 
-                //panic_on(p->stat!=RUNNABLE && p->on_time>=MAX_ONTIME, "invalid *next!\n");
-                break;
-            }
+        if(p->cpu != _cpu()){
+            p = p->next;
+            continue;
+        }
+        if(p->stat == ZOMBIE){
+            p->stat = RUNNABLE;
+            p = p->next;
+            continue;
+        }
+        if(p->stat == EMBRYO || p->stat == RUNNABLE){
+            next = p->context;
+            break;
+        }
+        if(p->stat == RUNNING){
+            panic("shouldn't be running");
         }
         p = p->next;
     }
-    if(next){
+    if(next != NULL){
         r_panic_on(p->context!=next, "p->context!=next\n");
         current = p;
         current->on_time++;
