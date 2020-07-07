@@ -1,6 +1,6 @@
 //#include <common.h>
 #include "../include/common.h"
-//#define current 
+//#define current_task 
 extern void os_on_irq(int seq, int event, handler_t handler);
 extern void trap_handler_init();
 extern trap_handler_t head;
@@ -64,9 +64,9 @@ void sem_wait(sem_t *sem){
     c_log(WHITE, "sem[%s] value: %d\n", sem->name, sem->value);
     if(sem->value <= 0){
         flag = true;
-        current->sem = sem;
-        current->stat = SLEEPING;
-        //printf("[%s] now sleeping on sem[%s].\n", current->name, sem->name);   
+        current_task->sem = sem;
+        current_task->stat = SLEEPING;
+        //printf("[%s] now sleeping on sem[%s].\n", current_task->name, sem->name);   
     }
     sem->value--;
     kmt_unlock(&sem->lock);
@@ -108,10 +108,10 @@ void kstack_check(task_t *stk) {
 
 _Context *kmt_context_save(_Event ev, _Context *ctx){
     c_log(BLUE, "IN handler kmt_context_save\n");
-    if(current != NULL){
-        current->context = ctx;
-        if(current->stat == RUNNING) current->stat = RUNNABLE;
-    }// current == NULL ----> idle->stat = RUNNING.
+    if(current_task != NULL){
+        current_task->context = ctx;
+        if(current_task->stat == RUNNING) current_task->stat = RUNNABLE;
+    }// current_task == NULL ----> idle->stat = RUNNING.
     else{
         panic_on((idle->stat!=RUNNING && idle->stat!=EMBRYO), "This cpu has nothing to do.\n");
         idle->context = ctx;
@@ -181,16 +181,16 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
     }
     if(next != NULL){
         r_panic_on(p->context!=next, "p->context!=next\n");
-        current = p;
-        current->on_time++;
-        kstack_check(current);
-        current->stat = ZOMBIE;
-        if(_ncpu()==2 ) current->stat = RUNNING;
-        current->last_time = uptime();
-        current->cpu = (current->cpu + 1)%_ncpu(); // Round-robin to next cpu.
+        current_task = p;
+        current_task->on_time++;
+        kstack_check(current_task);
+        current_task->stat = ZOMBIE;
+        if(_ncpu()==2 ) current_task->stat = RUNNING;
+        current_task->last_time = uptime();
+        current_task->cpu = (current_task->cpu + 1)%_ncpu(); // Round-robin to next cpu.
     }
     else{
-        current = IDLE;
+        current_task = IDLE;
         next = idle->context;
         idle->stat = RUNNING;
         kstack_check(idle);
@@ -205,7 +205,7 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
         }
     }
     r_panic_on(next == NULL, "Schedule failed. No RUNNABLE TASK!\n");
-    c_log(GREEN, "Returning task:[%s]\n", current==IDLE ? "idle":current->name);
+    c_log(GREEN, "Returning task:[%s]\n", current_task==IDLE ? "idle":current_task->name);
     return next;
 }// return any task's _Context.
 

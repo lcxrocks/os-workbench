@@ -4,6 +4,8 @@
 #include <kernel.h>
 #include <klib.h>
 #include <klib-macros.h>
+#include <amdev.h>
+#include <sys/types.h>
 
 #define MAX_CPU 8
 #define MAX_ONTIME 3
@@ -111,7 +113,7 @@ struct cpu_local{
 
 enum stat { UNUSED, EMBRYO, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
 
-#define current cpu_info[_cpu()].current
+#define current_task cpu_info[_cpu()].current
 #define idle cpu_info[_cpu()].cpu_idle
 #define IDLE NULL
 #endif 
