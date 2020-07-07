@@ -1,5 +1,9 @@
 #include <game.h>
+<<<<<<< HEAD
 #include <klib.h>
+=======
+
+>>>>>>> d2975df19786aa7cfe393d99e2579d4f679cdbc7
 #define SIDE 16
 static int w, h;
 
@@ -32,6 +36,7 @@ void splash() {
     }
   }
 }
+<<<<<<< HEAD
 
 void black() {
   init();
@@ -41,3 +46,5 @@ void black() {
     }
   }
 }
+=======
+>>>>>>> d2975df19786aa7cfe393d99e2579d4f679cdbc7

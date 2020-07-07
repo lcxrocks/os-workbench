@@ -23,7 +23,6 @@ MODULE(pmm) {
   void *(*alloc)(size_t size);
   void  (*free)(void *ptr);
 };
-// need definition under /inlude/**.h
 typedef struct task task_t;
 typedef struct spinlock spinlock_t;
 typedef struct semaphore sem_t;
@@ -37,4 +36,10 @@ MODULE(kmt) {
   void (*sem_init)(sem_t *sem, const char *name, int value);
   void (*sem_wait)(sem_t *sem);
   void (*sem_signal)(sem_t *sem);
+};
+
+typedef struct device device_t;
+MODULE(dev) {
+  void (*init)();
+  device_t *(*lookup)(const char *name);
 };

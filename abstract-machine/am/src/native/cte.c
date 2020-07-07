@@ -22,7 +22,10 @@ void __am_pmem_unprotect();
 void __am_panic_on_return() { panic("should not reach here\n"); }
 
 static void irq_handle(_Context *c) {
+<<<<<<< HEAD
   //printf("in irq_handle!\n");
+=======
+>>>>>>> d2975df19786aa7cfe393d99e2579d4f679cdbc7
   c->vm_head = thiscpu->vm_head;
   c->ksp = thiscpu->ksp;
 
@@ -88,7 +91,10 @@ static void iret(ucontext_t *uc) {
 }
 
 static void sig_handler(int sig, siginfo_t *info, void *ucontext) {
+<<<<<<< HEAD
   //printf("In sig_handler!\n");
+=======
+>>>>>>> d2975df19786aa7cfe393d99e2579d4f679cdbc7
   thiscpu->ev = (_Event) {0};
   thiscpu->ev.event = _EVENT_ERROR;
   switch (sig) {
@@ -127,7 +133,10 @@ static void sig_handler(int sig, siginfo_t *info, void *ucontext) {
 
 // signal handlers are inherited across fork()
 static void install_signal_handler() {
+<<<<<<< HEAD
   //printf("in install_signal_handle!\n");
+=======
+>>>>>>> d2975df19786aa7cfe393d99e2579d4f679cdbc7
   struct sigaction s;
   memset(&s, 0, sizeof(s));
   s.sa_sigaction = sig_handler;
@@ -145,7 +154,11 @@ static void install_signal_handler() {
 // setitimer() are inherited across fork(), should be called again from children
 void __am_init_timer_irq() {
   _intr_write(0);
+<<<<<<< HEAD
   //printf("in am_init_timer_irq!\n");
+=======
+
+>>>>>>> d2975df19786aa7cfe393d99e2579d4f679cdbc7
   struct itimerval it = {};
   it.it_value.tv_sec = 0;
   it.it_value.tv_usec = 1000000 / TIMER_HZ;
@@ -156,7 +169,11 @@ void __am_init_timer_irq() {
 
 int _cte_init(_Context*(*handler)(_Event, _Context*)) {
   user_handler = handler;
+<<<<<<< HEAD
   //printf("in cte_init!\n");
+=======
+
+>>>>>>> d2975df19786aa7cfe393d99e2579d4f679cdbc7
   install_signal_handler();
   __am_init_timer_irq();
   return 0;
