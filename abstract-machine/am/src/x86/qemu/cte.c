@@ -73,10 +73,6 @@ void __am_irq_handle(struct trap_frame *tf) {
     case EX_SS: MSG("SS #12 stack fault")
       ev.event = _EVENT_ERROR; break;
     case EX_GP: MSG("GP #13, general protection fault")
-<<<<<<< HEAD
-      //_halt(0);
-=======
->>>>>>> d2975df19786aa7cfe393d99e2579d4f679cdbc7
       ev.event = _EVENT_ERROR; break;
     case EX_PF: MSG("PF #14, page fault, @cause: _PROT_XXX")
       ev.event = _EVENT_PAGEFAULT;
@@ -132,15 +128,9 @@ int _intr_read() {
 
 void _intr_write(int enable) {
   if (enable) {
-<<<<<<< HEAD
     sti(); //开中断
   } else {
     cli(); //关中断
-=======
-    sti();
-  } else {
-    cli();
->>>>>>> d2975df19786aa7cfe393d99e2579d4f679cdbc7
   }
 }
 
