@@ -1,0 +1,279 @@
+execve : 0.000183, cnt: (1/14)
+write : 0.000021, cnt: (2/14)
+ioctl : 0.000020, cnt: (3/14)
+munmap : 0.000033, cnt: (4/14)
+arch_prctl : 0.000021, cnt: (5/14)
+mprotect : 0.000099, cnt: (6/14)
+read : 0.000022, cnt: (7/14)
+close : 0.000113, cnt: (8/14)
+mmap : 0.000168, cnt: (9/14)
+fstat : 0.000083, cnt: (10/14)
+stat : 0.000216, cnt: (11/14)
+openat : 0.000323, cnt: (12/14)
+access : 0.000122, cnt: (13/14)
+brk : 0.000089, cnt: (14/14)
+
+[31m ------------------------------------- [0m
+Sorting for the (0/14)...
+ptr is execve, time: 0.000183
+ptr is write, time: 0.000021
+ptr is ioctl, time: 0.000020
+swapped (ioctl, write)
+swapped (ioctl, munmap)
+ptr is ioctl, time: 0.000020
+swapped (ioctl, munmap)
+swapped (ioctl, arch_prctl)
+ptr is ioctl, time: 0.000020
+swapped (ioctl, arch_prctl)
+swapped (ioctl, mprotect)
+ptr is ioctl, time: 0.000020
+swapped (ioctl, mprotect)
+swapped (ioctl, read)
+ptr is ioctl, time: 0.000020
+swapped (ioctl, read)
+swapped (ioctl, close)
+ptr is ioctl, time: 0.000020
+swapped (ioctl, close)
+swapped (ioctl, mmap)
+ptr is ioctl, time: 0.000020
+swapped (ioctl, mmap)
+swapped (ioctl, fstat)
+ptr is ioctl, time: 0.000020
+swapped (ioctl, fstat)
+swapped (ioctl, stat)
+ptr is ioctl, time: 0.000020
+swapped (ioctl, stat)
+swapped (ioctl, openat)
+ptr is ioctl, time: 0.000020
+swapped (ioctl, openat)
+swapped (ioctl, access)
+ptr is ioctl, time: 0.000020
+swapped (ioctl, access)
+swapped (ioctl, brk)
+Sorting for the (1/14)...
+ptr is execve, time: 0.000183
+ptr is write, time: 0.000021
+swapped (write, execve)
+swapped (write, munmap)
+ptr is write, time: 0.000021
+ptr is arch_prctl, time: 0.000021
+swapped (arch_prctl, munmap)
+swapped (arch_prctl, mprotect)
+ptr is arch_prctl, time: 0.000021
+swapped (arch_prctl, mprotect)
+swapped (arch_prctl, read)
+ptr is arch_prctl, time: 0.000021
+swapped (arch_prctl, read)
+swapped (arch_prctl, close)
+ptr is arch_prctl, time: 0.000021
+swapped (arch_prctl, close)
+swapped (arch_prctl, mmap)
+ptr is arch_prctl, time: 0.000021
+swapped (arch_prctl, mmap)
+swapped (arch_prctl, fstat)
+ptr is arch_prctl, time: 0.000021
+swapped (arch_prctl, fstat)
+swapped (arch_prctl, stat)
+ptr is arch_prctl, time: 0.000021
+swapped (arch_prctl, stat)
+swapped (arch_prctl, openat)
+ptr is arch_prctl, time: 0.000021
+swapped (arch_prctl, openat)
+swapped (arch_prctl, access)
+ptr is arch_prctl, time: 0.000021
+swapped (arch_prctl, access)
+swapped (arch_prctl, brk)
+ptr is arch_prctl, time: 0.000021
+Sorting for the (2/14)...
+ptr is execve, time: 0.000183
+ptr is munmap, time: 0.000033
+swapped (munmap, execve)
+swapped (munmap, mprotect)
+ptr is munmap, time: 0.000033
+ptr is read, time: 0.000022
+swapped (read, mprotect)
+swapped (read, close)
+ptr is read, time: 0.000022
+swapped (read, close)
+swapped (read, mmap)
+ptr is read, time: 0.000022
+swapped (read, mmap)
+swapped (read, fstat)
+ptr is read, time: 0.000022
+swapped (read, fstat)
+swapped (read, stat)
+ptr is read, time: 0.000022
+swapped (read, stat)
+swapped (read, openat)
+ptr is read, time: 0.000022
+swapped (read, openat)
+swapped (read, access)
+ptr is read, time: 0.000022
+swapped (read, access)
+swapped (read, brk)
+ptr is read, time: 0.000022
+ptr is arch_prctl, time: 0.000021
+Sorting for the (3/14)...
+ptr is execve, time: 0.000183
+ptr is mprotect, time: 0.000099
+swapped (mprotect, execve)
+swapped (mprotect, close)
+ptr is mprotect, time: 0.000099
+swapped (mprotect, close)
+swapped (mprotect, mmap)
+ptr is mprotect, time: 0.000099
+ptr is fstat, time: 0.000083
+swapped (fstat, mmap)
+swapped (fstat, stat)
+ptr is fstat, time: 0.000083
+swapped (fstat, stat)
+swapped (fstat, openat)
+ptr is fstat, time: 0.000083
+swapped (fstat, openat)
+swapped (fstat, access)
+ptr is fstat, time: 0.000083
+swapped (fstat, access)
+swapped (fstat, brk)
+ptr is fstat, time: 0.000083
+ptr is read, time: 0.000022
+ptr is arch_prctl, time: 0.000021
+Sorting for the (4/14)...
+ptr is execve, time: 0.000183
+ptr is close, time: 0.000113
+swapped (close, execve)
+swapped (close, mmap)
+ptr is close, time: 0.000113
+swapped (close, mmap)
+swapped (close, stat)
+ptr is close, time: 0.000113
+swapped (close, stat)
+swapped (close, openat)
+ptr is close, time: 0.000113
+swapped (close, openat)
+swapped (close, access)
+ptr is close, time: 0.000113
+ptr is brk, time: 0.000089
+ptr is fstat, time: 0.000083
+ptr is read, time: 0.000022
+ptr is arch_prctl, time: 0.000021
+Sorting for the (5/14)...
+ptr is execve, time: 0.000183
+ptr is mmap, time: 0.000168
+swapped (mmap, execve)
+swapped (mmap, stat)
+ptr is mmap, time: 0.000168
+swapped (mmap, stat)
+swapped (mmap, openat)
+ptr is mmap, time: 0.000168
+ptr is access, time: 0.000122
+ptr is close, time: 0.000113
+ptr is brk, time: 0.000089
+ptr is fstat, time: 0.000083
+ptr is read, time: 0.000022
+ptr is arch_prctl, time: 0.000021
+Sorting for the (6/14)...
+ptr is execve, time: 0.000183
+swapped (execve, (null))
+swapped (execve, stat)
+ptr is execve, time: 0.000183
+swapped (execve, stat)
+swapped (execve, openat)
+ptr is execve, time: 0.000183
+ptr is mmap, time: 0.000168
+ptr is access, time: 0.000122
+ptr is close, time: 0.000113
+ptr is brk, time: 0.000089
+ptr is fstat, time: 0.000083
+ptr is read, time: 0.000022
+ptr is arch_prctl, time: 0.000021
+Sorting for the (7/14)...
+ptr is stat, time: 0.000216
+swapped (stat, (null))
+swapped (stat, openat)
+ptr is stat, time: 0.000216
+ptr is execve, time: 0.000183
+ptr is mmap, time: 0.000168
+ptr is access, time: 0.000122
+ptr is close, time: 0.000113
+ptr is brk, time: 0.000089
+ptr is fstat, time: 0.000083
+ptr is read, time: 0.000022
+ptr is arch_prctl, time: 0.000021
+Sorting for the (8/14)...
+ptr is openat, time: 0.000323
+ptr is stat, time: 0.000216
+ptr is execve, time: 0.000183
+ptr is mmap, time: 0.000168
+ptr is access, time: 0.000122
+ptr is close, time: 0.000113
+ptr is brk, time: 0.000089
+ptr is fstat, time: 0.000083
+ptr is read, time: 0.000022
+ptr is arch_prctl, time: 0.000021
+Sorting for the (9/14)...
+ptr is openat, time: 0.000323
+ptr is stat, time: 0.000216
+ptr is execve, time: 0.000183
+ptr is mmap, time: 0.000168
+ptr is access, time: 0.000122
+ptr is close, time: 0.000113
+ptr is brk, time: 0.000089
+ptr is fstat, time: 0.000083
+ptr is read, time: 0.000022
+ptr is arch_prctl, time: 0.000021
+Sorting for the (10/14)...
+ptr is openat, time: 0.000323
+ptr is stat, time: 0.000216
+ptr is execve, time: 0.000183
+ptr is mmap, time: 0.000168
+ptr is access, time: 0.000122
+ptr is close, time: 0.000113
+ptr is brk, time: 0.000089
+ptr is fstat, time: 0.000083
+ptr is read, time: 0.000022
+ptr is arch_prctl, time: 0.000021
+Sorting for the (11/14)...
+ptr is openat, time: 0.000323
+ptr is stat, time: 0.000216
+ptr is execve, time: 0.000183
+ptr is mmap, time: 0.000168
+ptr is access, time: 0.000122
+ptr is close, time: 0.000113
+ptr is brk, time: 0.000089
+ptr is fstat, time: 0.000083
+ptr is read, time: 0.000022
+ptr is arch_prctl, time: 0.000021
+Sorting for the (12/14)...
+ptr is openat, time: 0.000323
+ptr is stat, time: 0.000216
+ptr is execve, time: 0.000183
+ptr is mmap, time: 0.000168
+ptr is access, time: 0.000122
+ptr is close, time: 0.000113
+ptr is brk, time: 0.000089
+ptr is fstat, time: 0.000083
+ptr is read, time: 0.000022
+ptr is arch_prctl, time: 0.000021
+Sorting for the (13/14)...
+ptr is openat, time: 0.000323
+ptr is stat, time: 0.000216
+ptr is execve, time: 0.000183
+ptr is mmap, time: 0.000168
+ptr is access, time: 0.000122
+ptr is close, time: 0.000113
+ptr is brk, time: 0.000089
+ptr is fstat, time: 0.000083
+ptr is read, time: 0.000022
+ptr is arch_prctl, time: 0.000021
+openat : 0.000323, cnt: (1/14)
+stat : 0.000216, cnt: (2/14)
+execve : 0.000183, cnt: (3/14)
+mmap : 0.000168, cnt: (4/14)
+access : 0.000122, cnt: (5/14)
+close : 0.000113, cnt: (6/14)
+brk : 0.000089, cnt: (7/14)
+fstat : 0.000083, cnt: (8/14)
+read : 0.000022, cnt: (9/14)
+arch_prctl : 0.000021, cnt: (10/14)
+ioctl : 0.000020, cnt: (11/14)
+this is parent pid : 27220

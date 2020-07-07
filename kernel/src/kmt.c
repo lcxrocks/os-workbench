@@ -138,7 +138,7 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
     // panic_on(sleep == true, "All task sleeping.\n");
     // c_log(WHITE, "======================================\n");
     task_t *p = task_head.next;
-    if(_ncpu() > 2){
+    if(_ncpu() != 2){
         while(p){
             if(p->cpu != _cpu()){
                 p = p->next;
@@ -168,7 +168,7 @@ _Context *kmt_schedule(_Event ev, _Context *ctx){
             p = p->next;
         } 
     }
-    if(_ncpu() <= 2){
+    if(_ncpu() == 2){
         while(p){
         if(p->stat == EMBRYO || p->stat == RUNNABLE){
             if(p->cpu == _cpu()){
