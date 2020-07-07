@@ -12,6 +12,7 @@ trap_handler_t head = {0, _EVENT_HEAD, NULL, NULL, NULL};
 static void os_init() {
   pmm->init();
   kmt->init();
+  dev->init();
   kmt->spin_init(&info_lock, "info_lock");
   //dev-init();
 }
